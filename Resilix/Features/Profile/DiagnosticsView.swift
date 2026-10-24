@@ -6,7 +6,7 @@ struct DiagnosticsView: View {
     
     var body: some View {
         List {
-            Section(header: Text(String(localized: "diagnostics.transports"))) {
+            Section(header: Text(L("diagnostics.transports"))) {
                 DiagnosticRow(label: "Bluetooth", value: app.diagnosticsService.snapshot.bluetoothState)
                 DiagnosticRow(label: "P2P Wi-Fi", value: app.diagnosticsService.snapshot.p2pWiFiState)
                 DiagnosticRow(label: "Wi-Fi Aware", value: app.diagnosticsService.snapshot.wifiAwareState)
@@ -16,7 +16,7 @@ struct DiagnosticsView: View {
                 }
             }
             
-            Section(header: Text(String(localized: "diagnostics.mesh"))) {
+            Section(header: Text(L("diagnostics.mesh"))) {
                 DiagnosticRow(label: "Connected peers", value: "\(app.diagnosticsService.snapshot.connectedCount)")
                 DiagnosticRow(label: "Discovered", value: "\(app.diagnosticsService.snapshot.discoveredCount)")
                 DiagnosticRow(label: "Routes", value: "\(app.diagnosticsService.snapshot.routeCount)")
@@ -27,7 +27,7 @@ struct DiagnosticsView: View {
                 DiagnosticRow(label: "Relay", value: app.diagnosticsService.snapshot.relayActive ? "Active" : "Inactive")
             }
             
-            Section(header: Text(String(localized: "diagnostics.system"))) {
+            Section(header: Text(L("diagnostics.system"))) {
                 DiagnosticRow(label: "Protocol version", value: "\(app.diagnosticsService.snapshot.protocolVersion)")
                 DiagnosticRow(label: "Persistence", value: app.diagnosticsService.snapshot.persistenceStatus)
                 DiagnosticRow(label: "Permissions", value: app.diagnosticsService.snapshot.permissionStatus)
@@ -36,7 +36,7 @@ struct DiagnosticsView: View {
             }
             
             Section {
-                DisclosureGroup(String(localized: "diagnostics.developerDetails"), isExpanded: $showDetails) {
+                DisclosureGroup(L("diagnostics.developerDetails"), isExpanded: $showDetails) {
                     Text("Packet queue inspected without plaintext. Logs contain packet IDs only.")
                         .font(.caption2)
                         .foregroundStyle(ResilixTheme.textTertiary)
@@ -45,7 +45,7 @@ struct DiagnosticsView: View {
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
                 
-                Button(String(localized: "diagnostics.refresh")) {
+                Button(L("diagnostics.refresh")) {
                     Task {
                         await app.diagnosticsService.refresh(
                             transports: app.meshController.availableTransports,
@@ -59,7 +59,7 @@ struct DiagnosticsView: View {
                 }
                 .accessibilityLabel("Refresh diagnostics")
                 
-                Button(String(localized: "diagnostics.connectivityTest")) {
+                Button(L("diagnostics.connectivityTest")) {
                     Task {
                         await app.diagnosticsService.refresh(
                             transports: app.meshController.availableTransports,

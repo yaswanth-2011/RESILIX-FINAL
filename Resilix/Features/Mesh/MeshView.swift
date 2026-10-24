@@ -30,7 +30,8 @@ struct MeshPeer: Identifiable {
     let distance: String
     let connectionLabel: String
     let accentColor: Color
-    let coordinate: CLLocationCoordinate2D
+    /// Position the peer shared with the mesh (nil when it did not share one).
+    let coordinate: CLLocationCoordinate2D?
 
     enum HopType: String {
         case direct = "Direct"
@@ -48,6 +49,8 @@ struct MeshView: View {
     @State private var relayEnabled: Bool = false
     @State private var pulse: Bool = false
     @State private var hasAppeared: Bool = false
+    @State private var showDiagnostics: Bool = false
+    @State private var testMessage: String?
 
     private let userCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
 
@@ -75,6 +78,19 @@ struct MeshView: View {
             }
             .navigationBarHidden(true)
             .task { await loadPeers() }
+            .onReceive(app.meshController.$peers) { _ in
+                Task { await loadPeers() }
+            }
+            .alert("Mesh", isPresented: .constant(testMessage != nil), presenting: testMessage) { _ in
+                Button("OK") { testMessage = nil }
+            } message: { message in
+                Text(message)
+            }
+            .sheet(isPresented: $showDiagnostics) {
+                DiagnosticsView()
+                    .presentationDetents([.medium, .large])
+                    .presentationBackground(ResilixTheme.backgroundPrimary)
+            }
             .onAppear {
                 if !hasAppeared {
                     hasAppeared = true
@@ -109,15 +125,21 @@ struct MeshView: View {
                             .font(ResilixTheme.font(13, .semibold))
                             .foregroundStyle(ResilixTheme.successGreen)
                     }
-                    Text("· \(peers.count) devices · 3 connections")
+                    Text("· \(peers.count) devices · \(app.meshController.connectedPeerIDs.count) connections")
                         .font(ResilixTheme.font(13, .regular))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 8) {
-                MeshToggleChip(label: "Auto Route", isOn: $autoRoute)
-                MeshToggleChip(label: "Relay", isOn: $relayEnabled)
+                MeshToggleChip(label: "Auto Route", isOn: Binding(
+                    get: { app.meshController.routing.automaticRoutingEnabled },
+                    set: { newValue in app.meshController.routing.automaticRoutingEnabled = newValue }
+                ))
+                MeshToggleChip(label: "Relay", isOn: Binding(
+                    get: { app.relayManager.isRelayActive },
+                    set: { newValue in Task { await app.relayManager.setRelay(newValue) } }
+                ))
             }
         }
         .padding(.horizontal, ResilixTheme.space20)
@@ -137,9 +159,9 @@ struct MeshView: View {
     private var statsRow: some View {
         HStack(spacing: 10) {
             MeshStatBox(value: "\(peers.count)", label: "Members", color: MeshColors.direct)
-            MeshStatBox(value: "94%", label: "Health", color: MeshColors.you)
-            MeshStatBox(value: "14", label: "Routes", color: MeshColors.routes)
-            MeshStatBox(value: "\(app.relayManager.forwardedCount)", label: "Relayed", color: MeshColors.relay)
+            MeshStatBox(value: "\(meshHealth)", label: "Health", color: MeshColors.you)
+            MeshStatBox(value: "\(app.meshController.routing.routes.count)", label: "Routes", color: MeshColors.routes)
+            MeshStatBox(value: "\(app.meshController.statistics.relayedPackets)", label: "Relayed", color: MeshColors.relay)
         }
         .padding(.horizontal, ResilixTheme.space20)
     }
@@ -147,89 +169,97 @@ struct MeshView: View {
     // MARK: - Action Cards
     private var actionCards: some View {
         VStack(spacing: 10) {
-            MeshActionRow(icon: "viewfinder", title: "Scan for Devices", subtitle: "Discover new mesh peers") {}
-            MeshActionRow(icon: "waveform.path.ecg", title: "Network Diagnostics", subtitle: "Check routes & latency") {}
-            MeshActionRow(icon: "paperplane.fill", title: "Send Test Message", subtitle: "Watch packet travel the mesh") {}
+            MeshActionRow(icon: "viewfinder", title: "Scan for Devices", subtitle: "Discover new mesh peers") {
+                Task { await rescan() }
+            }
+            MeshActionRow(icon: "waveform.path.ecg", title: "Network Diagnostics", subtitle: "Check routes & latency") {
+                showDiagnostics = true
+            }
+            MeshActionRow(icon: "paperplane.fill", title: "Send Test Message", subtitle: "Watch packet travel the mesh") {
+                Task { await sendTestMessage() }
+            }
         }
         .padding(.horizontal, ResilixTheme.space20)
     }
 
     // MARK: - Data
+    /// Builds the peer list from the real mesh state.
     private func loadPeers() async {
-        // Demo data — the same names as the image, scattered around the user location.
-        let base = userCoordinate
-        peers = [
-            MeshPeer(
-                id: "sarah",
-                name: "Sarah K.",
-                hopType: .direct,
-                signalPercent: 95,
-                isRelay: false,
-                distance: "120m",
-                connectionLabel: "Direct",
-                accentColor: MeshColors.direct,
-                coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0018, longitude: base.longitude - 0.0002)
-            ),
-            MeshPeer(
-                id: "marcus",
-                name: "Marcus D.",
-                hopType: .direct,
-                signalPercent: 80,
-                isRelay: false,
-                distance: "340m",
-                connectionLabel: "1 hop",
-                accentColor: MeshColors.direct,
-                coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0011, longitude: base.longitude + 0.0024)
-            ),
-            MeshPeer(
-                id: "resbot",
-                name: "ResBot-α",
-                hopType: .relay,
-                signalPercent: 72,
-                isRelay: true,
-                distance: "510m",
-                connectionLabel: "Relay",
-                accentColor: MeshColors.relay,
-                coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0028, longitude: base.longitude + 0.0012)
-            ),
-            MeshPeer(
-                id: "james",
-                name: "James R.",
-                hopType: .relay,
-                signalPercent: 64,
-                isRelay: false,
-                distance: "780m",
-                connectionLabel: "2+ Hop",
-                accentColor: MeshColors.relay,
-                coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0010, longitude: base.longitude - 0.0026)
-            ),
-            MeshPeer(
-                id: "emma",
-                name: "Emma T.",
-                hopType: .multiHop,
-                signalPercent: 52,
-                isRelay: false,
-                distance: "1.1km",
-                connectionLabel: "2+ Hop",
-                accentColor: MeshColors.multiHop,
-                coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0034, longitude: base.longitude - 0.0008)
-            ),
-            MeshPeer(
-                id: "dev47",
-                name: "Dev-47",
-                hopType: .multiHop,
-                signalPercent: 41,
-                isRelay: false,
-                distance: "1.3km",
-                connectionLabel: "2+ Hop",
-                accentColor: MeshColors.multiHop,
-                coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0026, longitude: base.longitude + 0.0010)
-            ),
-        ]
+        let nodes = app.meshController.peers
+        peers = nodes.map { node in
+            let connected = app.meshController.isConnected(to: node.id)
+            let route = app.meshController.routing.routes.first { $0.destination == node.id }
+            let hopType: MeshPeer.HopType
+            if connected {
+                hopType = .direct
+            } else if node.isRelay {
+                hopType = .relay
+            } else {
+                hopType = .multiHop
+            }
+            var coordinate: CLLocationCoordinate2D?
+            if let latitude = node.latitude, let longitude = node.longitude {
+                coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+            }
+            let distance = coordinate.flatMap { app.locationService.formattedDistance(to: $0) } ?? "—"
+            let connectionLabel = connected
+                ? "Direct"
+                : (route.map { "\($0.hopCount) hop" + ($0.hopCount == 1 ? "" : "s") } ?? "Unknown")
+            return MeshPeer(id: node.id,
+                            name: node.displayName ?? node.alias,
+                            hopType: hopType,
+                            signalPercent: app.meshController.signalStrength(for: node.id) ?? 0,
+                            isRelay: node.isRelay,
+                            distance: distance,
+                            connectionLabel: connectionLabel,
+                            accentColor: MeshColors.pin(for: hopType),
+                            coordinate: coordinate)
+        }
+    }
+
+    /// Health of the local mesh: share of the discovered peers that are
+    /// currently connected (0 - 100).
+    private var meshHealth: Int {
+        guard !peers.isEmpty else { return 0 }
+        let connected = app.meshController.connectedPeerIDs.count
+        return min(100, Int((Double(connected) / Double(peers.count)) * 100))
+    }
+
+    /// Restarts the discovery on every transport.
+    private func rescan() async {
+        for transport in app.meshController.availableTransports {
+            await transport.stopDiscovery()
+        }
+        for transport in app.meshController.availableTransports {
+            await transport.startDiscovery()
+        }
+        await loadPeers()
+    }
+
+    /// Sends a short test packet to every connected peer.
+    private func sendTestMessage() async {
+        guard !app.meshController.connectedPeerIDs.isEmpty else {
+            testMessage = "No peer is connected yet — scan for devices first."
+            return
+        }
+        var sent = 0
+        for peerID in app.meshController.connectedPeerIDs {
+            do {
+                _ = try await app.meshController.sendSecurePacket(type: .chat,
+                                                                  plaintext: Data("Resilix mesh test message".utf8),
+                                                                  destination: peerID)
+                sent += 1
+            } catch {
+                continue
+            }
+        }
+        testMessage = sent > 0
+            ? "Test packet sent to \(sent) peer(s)."
+            : "The test packet could not be sent."
     }
 }
 
-// MARK: - Toggle Chip (used for Auto Route & Relay)
+
 private struct MeshToggleChip: View {
     let label: String
     @Binding var isOn: Bool
@@ -355,20 +385,24 @@ struct MeshAppleMapView: View {
 
                     // Dotted mesh connection lines (You → peer)
                     ForEach(peers) { peer in
-                        MapPolyline(coordinates: [userCoordinate, peer.coordinate])
-                            .stroke(
-                                lineColor(for: peer.hopType).opacity(0.65),
-                                style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [5, 4])
-                            )
+                        if let coordinate = peer.coordinate {
+                            MapPolyline(coordinates: [userCoordinate, coordinate])
+                                .stroke(
+                                    lineColor(for: peer.hopType).opacity(0.65),
+                                    style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [5, 4])
+                                )
+                        }
                     }
 
-                    // Peer annotations
+                    // Peer annotations (only peers that shared a position)
                     ForEach(peers) { peer in
-                        Annotation(peer.name, coordinate: peer.coordinate) {
-                            PeerMapPin(peer: peer, pulse: pulse)
-                                .onTapGesture {
-                                    onSelect(peer)
-                                }
+                        if let coordinate = peer.coordinate {
+                            Annotation(peer.name, coordinate: coordinate) {
+                                PeerMapPin(peer: peer, pulse: pulse)
+                                    .onTapGesture {
+                                        onSelect(peer)
+                                    }
+                            }
                         }
                     }
                 }
@@ -541,7 +575,7 @@ struct MeshDeviceDetailSheet: View {
                 // Stats
                 HStack(spacing: 10) {
                     MeshDetailStat(value: hopCount, label: "Hop Count")
-                    MeshDetailStat(value: "\(peer.signalPercent)%", label: "Signal")
+                    MeshDetailStat(value: "\(peer.signalPercent)", label: "Signal")
                     MeshDetailStat(value: relayLabel, label: "Relay")
                 }
                 .padding(.horizontal, ResilixTheme.space20)

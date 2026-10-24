@@ -1,0 +1,311 @@
+# lang	key	value
+hi	assist.notMedicalAdvice	यह मार्गदर्शिका पेशेवर चिकित्सा का विकल्प नहीं है।
+hi	commandCenter.acknowledge	स्वीकार करें
+hi	commandCenter.all	सभी
+hi	commandCenter.filter	फ़िल्टर
+hi	commandCenter.title	कमांड केंद्र
+hi	diagnostics.connectivityTest	कनेक्टिविटी जाँच चलाएँ
+hi	diagnostics.developerDetails	डेवलपर विवरण
+hi	error.generic	एक त्रुटि हुई। कृपया फिर से प्रयास करें।
+hi	error.noRoute	कोई रूट उपलब्ध नहीं। गंतव्य अभी unreachable है।
+hi	home.internetNotRequired	मेश संदेश के लिए इंटरनेट की आवश्यकता नहीं
+hi	home.quickActions	त्वरित क्रियाएँ
+hi	home.recent	हाल के
+hi	home.relayActive	रीले मोड सक्रिय
+hi	home.subtitle	सर्वाइवल और रेज़िलिएंस समाधान
+hi	home.title	रेज़िलिक्स
+hi	map.addResource	संसाधन जोड़ें
+hi	map.communityReported	समुदाय द्वारा रिपोर्ट किया गया
+hi	map.stale	पुराना
+hi	onboarding.getStarted	शुरू करें
+hi	onboarding.next	अगला
+hi	onboarding.offlineMesh	ऑफ़लाइन मेश
+hi	onboarding.participate	भाग लें
+hi	onboarding.private	निजी और स्थानीय
+hi	onboarding.relay	रीले A → B → C
+hi	onboarding.skip	छोड़ें
+hi	settings.data	डेटा
+hi	settings.debug	डीबग जानकारी दिखाएँ
+hi	settings.meshRelay	मेश और रीले
+hi	settings.messaging	संदेश
+hi	sos.holdToSend	एसओएस भेजने के लिए दबाए रखें
+hi	sos.shareLocation	अनुमानित स्थान साझा करें
+te	assist.notMedicalAdvice	ఈ మార్గదర్శకం వృత్తి వైద్యానికి ప్రత్యామ్నాయం కాదు.
+te	commandCenter.acknowledge	అంగీకరించు
+te	commandCenter.all	అన్నీ
+te	commandCenter.filter	ఫిల్టర్
+te	commandCenter.title	కమాండ్ సెంటర్
+te	diagnostics.connectivityTest	కనెక్టివిటీ పరీక్ష నడపండి
+te	diagnostics.developerDetails	డెవలపర్ వివరాలు
+te	error.generic	ఒక పొరపాటు జరిగింది. దయచేసి మళ్లీ ప్రయత్నించండి.
+te	error.noRoute	మార్గం లేదు. గమ్యం ప్రస్తుతం చేరుకోలేరు.
+te	home.internetNotRequired	మెష్ సందేశాలకు ఇంటర్నెట్ అవసరం లేదు
+te	home.quickActions	త్వరిత చర్యలు
+te	home.recent	ఇటీవలి
+te	home.relayActive	రిలే మోడ్ క్రియాశీలం
+te	home.subtitle	సర్వైవల్ మరియు రెసిలియెన్స్ పరిష్కారాలు
+te	home.title	రెసిలిక్స్
+te	map.addResource	వనరు జోడించు
+te	map.communityReported	సముదాయం నివేదించింది
+te	map.stale	పాతది
+te	onboarding.getStarted	ప్రారంభించండి
+te	onboarding.next	తదుపరి
+te	onboarding.offlineMesh	ఆఫ్‌లైన్ మెష్
+te	onboarding.participate	పాల్గొనండి
+te	onboarding.private	గోప్యం మరియు స్థానికం
+te	onboarding.relay	రిలే A → B → C
+te	onboarding.skip	దాటవేయండి
+te	settings.data	డేటా
+te	settings.debug	డీబగ్ సమాచారం చూపించు
+te	settings.meshRelay	మెష్ మరియు రిలే
+te	settings.messaging	సందేశాలు
+te	sos.holdToSend	ఎస్‌ఒఎస్ పంపడానికి నొక్కి పట్టుకోండి
+te	sos.shareLocation	సమీపస్థ అవస్థానం పంచుకోండి
+ta	assist.notMedicalAdvice	இந்த வழிகாட்டல் வ மருத்துவக்கு மாற்றாகாது.
+ta	commandCenter.acknowledge	ஏற்கொள்
+ta	commandCenter.all	அனைத்தும்
+ta	commandCenter.filter	வடிகட்டு
+ta	commandCenter.title	கட்டளை மையம்
+ta	diagnostics.connectivityTest	இணைப்பு சோதனை இயக்கு
+ta	diagnostics.developerDetails	உருவாக்குநர் விவரங்கள்
+ta	error.generic	ஒரு பிழை ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.
+ta	error.noRoute	வழி இல்லை. இலக்கு தற்போது அணுக முடியாது.
+ta	home.internetNotRequired	மெஷ் செய்திகளுக்கு இணையம் தேவையில்லை
+ta	home.quickActions	விரைவு செயல்கள்
+ta	home.recent	சமீபத்தியவை
+ta	home.relayActive	ரிலே முறை செயல்பாட்டில்
+ta	home.subtitle	உயிர் வாழ் மற்றும் எதிர்ப்பு தீர்வுகள்
+ta	home.title	ரெசிலிக்ஸ்
+ta	map.addResource	வளத்தைச் சேர்
+ta	map.communityReported	சமூகம் தெரிவித்தது
+ta	map.stale	பழையது
+ta	onboarding.getStarted	தொடங்கு
+ta	onboarding.next	அடுத்து
+ta	onboarding.offlineMesh	இணைநிலையில் இல்லாத மெஷ்
+ta	onboarding.participate	பங்கேறு
+ta	onboarding.private	தனிப்பட்டது மற்றும் உள்ளூரது
+ta	onboarding.relay	ரிலே A → B → C
+ta	onboarding.skip	தவிர்
+ta	settings.data	தரவு
+ta	settings.debug	பிழைத் தகவலைக் காட்டு
+ta	settings.meshRelay	மெஷ் மற்றும் ரிலே
+ta	settings.messaging	செய்திகள்
+ta	sos.holdToSend	எஸ்ஒஎஸ் அனுப்ப அழுத்திப் பிடியுங்கள்
+ta	sos.shareLocation	தோராயமான இருப்பிடத்தைப் பகிர்
+kn	assist.notMedicalAdvice	ಈ ಮಾರ್ಗದರ್ಶನವು ವೃತ್ತಿ ಚಿಕಿತ್ಸೆಗೆ ಪರ್ಯಾಯವಲ್ಲ.
+kn	commandCenter.acknowledge	ಒಪ್ಪಿಕೊಳ್ಳಿ
+kn	commandCenter.all	ಎಲ್ಲಾ
+kn	commandCenter.filter	ಫಿಲ್ಟರ್
+kn	commandCenter.title	ಆದೇಶ ಕೇಂದ್ರ
+kn	diagnostics.connectivityTest	ಸಂಪರ್ಕತೆ ಪರೀಕ್ಷೆ ನಡೆಸಿ
+kn	diagnostics.developerDetails	ಅಭಿವೃದ್ಧಿಕಾರ ವಿವರಗಳು
+kn	error.generic	ಒಂದು ದೋಷ ಸಂಭವಿಸಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.
+kn	error.noRoute	ಮಾರ್ಗವಿಲ್ಲ. ಗಮನಾರ್ಹವನ್ನು ಈಗ ತಲುಪಲು ಸಾಧ್ಯವಿಲ್ಲ.
+kn	home.internetNotRequired	ಮೆಶ್ ಸಂದೇಶಗಳಿಗೆ ಇಂಟರ್ನೆಟ್ ಅಗತ್ಯವಿಲ್ಲ
+kn	home.quickActions	ತ್ವರಿತ ಕ್ರಮಗಳು
+kn	home.recent	ಇತ್ತೀಚಿನವು
+kn	home.relayActive	ರಿಲೇ ಮೋಡ್ ಸಕ್ರಿಯ
+kn	home.subtitle	ಅಸ್ತಿತ್ವ ಮತ್ತು ಪ್ರತಿಕ್ರಿಯಾತ್ಮಕತೆ ಪರಿಹಾರಗಳು
+kn	home.title	ರೆಸಿಲಿಕ್ಸ್
+kn	map.addResource	ಸಂಪನ್ಮೂಲ ಸೇರಿಸಿ
+kn	map.communityReported	ಸಮುದಾಯ ವರದಿ
+kn	map.stale	ಹಳೆಯದು
+kn	onboarding.getStarted	ಪ್ರಾರಂಭಿಸಿ
+kn	onboarding.next	ಮುಂದೆ
+kn	onboarding.offlineMesh	ಆಫ್‌ಲೈನ್ ಮೆಶ್
+kn	onboarding.participate	ಭಾಗವಹಿಸಿ
+kn	onboarding.private	ಖಾಸಿ ಮತ್ತು ಸ್ಥಳೀಯ
+kn	onboarding.relay	ರಿಲೇ A → B → C
+kn	onboarding.skip	ಬಿಟ್ಟುಬಿಡಿ
+kn	settings.data	ಡೇಟಾ
+kn	settings.debug	ಡೀಬಗ್ ಮಾಹಿತಿ ತೋರಿಸಿ
+kn	settings.meshRelay	ಮೆಶ್ ಮತ್ತು ರಿಲೇ
+kn	settings.messaging	ಸಂದೇಶಗಳು
+kn	sos.holdToSend	ಎಸ್‌ಒಎಸ್ ಕಳುಹಿಸಲು ಒತ್ತಿ ಹಿಡಿಯಿರಿ
+kn	sos.shareLocation	ಸಮೀಪಸ್ಥ ಸ್ಥಾನ ಹಂಚಿಕೆ
+ml	assist.notMedicalAdvice	ഈ മാർഗരേഖ പ്രൊഫഷണൽ ചികിത്സയ്ക്ക് പകരം അല്ല.
+ml	commandCenter.acknowledge	അംഗീകരിക്കുക
+ml	commandCenter.all	എല്ലാം
+ml	commandCenter.filter	ഫിൽട്ടർ
+ml	commandCenter.title	കമാൻഡ് സെന്റർ
+ml	diagnostics.connectivityTest	കണക്ഷൻ പരിശോധന നടത്തുക
+ml	diagnostics.developerDetails	ഡവലപ്പർ വിശദാംശങ്ങൾ
+ml	error.generic	ഒരു പിഴച്ചം സംഭവിച്ചു. വീണ്ടും ശ്രമിക്കുക.
+ml	error.noRoute	വഴി ലഭ്യമില്ല. ലക്ഷ്യസ്ഥാനം ഇപ്പോൾ എത്താക്കാക്കില്ല.
+ml	home.internetNotRequired	മെഷ് സന്ദേശങ്ങൾക്ക് ഇന്റർനെറ്റ് ആവശ്യമില്ല
+ml	home.quickActions	വേഗത്തിലുള்ள പ്രവർത്തനങ്ങൾ
+ml	home.recent	അടുത്തത്
+ml	home.relayActive	റിലേ മോഡ് സജീവം
+ml	home.subtitle	ജീവനും പ്രതിരോധവും പരിഹാരങ്ങൾ
+ml	home.title	റെസിലിക്സ്
+ml	map.addResource	വിഭവം ചേർക്കുക
+ml	map.communityReported	സമൂഹം റിപ്പോർട്ട് ചെയ്തത്
+ml	map.stale	കാലാവധിയായത്
+ml	onboarding.getStarted	തുടങ്ങുക
+ml	onboarding.next	അടുത്തത്
+ml	onboarding.offlineMesh	ഓഫ്‌ലൈൻ മെഷ്
+ml	onboarding.participate	പങ്കെടുക
+ml	onboarding.private	സ്വകാര്യവും സ്ഥാനികവും
+ml	onboarding.relay	റിലേ A → B → C
+ml	onboarding.skip	ഒഴിവാക്കുക
+ml	settings.data	ഡാറ്റ
+ml	settings.debug	ഡീബഗ് വിവരങ്ങൾ കാണിക്കുക
+ml	settings.meshRelay	മെഷ്, റിലേ
+ml	settings.messaging	സന്ദേശങ്ങൾ
+ml	sos.holdToSend	എസ്‌ഒഎസ് അയയ്ക്കാൻ അമർത്തിപ്പിടിക്കുക
+ml	sos.shareLocation	ഏകദേശ സ്ഥാനം പങ്കിടുക
+mr	assist.notMedicalAdvice	हा मार्गदर्शन व्यावसायिक वैद्यकीय उपचाराचा पर्याय नाही.
+mr	commandCenter.acknowledge	स्वीकार करा
+mr	commandCenter.all	सर्व
+mr	commandCenter.filter	फिल्टर
+mr	commandCenter.title	कमांड सेंटर
+mr	diagnostics.connectivityTest	कनेक्टिव्हिटी तपासणी चालवा
+mr	diagnostics.developerDetails	डेव्हलपर तपशील
+mr	error.generic	एक त्रुटी आली. कृपया पुन्हा प्रयत्न करा.
+mr	error.noRoute	मार्ग उपलब्ध नाही. गंतव्य सध्या पोहोचता येत नाही.
+mr	home.internetNotRequired	मेश संदेशांसाठी इंटरनेट आवश्यक नाही
+mr	home.quickActions	झटपट कृती
+mr	home.recent	अलीकडील
+mr	home.relayActive	रीले मोड सक्रिय
+mr	home.subtitle	सर्वाइव्हल आणि रेझिलिअन्स उपाय
+mr	home.title	रेझिलिक्स
+mr	map.addResource	संसाधन जोडा
+mr	map.communityReported	समुदायाने कळवले
+mr	map.stale	जुनं
+mr	onboarding.getStarted	सुरुवात करा
+mr	onboarding.next	पुढे
+mr	onboarding.offlineMesh	ऑफलाइन मेश
+mr	onboarding.participate	सहभागी व्हा
+mr	onboarding.private	खाजगी आणि स्थानिक
+mr	onboarding.relay	रीले A → B → C
+mr	onboarding.skip	वगळा
+mr	settings.data	डेटा
+mr	settings.debug	डीबग माहिती दाखवा
+mr	settings.meshRelay	मेश आणि रिले
+mr	settings.messaging	संदेश
+mr	sos.holdToSend	एसओएस पाठवण्यासाठी दाबून धरा
+mr	sos.shareLocation	अंदाजे स्थान सामायिक करा
+bn	assist.notMedicalAdvice	এই নির্দেশনাটি পেশাদার চিকিৎসার বিকল্প নয়।
+bn	commandCenter.acknowledge	স্বীকার করুন
+bn	commandCenter.all	সব
+bn	commandCenter.filter	ফিল্টার
+bn	commandCenter.title	কমান্ড কেন্দ্র
+bn	diagnostics.connectivityTest	সংযোগ পরীক্ষা চালান
+bn	diagnostics.developerDetails	ডেভেলপার বিবরণ
+bn	error.generic	একটি ত্রুটি হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।
+bn	error.noRoute	কোনো রাস্তা নেই। গন্তব্য এখন পৌঁছানো যাচ্ছে না।
+bn	home.internetNotRequired	মেশ বার্তার জন্য ইন্টারনেট লাগে না
+bn	home.quickActions	দ্রুত কাজ
+bn	home.recent	সাম্প্রতিক
+bn	home.relayActive	রিলে মোড সক্রিয়
+bn	home.subtitle	সারভাইভাল ও রেজিলিয়েন্স সমাধান
+bn	home.title	রেজিলিক্স
+bn	map.addResource	সম্পদ যোগ করুন
+bn	map.communityReported	কমিউনিটি জানিয়েছে
+bn	map.stale	পুরোনো
+bn	onboarding.getStarted	শুরু করুন
+bn	onboarding.next	পরবর্তী
+bn	onboarding.offlineMesh	অফলাইন মেশ
+bn	onboarding.participate	অংশ নিন
+bn	onboarding.private	ব্যক্তিগত ও স্থানীয়
+bn	onboarding.relay	রিলে A → B → C
+bn	onboarding.skip	এড়িয়ে যান
+bn	settings.data	ডেটা
+bn	settings.debug	ডিবগ তথ্য দেখান
+bn	settings.meshRelay	মেশ ও রিলে
+bn	settings.messaging	বার্তা
+bn	sos.holdToSend	এসওএস পাঠাতে চেপে ধরুন
+bn	sos.shareLocation	আনুমানিক অবস্থান ভাগ করুন
+gu	assist.notMedicalAdvice	આ માર્ગદર્શન વૃત્તિ તબીબીનો વિકલ્પ નથી.
+gu	commandCenter.acknowledge	સ્વીકારો
+gu	commandCenter.all	બધા
+gu	commandCenter.filter	ફિલ્ટર
+gu	commandCenter.title	કમાન્ડ સેન્ટર
+gu	diagnostics.connectivityTest	કનેક્ટિવિટી તપાસ ચલાવો
+gu	diagnostics.developerDetails	ડેવલપર વિગતો
+gu	error.generic	એક ભૂલ થઈ. કૃપા કરીને ફરી પ્રયત્ન કરો.
+gu	error.noRoute	કોઈ રસ્તો નથી. ગંતવ્ય હાલમાં પહોંચી શકાતું નથી.
+gu	home.internetNotRequired	મેશ સંદેશા માટે ઇન્ટરનેટ જરૂરી નથી
+gu	home.quickActions	ઝડપી ક્રિયાઓ
+gu	home.recent	તાજેતરના
+gu	home.relayActive	રિલે મોડ સક્રિય
+gu	home.subtitle	સર્વાઇવલ અને રેઝિલિયન્સ ઉકેલો
+gu	home.title	રેઝિલિક્સ
+gu	map.addResource	સાધન ઉમેરો
+gu	map.communityReported	સમુદાય દ્વારા જણાવાયેલ
+gu	map.stale	જૂનું
+gu	onboarding.getStarted	શરૂ કરો
+gu	onboarding.next	આગળ
+gu	onboarding.offlineMesh	ઑફલાઇન મેશ
+gu	onboarding.participate	ભાગ લો
+gu	onboarding.private	ખાનગી અને સ્થાનિક
+gu	onboarding.relay	રિલે A → B → C
+gu	onboarding.skip	છોડો
+gu	settings.data	ડેટા
+gu	settings.debug	ડીબગ માહિતી બતાવો
+gu	settings.meshRelay	મેશ અને રિલે
+gu	settings.messaging	સંદેશા
+gu	sos.holdToSend	એસઓએસ મોકલવા દબાવી રાખો
+gu	sos.shareLocation	અંદાજ સ્થાન શેર કરો
+pa	assist.notMedicalAdvice	ਇਹ ਮਾਰਗਦਰਸ਼ਨ ਪੇਸ਼ੇਦਾਰ ਡਾਕਟਰੀ ਦਾ ਬਦਲਾ ਨਹੀਂ ਹੈ।
+pa	commandCenter.acknowledge	ਸਵੀਕਾਰ ਕਰੋ
+pa	commandCenter.all	ਸਭ
+pa	commandCenter.filter	ਫਿਲਟਰ
+pa	commandCenter.title	ਕਮਾਂਡ ਸੈਂਟਰ
+pa	diagnostics.connectivityTest	ਕਨੈਕਟਿਵਿਟੀ ਜਾਂਚ ਚਲਾਓ
+pa	diagnostics.developerDetails	ਡਿਵੈਲਪਰ ਵੇਰਵੇ
+pa	error.generic	ਇੱਕ ਗਲਤੀ ਹੋਈ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।
+pa	error.noRoute	ਕੋਈ ਰਾਹ ਨਹੀਂ। ਮੁਕਾਮਾ ਹੁਣ ਪਹੁੰਚਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ।
+pa	home.internetNotRequired	ਮੈਸ਼ ਸੁਨੇਹਿਆਂ ਲਈ ਇੰਟਰਨੈੱਟ ਦੀ ਲੋੜ ਨਹੀਂ
+pa	home.quickActions	ਤੁਰੰਤ ਕਾਰਵਾਈਆਂ
+pa	home.recent	ਹਾਲੀਆ
+pa	home.relayActive	ਰਿਲੇ ਮੋਡ ਸਰਗਰਮ
+pa	home.subtitle	ਸਰਵਾਈਵਲ ਅਤੇ ਰੈਜ਼ਿਲੀਅੰਸ ਹੱਲ
+pa	home.title	ਰੈਜ਼ਿਲਿਕਸ
+pa	map.addResource	ਸਾਧਨ ਸ਼ਾਮਲ ਕਰੋ
+pa	map.communityReported	ਭਾਈਚਾਰਾ ਦੁਆਰਾ ਰਿਪੋਰਟ ਕੀਤਾ
+pa	map.stale	ਪੁਰਾਣਾ
+pa	onboarding.getStarted	ਸ਼ੁਰੂ ਕਰੋ
+pa	onboarding.next	ਅੱਗੇ
+pa	onboarding.offlineMesh	ਆਫਲਾਈਨ ਮੈਸ਼
+pa	onboarding.participate	ਭਾਗ ਲਓ
+pa	onboarding.private	ਨਿੱਜੀ ਅਤੇ ਸਥਾਨਕ
+pa	onboarding.relay	ਰਿਲੇ A → B → C
+pa	onboarding.skip	ਛੱਡ ਦਿਓ
+pa	settings.data	ਡਾਟਾ
+pa	settings.debug	ਡੀਬੱਗ ਜਾਣਕਾਰੀ ਦਿਖਾਓ
+pa	settings.meshRelay	ਮੈਸ਼ ਅਤੇ ਰਿਲੇ
+pa	settings.messaging	ਸੁਨੇਹੇ
+pa	sos.holdToSend	ਐਸਓਐਸ ਭੇਜਣ ਲਈ ਦਬਾ ਕੇ ਰੱਖੋ
+pa	sos.shareLocation	ਅਣਕਲਿਤ ਟਿਕਾਣਾ ਸਾਂਝਾ ਕਰੋ
+ur	assist.notMedicalAdvice	یہ رہنمائی پیشہ ور طبی نگہداشت کا متبادل نہیں ہے۔
+ur	commandCenter.acknowledge	تسلیم کریں
+ur	commandCenter.all	تمام
+ur	commandCenter.filter	چھانٹیں
+ur	commandCenter.title	کمانڈ سنٹر
+ur	diagnostics.connectivityTest	کنیکٹیوٹی چیک چلائیں
+ur	diagnostics.developerDetails	ڈویلپر تفصیلات
+ur	error.generic	ایک خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔
+ur	error.noRoute	کوئی راستہ نہیں۔ منزل ابھی تک پہنچ میں نہیں سکتی۔
+ur	home.internetNotRequired	میش پیغامات کے لیے انٹرنیٹ کی ضرورت نہیں
+ur	home.quickActions	فوری اقدامات
+ur	home.recent	حالیہ
+ur	home.relayActive	ریلے موڈ فعال
+ur	home.subtitle	سروائیول اور ریزیلینس حل
+ur	home.title	ریزیلکس
+ur	map.addResource	وسیلہ شامل کریں
+ur	map.communityReported	کمیونٹی کی طرف سے رپورٹ کیا گیا
+ur	map.stale	پرانا
+ur	onboarding.getStarted	شروع کریں
+ur	onboarding.next	اگلا
+ur	onboarding.offlineMesh	آف لائن میش
+ur	onboarding.participate	حصہ لیں
+ur	onboarding.private	نجی اور مقامی
+ur	onboarding.relay	ریلے A → B → C
+ur	onboarding.skip	چھोड़ دیں
+ur	settings.data	ڈیٹا
+ur	settings.debug	ڈیبگ معلومات دکھائیں
+ur	settings.meshRelay	میش اور ریلے
+ur	settings.messaging	پیغامات
+ur	sos.holdToSend	ایس او ایس بھیجنے کے لیے دبائے رکھیں
+ur	sos.shareLocation	تخمینی مقام شیئر کریں

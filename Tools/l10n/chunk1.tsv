@@ -1,0 +1,326 @@
+# lang	key	value
+hi	mesh.title	मेश
+hi	mesh.peers	पीयर
+hi	mesh.routes	रूट
+hi	mesh.relay	रीले
+hi	mesh.available	मेश उपलब्ध है
+hi	mesh.connected	मेश जुड़ा है
+hi	mesh.searching	आस-पास के उपकरण खोजे जा रहे हैं
+hi	mesh.unavailable	मेश उपलब्ध नहीं है
+hi	messages.title	संदेश
+hi	messages.new	नया संदेश
+hi	messages.send	भेजें
+hi	messages.delete	हटाएँ
+hi	messages.retry	पुनः प्रयास
+hi	messages.destination	गंतव्य
+hi	messages.expiry	समाप्ति
+hi	messages.noExpiry	कोई समाप्ति नहीं
+hi	delivery.queued	मेश के लिए कतार में
+hi	delivery.sending	भेजा जा रहा है
+hi	delivery.relaying	रीले किया जा रहा है
+hi	delivery.delivered	पहुँचा दिया गया
+hi	delivery.expired	समाप्त हो गया
+hi	delivery.failed	कोई रूट उपलब्ध नहीं
+hi	settings.title	सेटिंग्स
+hi	settings.appearance	रूप
+hi	settings.dark	गहरा
+hi	settings.light	हल्का
+hi	settings.system	सिस्टम
+hi	settings.about	परिचय
+hi	settings.diagnostics	निदान
+hi	settings.clearData	सारा स्थानीय डेटा मिटाएँ
+hi	settings.autoRelay	जुड़ने पर अपने आप रीले करें
+hi	settings.privacy	गोपनीयता और सुरक्षा
+hi	profile.title	प्रोफ़ाइल
+hi	profile.displayName	प्रदर्शित नाम
+hi	profile.locationSharing	स्थान साझा करना
+hi	profile.messageExpiry	संदेश समाप्ति
+hi	profile.relayParticipation	रीले में भाग लेना
+hi	profile.permissions	अनुमतियाँ
+hi	profile.privacy	गोपनीयता अवलोकन
+hi	profile.diagnostics	निदान
+hi	profile.onboarding	परिचय फिर से देखें
+hi	profile.resetData	स्थानीय डेटा रीसेट करें
+hi	map.title	सर्वाइवल मैप
+hi	map.all	सभी
+hi	map.filter	फ़िल्टर
+hi	map.verified	सत्यापित
+hi	assist.title	प्राथमिक चिकित्सा
+hi	assist.search	प्राथमिक चिकित्सा खोजें
+hi	assist.offline	ऑफ़लाइन
+hi	assist.whenToSeekHelp	पेशेवर मदद कब लें
+hi	permissions.bluetooth	ब्लूटूथ
+hi	permissions.localNetwork	स्थानीय नेटवर्क
+hi	permissions.location	स्थान
+hi	permissions.openSettings	सेटिंग्स खोलें
+hi	diagnostics.transports	ट्रांसपोर्ट
+hi	diagnostics.mesh	मेश
+hi	diagnostics.system	सिस्टम
+hi	diagnostics.refresh	रिफ़्रेश
+hi	sos.title	एसओएस
+hi	sos.send	एसओएस भेजें
+hi	sos.cancel	रद्द करें
+hi	sos.confirm	एसओएस की पुष्टि करें
+hi	sos.category	श्रेणी
+hi	sos.severity	गंभीरता
+hi	sos.note	वैकल्पिक टिप्पणी
+te	mesh.title	మెష్
+te	mesh.peers	పీర్లు
+te	mesh.routes	మార్గాలు
+te	mesh.relay	రిలే
+te	mesh.available	మెష్ అందుబాటులో ఉంది
+te	mesh.connected	మెష్ కనెక్ట్ అయింది
+te	mesh.searching	సమీపంలోని పరికరాలను వెతుకుతున్నాం
+te	mesh.unavailable	మెష్ అందుబాటులో లేదు
+te	messages.title	సందేశాలు
+te	messages.new	కొత్త సందేశం
+te	messages.send	పంపు
+te	messages.delete	తొలగించు
+te	messages.retry	మళ్లీ ప్రయత్నించు
+te	messages.destination	గమ్యం
+te	messages.expiry	గడువు
+te	messages.noExpiry	గడువు లేదు
+te	delivery.queued	మెష్ కోసం వరుసలో
+te	delivery.sending	పంపుతోంది
+te	delivery.relaying	రిలే చేస్తోంది
+te	delivery.delivered	అందించబడింది
+te	delivery.expired	గడువు ముగిసింది
+te	delivery.failed	మార్గం లేదు
+te	settings.title	సెట్టింగ్‌లు
+te	settings.appearance	రూపం
+te	settings.dark	గాఢ రంగు
+te	settings.light	తేలిక
+te	settings.system	సిస్టమ్
+te	settings.about	గురించి
+te	settings.diagnostics	డైగ్నాస్టిక్స్
+te	settings.clearData	స్థానిక డేటా అంతా తొలగించు
+te	settings.autoRelay	కనెక్ట్ అయినప్పుడు ఆటో రిలే
+te	settings.privacy	గోప్యత మరియు భద్రత
+te	profile.title	ప్రొఫైల్
+te	profile.displayName	ప్రదర్శన పేరు
+te	profile.locationSharing	స్థానం పంచుకోవడం
+te	profile.messageExpiry	సందేశ గడువు
+te	profile.relayParticipation	రిలేలో పాల్గొనడం
+te	profile.permissions	అనుమతులు
+te	profile.privacy	గోప్యత అవలోకనం
+te	profile.diagnostics	డైగ్నాస్టిక్స్
+te	profile.onboarding	ఆన్‌బోర్డింగ్ మళ్లీ చూడండి
+te	profile.resetData	స్థానిక డేటా రీసెట్ చేయండి
+te	map.title	సర్వైవల్ మ్యాప్
+te	map.all	అన్నీ
+te	map.filter	ఫిల్టర్
+te	map.verified	ధృవీకరించబడింది
+te	assist.title	ప్రథమ చికిత్స
+te	assist.search	ప్రథమ చికిత్స వెతకండి
+te	assist.offline	ఆఫ్‌లైన్
+te	assist.whenToSeekHelp	ఎప్పుడు వృత్తి సహాయం తీసుకోవాలి
+te	permissions.bluetooth	బ్లూటూత్
+te	permissions.localNetwork	లోకల్ నెట్‌వర్క్
+te	permissions.location	స్థానం
+te	permissions.openSettings	సెట్టింగ్‌లు తెరవండి
+te	diagnostics.transports	ట్రాన్స్‌పోర్ట్స్
+te	diagnostics.mesh	మెష్
+te	diagnostics.system	సిస్టమ్
+te	diagnostics.refresh	రిఫ్రెష్
+te	sos.title	ఎస్‌ఒఎస్
+te	sos.send	ఎస్‌ఒఎస్ పంపు
+te	sos.cancel	రద్దు
+te	sos.confirm	ఎస్‌ఒఎస్ నిర్ధారించు
+te	sos.category	వర్గం
+te	sos.severity	తీవ్రత
+te	sos.note	ఐచ్ఛిక సూచన
+ta	mesh.title	மெஷ்
+ta	mesh.peers	நண்பர்கள்
+ta	mesh.routes	பாதைகள்
+ta	mesh.relay	ரிலே
+ta	mesh.available	மெஷ் கிடைக்கிறது
+ta	mesh.connected	மெஷ் இணைக்கப்பட்டது
+ta	mesh.searching	அருகிலுள்ள சாதனங்களைத் தேடுகிறது
+ta	mesh.unavailable	மெஷ் கிடைக்கவில்லை
+ta	messages.title	செய்திகள்
+ta	messages.new	புதிய செய்தி
+ta	messages.send	அனுப்பு
+ta	messages.delete	நீக்கு
+ta	messages.retry	மீண்டும் முயற்சி
+ta	messages.destination	சேருமிடம்
+ta	messages.expiry	காலாவதி
+ta	messages.noExpiry	காலாவதி இல்லை
+ta	delivery.queued	மெஷ் வரிசையில்
+ta	delivery.sending	அனுப்பப்படுகிறது
+ta	delivery.relaying	ரிலே செய்யப்படுகிறது
+ta	delivery.delivered	வழங்கப்பட்டது
+ta	delivery.expired	காலாவதியானது
+ta	delivery.failed	பாதை இல்லை
+ta	settings.title	அமைப்புகள்
+ta	settings.appearance	தோற்றம்
+ta	settings.dark	இருள்
+ta	settings.light	ஒளி
+ta	settings.system	அமைப்பு
+ta	settings.about	பற்றி
+ta	settings.diagnostics	நோய்கணிக்கை
+ta	settings.clearData	உள்ளணி தரவை அனைத்தும் நீக்கு
+ta	settings.autoRelay	இணைந்ததும் தானாக ரிலே செய்
+ta	settings.privacy	தனியுரிமை மற்றும் பாதுகாப்பு
+ta	profile.title	சுயவிவரம்
+ta	profile.displayName	காட்சி பெயர்
+ta	profile.locationSharing	இருப்பிடத்தைப் பகிர்தல்
+ta	profile.messageExpiry	செய்தி காலாவதி
+ta	profile.relayParticipation	ரிலேயில் பங்கேற்பு
+ta	profile.permissions	அனுமதிகள்
+ta	profile.privacy	தனியுரிமை மேலோட்டம்
+ta	profile.diagnostics	நோய்கணிக்கை
+ta	profile.onboarding	அறிமுகத்தை மீண்டும் பார்க்க
+ta	profile.resetData	உள்ளணி தரவை மீட்டமை
+ta	map.title	சர்வைவல் வரைபடம்
+ta	map.all	அனைத்தும்
+ta	map.filter	வடிகட்டு
+ta	map.verified	சரிபார்க்கப்பட்டது
+ta	assist.title	முதலாம் உதவி
+ta	assist.search	முதலாம் உதவியைத் தேடு
+ta	assist.offline	இணைநிலையில் இல்லை
+ta	assist.whenToSeekHelp	எப்போது தொழில்நுட்ப உதவி தேவை
+ta	permissions.bluetooth	ப்ளூடூத்
+ta	permissions.localNetwork	உள்ளூர் வலைபின்னல்
+ta	permissions.location	இருப்பிடம்
+ta	permissions.openSettings	அமைப்புகளைத் திற
+ta	diagnostics.transports	கடத்தல் முறைகள்
+ta	diagnostics.mesh	மெஷ்
+ta	diagnostics.system	அமைப்பு
+ta	diagnostics.refresh	புதுப்பி
+ta	sos.title	எஸ்ஒஎஸ்
+ta	sos.send	எஸ்ஒஎஸ் அனுப்பு
+ta	sos.cancel	ரத்து
+ta	sos.confirm	எஸ்ஒஎஸை உறுதிசெய்
+ta	sos.category	வகை
+ta	sos.severity	தீவிரம்
+ta	sos.note	விருப்பக் குறிப்பு
+kn	mesh.title	ಮೆಶ್
+kn	mesh.peers	ಸಹವರು
+kn	mesh.routes	ಮಾರ್ಗಗಳು
+kn	mesh.relay	ರಿಲೇ
+kn	mesh.available	ಮೆಶ್ ಲಭ್ಯವಿದೆ
+kn	mesh.connected	ಮೆಶ್ ಸಂಪರ್ಕಿತವಾಗಿದೆ
+kn	mesh.searching	ಹತ್ತಿನ ಸಾಧನಗಳನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ
+kn	mesh.unavailable	ಮೆಶ್ ಲಭ್ಯವಿಲ್ಲ
+kn	messages.title	ಸಂದೇಶಗಳು
+kn	messages.new	ಹೊಸ ಸಂದೇಶ
+kn	messages.send	ಕಳುಹಿಸಿ
+kn	messages.delete	ಅಳಿಸಿ
+kn	messages.retry	ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ
+kn	messages.destination	ಗಮನಾರ್ಹ
+kn	messages.expiry	ಅವಧಿ
+kn	messages.noExpiry	ಅವಧಿ ಇಲ್ಲ
+kn	delivery.queued	ಮೆಶ್ ಸರತಿಯಲ್ಲಿ
+kn	delivery.sending	ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ
+kn	delivery.relaying	ರಿಲೇ ಮಾಡಲಾಗುತ್ತಿದೆ
+kn	delivery.delivered	ತಲುಪಿಸಲಾಗಿದೆ
+kn	delivery.expired	ಅವಧಿ ಮುಗಿದಿದೆ
+kn	delivery.failed	ಮಾರ್ಗ ಇಲ್ಲ
+kn	settings.title	ಸೆಟ್ಟಿಂಗ್‌ಗಳು
+kn	settings.appearance	ಗೋಚರತೆ
+kn	settings.dark	ಗಾಢ
+kn	settings.light	ತಿಳಿ
+kn	settings.system	ವ್ಯವಸ್ಥೆ
+kn	settings.about	ಬಗ್ಗೆ
+kn	settings.diagnostics	ರೋಗನಿರ್ಣಯ
+kn	settings.clearData	ಎಲ್ಲಾ ಸ್ಥಳೀಯ ಡೇಟಾ ಅಳಿಸಿ
+kn	settings.autoRelay	ಸಂಪರ್ಕಿಸಿದ ನಂತರ ಸ್ವಯಂ ರಿಲೇ
+kn	settings.privacy	ಗೌಪ್ಯತೆ ಮತ್ತು ಭದ್ರತೆ
+kn	profile.title	ಪ್ರೊಫೈಲ್
+kn	profile.displayName	ಪ್ರದರ್ಶನ ಹೆಸರು
+kn	profile.locationSharing	ಸ್ಥಳ ಹಂಚಿಕೆ
+kn	profile.messageExpiry	ಸಂದೇಶ ಅವಧಿ
+kn	profile.relayParticipation	ರಿಲೇನಲ್ಲಿ ಭಾಗವಹಿಸುವಿಕೆ
+kn	profile.permissions	ಅನುಮತಿಗಳು
+kn	profile.privacy	ಗೌಪ್ಯತೆ ಅವಲೋಕನ
+kn	profile.diagnostics	ರೋಗನಿರ್ಣಯ
+kn	profile.onboarding	ಪರಿಚಯ ಮತ್ತೆ ನೋಡಿ
+kn	profile.resetData	ಸ್ಥಳೀಯ ಡೇಟಾ ಮರುಹೊಂದಿಸಿ
+kn	map.title	ಸರ್ವೈವಲ್ ನಕ್ಷೆ
+kn	map.all	ಎಲ್ಲಾ
+kn	map.filter	ಫಿಲ್ಟರ್
+kn	map.verified	ಪರಿಶೀಲಿಸಲಾಗಿದೆ
+kn	assist.title	ಮೊದಲ ಸಹಾಯ
+kn	assist.search	ಮೊದಲ ಸಹಾಯ ಹುಡುಕಿ
+kn	assist.offline	ಆಫ್‌ಲೈನ್
+kn	assist.whenToSeekHelp	ವೃತ್ತರ ಸಹಾಯ ಯಾವಾಗ ಬೇಕು
+kn	permissions.bluetooth	ಬ್ಲೂಟೂತ್
+kn	permissions.localNetwork	ಸ್ಥಳೀಯ ನೆಟ್‌ವರ್ಕ್
+kn	permissions.location	ಸ್ಥಳ
+kn	permissions.openSettings	ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ
+kn	diagnostics.transports	ರವಾನೆ ವಿಧಾನಗಳು
+kn	diagnostics.mesh	ಮೆಶ್
+kn	diagnostics.system	ವ್ಯವಸ್ಥೆ
+kn	diagnostics.refresh	ಪುನರ್ತಾನ
+kn	sos.title	ಎಸ್‌ಒಎಸ್
+kn	sos.send	ಎಸ್‌ಒಎಸ್ ಕಳುಹಿಸಿ
+kn	sos.cancel	ರದ್ದುಮಾಡಿ
+kn	sos.confirm	ಎಸ್‌ಒಎಸ್ ದೃಢೀಕರಿಸಿ
+kn	sos.category	ವರ್ಗ
+kn	sos.severity	ತೀವ್ರತೆ
+kn	sos.note	ಐಚ್ಛಿಕ ಟಿಪ್ಪಣಿ
+ml	mesh.title	മെഷ്
+ml	mesh.peers	സമാനങ്ങൾ
+ml	mesh.routes	വഴികൾ
+ml	mesh.relay	റിലേ
+ml	mesh.available	മെഷ് ലഭ്യമാണ്
+ml	mesh.connected	മെഷ് ബന്ധിച്ചു
+ml	mesh.searching	സമീപത്തെ ഉപകരണങ്ങൾ തിരയുന്നു
+ml	mesh.unavailable	മെഷ് ലഭ്യമല്ല
+ml	messages.title	സന്ദേശങ്ങൾ
+ml	messages.new	പുതിയ സന്ദേശം
+ml	messages.send	അയയ്ക്കുക
+ml	messages.delete	ഇല്ലാതാക്കുക
+ml	messages.retry	വീണ്ടും ശ്രമിക്കുക
+ml	messages.destination	ലക്ഷ്യസ്ഥാനം
+ml	messages.expiry	കാലാവധി
+ml	messages.noExpiry	കാലാവധി ഇല്ല
+ml	delivery.queued	മെഷ് വരിക്കുന്ന അറുവയിൽ
+ml	delivery.sending	അയയ്ക്കുന്നു
+ml	delivery.relaying	റിലേ ചെയ്യുന്നു
+ml	delivery.delivered	എത്തിച്ചേർന്നു
+ml	delivery.expired	കാലാവധി കഴിഞ്ഞു
+ml	delivery.failed	വഴി ലഭ്യമില്ല
+ml	settings.title	ക്രമീകരണങ്ങൾ
+ml	settings.appearance	രൂപം
+ml	settings.dark	ഇരുണ്ട
+ml	settings.light	ഇളം
+ml	settings.system	സമ്പ്രദായം
+ml	settings.about	വിവരം
+ml	settings.diagnostics	ഡയാഗ്നോസ്റ്റിക്സ്
+ml	settings.clearData	എല്ലാ ലോക്കൽ ഡാറ്റയും ഇല്ലാതാക്കുക
+ml	settings.autoRelay	ബന്ധിച്ചാൽ സ്വയം റിലേ ചെയ്യുക
+ml	settings.privacy	സ്വകാര്യതയും സുരക്ഷയും
+ml	profile.title	പ്രൊഫൈൽ
+ml	profile.displayName	പ്രദർശന നാമം
+ml	profile.locationSharing	സ്ഥാനം പങ്കിടുക
+ml	profile.messageExpiry	സന്ദേശ കാലാവധി
+ml	profile.relayParticipation	റിലേയിൽ പങ്കെടുക
+ml	profile.permissions	അനുമതികൾ
+ml	profile.privacy	സ്വകാര്യത അവലോകനം
+ml	profile.diagnostics	ഡയാഗ്നോസ്റ്റിക്സ്
+ml	profile.onboarding	ആദ്യ അറിയിപ്പ് വീണ്ടും കാണുക
+ml	profile.resetData	ലോക്കൽ ഡാറ്റ റീസെറ്റ് ചെയ്യുക
+ml	map.title	സർവൈവൽ മാപ്പ്
+ml	map.all	എല്ലാം
+ml	map.filter	ഫിൽട്ടർ
+ml	map.verified	പരിശോധിച്ചത്
+ml	assist.title	പെട്ടുകാരി
+ml	assist.search	പെട്ടുകാരി തിരയുക
+ml	assist.offline	ഓഫ്‌ലൈൻ
+ml	assist.whenToSeekHelp	പ്രൊഫഷണൽ സഹായം എപ്പോൾ വേണം
+ml	permissions.bluetooth	ബ്ലൂട്ടൂത്ത്
+ml	permissions.localNetwork	ലോക്കൽ നെറ്റ്‌വർക്ക്
+ml	permissions.location	സ്ഥാനം
+ml	permissions.openSettings	ക്രമീകരണങ്ങൾ തുറക്കുക
+ml	diagnostics.transports	ട്രാൻസ്പോർട്ടുകൾ
+ml	diagnostics.mesh	മെഷ്
+ml	diagnostics.system	സമ്പ്രദായം
+ml	diagnostics.refresh	പുതുക്കുക
+ml	sos.title	എസ്‌ഒഎസ്
+ml	sos.send	എസ്‌ഒഎസ് അയയ്ക്കുക
+ml	sos.cancel	റദ്ദാക്കുക
+ml	sos.confirm	എസ്‌ഒഎസ് സ്ഥിരീകരിക്കുക
+ml	sos.category	വിഭാഗം
+ml	sos.severity	ഗുരുതത
+ml	sos.note	ഐച്ഛിക അറിയിപ്പ്

@@ -54,7 +54,6 @@
 		914355D67348461EBDCE7FD1 /* Features/CommandCenter/IncidentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462CDAEBBCFC4FFA97113F54 /* Features/CommandCenter/IncidentDetailView.swift */; };
 		91E2CD4DB1E74A18930774FD /* SharedUI/ResilixComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF4221626F646948476C27D /* SharedUI/ResilixComponents.swift */; };
 		995E1D09111B421BB82E78F4 /* Features/Profile/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63596E4AB8B042EEB0886C09 /* Features/Profile/SettingsView.swift */; };
-		9BCBEDEA112946D78703A427 /* Core/Routing/PacketBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6D976D0F094E5199FEAE4D /* Core/Routing/PacketBuilder.swift */; };
 		9FADCFB65A1841098BDF29EE /* Core/Routing/PacketValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30337F15A12455389990498 /* Core/Routing/PacketValidator.swift */; };
 		A0E96A17E77743EEBA916525 /* Features/Map/SurvivalMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1BA77D2314704B9D54527 /* Features/Map/SurvivalMapView.swift */; };
 		AC698F2E7DE94FF39D12F0D4 /* Core/Services/DiagnosticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B9196FDB5B47DBB6662247 /* Core/Services/DiagnosticsService.swift */; };
@@ -95,6 +94,35 @@
 		FA15AE2EDCDC4222BD5C20DD /* Core/Models/MeshConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B063AC94BAE0440A96779E09 /* Core/Models/MeshConnectionState.swift */; };
 		FB9140406D494CC78ACF2789 /* Core/Services/ConnectivityCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70838A7248E4D4D8D9D97E0 /* Core/Services/ConnectivityCoordinator.swift */; };
 		FC9F422ECAF6475AADACE6B2 /* Core/Services/RelayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936DEAB68F1047D58F5B75D3 /* Core/Services/RelayManager.swift */; };
+		AAD810238047E266AA31FBC3 /* Core/Models/AIChatTurn.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A86A700799F97AD7513764 /* Core/Models/AIChatTurn.swift */; };
+		61483EDDDC807D354BD2C36B /* Core/Models/AttachmentDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882BFB122FF5205F2C1F9803 /* Core/Models/AttachmentDescriptor.swift */; };
+		0822F33F6E8C635C95E99D15 /* Core/Models/LocalModelDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0597D40B330EB9B8AE39616 /* Core/Models/LocalModelDescriptor.swift */; };
+		BE6E7963C1864EF1CEB7BDD9 /* Core/Models/LocationAdvertisement.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED82E5A28D52EE4676866111 /* Core/Models/LocationAdvertisement.swift */; };
+		86E7A97D79E13C5C3386200B /* Core/Models/MapPackDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7B11E5A6EA068332A752E1 /* Core/Models/MapPackDescriptor.swift */; };
+		D62B7224BC6A47CAB60092AC /* Core/Models/MeshAcknowledgement.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90A55E936B30DA9BE250888 /* Core/Models/MeshAcknowledgement.swift */; };
+		296CCBE9BC0522A08C065327 /* Core/Models/SecureEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = D26150B974724322057E1A93 /* Core/Models/SecureEnvelope.swift */; };
+		AD9400150B55509B14AFF1A0 /* Core/Routing/RouteAdvertisement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D3B0B3C7D6550DAC014A9DE /* Core/Routing/RouteAdvertisement.swift */; };
+		FB3141757E37C2503FFB8A86 /* Core/Security/PacketCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C83B260F4A1CEB5FE7B69B /* Core/Security/PacketCrypto.swift */; };
+		CE9EA530B84995B2AC9B7B91 /* Core/Security/PeerKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068632D1F76F4D0E4A9CB5FE /* Core/Security/PeerKeyStore.swift */; };
+		D695435E29070A41A2AD64E5 /* Core/Services/AppleFoundationModelRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC36C59B4148890B5AAE1D13 /* Core/Services/AppleFoundationModelRuntime.swift */; };
+		AFCA448B06806ED7C7D6A660 /* Core/Services/LiteRTModelRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A67974940217E98387A3D5 /* Core/Services/LiteRTModelRuntime.swift */; };
+		143401B9E958FA9E2E9B2E1A /* Core/Services/LocalAIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755194E9A3DF92B13067E831 /* Core/Services/LocalAIService.swift */; };
+		212C4855A4585894CA1E1D72 /* Core/Services/LocalModelRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E334987D89F64936EA9E139 /* Core/Services/LocalModelRuntime.swift */; };
+		CF132585EDAFCF09EC96658D /* Core/Services/LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF63BBB34844759E142AC2AE /* Core/Services/LocalizationManager.swift */; };
+		63262CEE561F3B53365CEF5D /* Core/Services/LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F94E5B1E58581FD149130B /* Core/Services/LocationService.swift */; };
+		3D59EB250F92BC8461EB863E /* Core/Services/MBTilesReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE8A6D6906653C4A77F111F /* Core/Services/MBTilesReader.swift */; };
+		CB4372BFE12873014CC8F2D1 /* Core/Services/MapPackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDEDFC34D236790174EAF96 /* Core/Services/MapPackService.swift */; };
+		44E8FEAA87AE52B9F5544C02 /* Core/Services/ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BB7912150350160CA60A929 /* Core/Services/ProfileService.swift */; };
+		DEBCFB32EA21122257ED5EEB /* Core/Services/TransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBAE78AA6A474DB103DD3B30 /* Core/Services/TransferService.swift */; };
+		E3ED4BFA7A4C826702729DB7 /* Core/Services/VoiceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689C4C6DADC4A74C3032228A /* Core/Services/VoiceService.swift */; };
+		12EEFAECAC40C2695678F9D3 /* Features/Assist/AIModelManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EF9271DD09096C19BE0B7C /* Features/Assist/AIModelManagerView.swift */; };
+		42E8764B61D4276E5C711308 /* Features/Map/OfflineMapSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 980C2756A90F5E8B9E8A50A9 /* Features/Map/OfflineMapSheet.swift */; };
+		0C39B3CADDDF234AF4C95EA8 /* Features/Map/OfflineTileOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D54B947D176E926BB7C030 /* Features/Map/OfflineTileOverlay.swift */; };
+		CE6D85149D867369D3C493C4 /* AI/LocalAITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F58190BDDDF385BDFC8876 /* AI/LocalAITests.swift */; };
+		BEFC7C529EDF9EF2E0002FE5 /* Maps/MapPackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC9E57AE9129D824BB288AD /* Maps/MapPackTests.swift */; };
+		285C0F06010E18D6FF223F90 /* Networking/FrameCodecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCF316B48C5CBA8F90FDD9 /* Networking/FrameCodecTests.swift */; };
+		74BE8959EDC994EE33C554E0 /* Networking/MediaTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19921076A1CFD23A0814EA19 /* Networking/MediaTransferTests.swift */; };
+		CC2077050CBD72A952C528F9 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037AE1B0064E3A37FBACF339 /* TestSupport.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -156,7 +184,6 @@
 		9EB5C750CEE84007B1FD70D0 /* Core/Models/LinkQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/LinkQuality.swift; sourceTree = "<group>"; };
 		A2E7A208C580473BBEEABA36 /* Core/Models/MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshMessage.swift; sourceTree = "<group>"; };
 		A2ED006A563F48B0A0D4D38D /* Core/Models/DeliveryState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DeliveryState.swift; sourceTree = "<group>"; };
-		AA6D976D0F094E5199FEAE4D /* Core/Routing/PacketBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/PacketBuilder.swift; sourceTree = "<group>"; };
 		AC24173AA5924AB592803D9A /* Core/Services/OfflineFirstAidService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/OfflineFirstAidService.swift; sourceTree = "<group>"; };
 		AE02A6E6573B4E31B340E7BB /* Core/Routing/RelayQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/RelayQueue.swift; sourceTree = "<group>"; };
 		B063AC94BAE0440A96779E09 /* Core/Models/MeshConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshConnectionState.swift; sourceTree = "<group>"; };
@@ -191,6 +218,35 @@
 		F431CE81354B4A3EA0193929 /* Features/Mesh/Mesh3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Mesh/Mesh3DView.swift; sourceTree = "<group>"; };
 		FD347FCBB3924D178DD0F244 /* Core/Networking/BLEConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/BLEConstants.swift; sourceTree = "<group>"; };
 		FE4F44992FB241B889761D40 /* Core/Models/PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/PermissionState.swift; sourceTree = "<group>"; };
+		F9A86A700799F97AD7513764 /* Core/Models/AIChatTurn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/AIChatTurn.swift; sourceTree = "<group>"; };
+		882BFB122FF5205F2C1F9803 /* Core/Models/AttachmentDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/AttachmentDescriptor.swift; sourceTree = "<group>"; };
+		E0597D40B330EB9B8AE39616 /* Core/Models/LocalModelDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/LocalModelDescriptor.swift; sourceTree = "<group>"; };
+		ED82E5A28D52EE4676866111 /* Core/Models/LocationAdvertisement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/LocationAdvertisement.swift; sourceTree = "<group>"; };
+		ED7B11E5A6EA068332A752E1 /* Core/Models/MapPackDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MapPackDescriptor.swift; sourceTree = "<group>"; };
+		F90A55E936B30DA9BE250888 /* Core/Models/MeshAcknowledgement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshAcknowledgement.swift; sourceTree = "<group>"; };
+		D26150B974724322057E1A93 /* Core/Models/SecureEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/SecureEnvelope.swift; sourceTree = "<group>"; };
+		0D3B0B3C7D6550DAC014A9DE /* Core/Routing/RouteAdvertisement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/RouteAdvertisement.swift; sourceTree = "<group>"; };
+		02C83B260F4A1CEB5FE7B69B /* Core/Security/PacketCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Security/PacketCrypto.swift; sourceTree = "<group>"; };
+		068632D1F76F4D0E4A9CB5FE /* Core/Security/PeerKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Security/PeerKeyStore.swift; sourceTree = "<group>"; };
+		FC36C59B4148890B5AAE1D13 /* Core/Services/AppleFoundationModelRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/AppleFoundationModelRuntime.swift; sourceTree = "<group>"; };
+		18A67974940217E98387A3D5 /* Core/Services/LiteRTModelRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/LiteRTModelRuntime.swift; sourceTree = "<group>"; };
+		755194E9A3DF92B13067E831 /* Core/Services/LocalAIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/LocalAIService.swift; sourceTree = "<group>"; };
+		6E334987D89F64936EA9E139 /* Core/Services/LocalModelRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/LocalModelRuntime.swift; sourceTree = "<group>"; };
+		AF63BBB34844759E142AC2AE /* Core/Services/LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/LocalizationManager.swift; sourceTree = "<group>"; };
+		67F94E5B1E58581FD149130B /* Core/Services/LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/LocationService.swift; sourceTree = "<group>"; };
+		2DE8A6D6906653C4A77F111F /* Core/Services/MBTilesReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/MBTilesReader.swift; sourceTree = "<group>"; };
+		9EDEDFC34D236790174EAF96 /* Core/Services/MapPackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/MapPackService.swift; sourceTree = "<group>"; };
+		8BB7912150350160CA60A929 /* Core/Services/ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/ProfileService.swift; sourceTree = "<group>"; };
+		EBAE78AA6A474DB103DD3B30 /* Core/Services/TransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/TransferService.swift; sourceTree = "<group>"; };
+		689C4C6DADC4A74C3032228A /* Core/Services/VoiceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/VoiceService.swift; sourceTree = "<group>"; };
+		55EF9271DD09096C19BE0B7C /* Features/Assist/AIModelManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Assist/AIModelManagerView.swift; sourceTree = "<group>"; };
+		980C2756A90F5E8B9E8A50A9 /* Features/Map/OfflineMapSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Map/OfflineMapSheet.swift; sourceTree = "<group>"; };
+		44D54B947D176E926BB7C030 /* Features/Map/OfflineTileOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Map/OfflineTileOverlay.swift; sourceTree = "<group>"; };
+		84F58190BDDDF385BDFC8876 /* AI/LocalAITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AI/LocalAITests.swift; sourceTree = "<group>"; };
+		5DC9E57AE9129D824BB288AD /* Maps/MapPackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Maps/MapPackTests.swift; sourceTree = "<group>"; };
+		5EFCF316B48C5CBA8F90FDD9 /* Networking/FrameCodecTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking/FrameCodecTests.swift; sourceTree = "<group>"; };
+		19921076A1CFD23A0814EA19 /* Networking/MediaTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking/MediaTransferTests.swift; sourceTree = "<group>"; };
+		037AE1B0064E3A37FBACF339 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +279,30 @@
 		4A28A448D526473EB9CE4AD1 /* Resilix */ = {
 			isa = PBXGroup;
 			children = (
+				44D54B947D176E926BB7C030 /* Features/Map/OfflineTileOverlay.swift */,
+				980C2756A90F5E8B9E8A50A9 /* Features/Map/OfflineMapSheet.swift */,
+				55EF9271DD09096C19BE0B7C /* Features/Assist/AIModelManagerView.swift */,
+				689C4C6DADC4A74C3032228A /* Core/Services/VoiceService.swift */,
+				EBAE78AA6A474DB103DD3B30 /* Core/Services/TransferService.swift */,
+				8BB7912150350160CA60A929 /* Core/Services/ProfileService.swift */,
+				9EDEDFC34D236790174EAF96 /* Core/Services/MapPackService.swift */,
+				2DE8A6D6906653C4A77F111F /* Core/Services/MBTilesReader.swift */,
+				67F94E5B1E58581FD149130B /* Core/Services/LocationService.swift */,
+				AF63BBB34844759E142AC2AE /* Core/Services/LocalizationManager.swift */,
+				6E334987D89F64936EA9E139 /* Core/Services/LocalModelRuntime.swift */,
+				755194E9A3DF92B13067E831 /* Core/Services/LocalAIService.swift */,
+				18A67974940217E98387A3D5 /* Core/Services/LiteRTModelRuntime.swift */,
+				FC36C59B4148890B5AAE1D13 /* Core/Services/AppleFoundationModelRuntime.swift */,
+				068632D1F76F4D0E4A9CB5FE /* Core/Security/PeerKeyStore.swift */,
+				02C83B260F4A1CEB5FE7B69B /* Core/Security/PacketCrypto.swift */,
+				0D3B0B3C7D6550DAC014A9DE /* Core/Routing/RouteAdvertisement.swift */,
+				D26150B974724322057E1A93 /* Core/Models/SecureEnvelope.swift */,
+				F90A55E936B30DA9BE250888 /* Core/Models/MeshAcknowledgement.swift */,
+				ED7B11E5A6EA068332A752E1 /* Core/Models/MapPackDescriptor.swift */,
+				ED82E5A28D52EE4676866111 /* Core/Models/LocationAdvertisement.swift */,
+				E0597D40B330EB9B8AE39616 /* Core/Models/LocalModelDescriptor.swift */,
+				882BFB122FF5205F2C1F9803 /* Core/Models/AttachmentDescriptor.swift */,
+				F9A86A700799F97AD7513764 /* Core/Models/AIChatTurn.swift */,
 				403B1334657C44EEA23512DB /* Resilix.entitlements */,
 				1A7071F059BE49289BF4149E /* Core/Security/SecurityManager.swift */,
 				3FC80BA8DD4B4014A868C71C /* Core/Networking/MockMeshTransport.swift */,
@@ -263,7 +343,6 @@
 				AE02A6E6573B4E31B340E7BB /* Core/Routing/RelayQueue.swift */,
 				8EC3330A4E0C417FB324BEF3 /* Core/Routing/MeshRoutingEngine.swift */,
 				D375ACE123CF43858EA876B8 /* Core/Routing/RouteTable.swift */,
-				AA6D976D0F094E5199FEAE4D /* Core/Routing/PacketBuilder.swift */,
 				CE80C48D28F64F6CBF526625 /* Core/Routing/MeshPeerRegistry.swift */,
 				E30337F15A12455389990498 /* Core/Routing/PacketValidator.swift */,
 				C6A17A49F9DE4E9DAB4F7CED /* Core/Services/SOSService.swift */,
@@ -334,6 +413,11 @@
 		FF13072B530143CD9B6C74FF /* ResilixTests */ = {
 			isa = PBXGroup;
 			children = (
+				037AE1B0064E3A37FBACF339 /* TestSupport.swift */,
+				19921076A1CFD23A0814EA19 /* Networking/MediaTransferTests.swift */,
+				5EFCF316B48C5CBA8F90FDD9 /* Networking/FrameCodecTests.swift */,
+				5DC9E57AE9129D824BB288AD /* Maps/MapPackTests.swift */,
+				84F58190BDDDF385BDFC8876 /* AI/LocalAITests.swift */,
 				48BF7F46B7DD48DFAF0A3312 /* Security/SecurityTests.swift */,
 				E995709655194A70AAAFC3DD /* Networking/MeshPacketTests.swift */,
 				6402A2423D034BA2B53526CC /* Persistence/PersistenceTests.swift */,
@@ -441,6 +525,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC2077050CBD72A952C528F9 /* TestSupport.swift in Sources */,
+				74BE8959EDC994EE33C554E0 /* Networking/MediaTransferTests.swift in Sources */,
+				285C0F06010E18D6FF223F90 /* Networking/FrameCodecTests.swift in Sources */,
+				BEFC7C529EDF9EF2E0002FE5 /* Maps/MapPackTests.swift in Sources */,
+				CE6D85149D867369D3C493C4 /* AI/LocalAITests.swift in Sources */,
 				4D0918F6A638473C95BFBD93 /* Security/SecurityTests.swift in Sources */,
 				B19927A0130A4D679EE1A4D6 /* Networking/MeshPacketTests.swift in Sources */,
 				DBF6902FCBA548F5B5F2E3CB /* Persistence/PersistenceTests.swift in Sources */,
@@ -452,6 +541,30 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C39B3CADDDF234AF4C95EA8 /* Features/Map/OfflineTileOverlay.swift in Sources */,
+				42E8764B61D4276E5C711308 /* Features/Map/OfflineMapSheet.swift in Sources */,
+				12EEFAECAC40C2695678F9D3 /* Features/Assist/AIModelManagerView.swift in Sources */,
+				E3ED4BFA7A4C826702729DB7 /* Core/Services/VoiceService.swift in Sources */,
+				DEBCFB32EA21122257ED5EEB /* Core/Services/TransferService.swift in Sources */,
+				44E8FEAA87AE52B9F5544C02 /* Core/Services/ProfileService.swift in Sources */,
+				CB4372BFE12873014CC8F2D1 /* Core/Services/MapPackService.swift in Sources */,
+				3D59EB250F92BC8461EB863E /* Core/Services/MBTilesReader.swift in Sources */,
+				63262CEE561F3B53365CEF5D /* Core/Services/LocationService.swift in Sources */,
+				CF132585EDAFCF09EC96658D /* Core/Services/LocalizationManager.swift in Sources */,
+				212C4855A4585894CA1E1D72 /* Core/Services/LocalModelRuntime.swift in Sources */,
+				143401B9E958FA9E2E9B2E1A /* Core/Services/LocalAIService.swift in Sources */,
+				AFCA448B06806ED7C7D6A660 /* Core/Services/LiteRTModelRuntime.swift in Sources */,
+				D695435E29070A41A2AD64E5 /* Core/Services/AppleFoundationModelRuntime.swift in Sources */,
+				CE9EA530B84995B2AC9B7B91 /* Core/Security/PeerKeyStore.swift in Sources */,
+				FB3141757E37C2503FFB8A86 /* Core/Security/PacketCrypto.swift in Sources */,
+				AD9400150B55509B14AFF1A0 /* Core/Routing/RouteAdvertisement.swift in Sources */,
+				296CCBE9BC0522A08C065327 /* Core/Models/SecureEnvelope.swift in Sources */,
+				D62B7224BC6A47CAB60092AC /* Core/Models/MeshAcknowledgement.swift in Sources */,
+				86E7A97D79E13C5C3386200B /* Core/Models/MapPackDescriptor.swift in Sources */,
+				BE6E7963C1864EF1CEB7BDD9 /* Core/Models/LocationAdvertisement.swift in Sources */,
+				0822F33F6E8C635C95E99D15 /* Core/Models/LocalModelDescriptor.swift in Sources */,
+				61483EDDDC807D354BD2C36B /* Core/Models/AttachmentDescriptor.swift in Sources */,
+				AAD810238047E266AA31FBC3 /* Core/Models/AIChatTurn.swift in Sources */,
 				E406102C42D3497886E1C6FE /* Core/Security/SecurityManager.swift in Sources */,
 				CAAF821DAFE3455A88159D85 /* Core/Networking/MockMeshTransport.swift in Sources */,
 				2D6C78A4D22744A5813029BF /* Core/Networking/BluetoothTransport.swift in Sources */,
@@ -492,7 +605,6 @@
 				27E7527965374302AFECAF3A /* Core/Routing/RelayQueue.swift in Sources */,
 				504E73CDB85E45108F64A206 /* Core/Routing/MeshRoutingEngine.swift in Sources */,
 				2C8321FD3D8B4DB4BC926B44 /* Core/Routing/RouteTable.swift in Sources */,
-				9BCBEDEA112946D78703A427 /* Core/Routing/PacketBuilder.swift in Sources */,
 				B582D171F4ED484A85771CDC /* Core/Routing/MeshPeerRegistry.swift in Sources */,
 				9FADCFB65A1841098BDF29EE /* Core/Routing/PacketValidator.swift in Sources */,
 				18585AD26BF64E18A75BDFEC /* Core/Services/SOSService.swift in Sources */,

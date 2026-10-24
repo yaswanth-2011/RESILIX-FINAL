@@ -67,6 +67,7 @@ struct SurvivalMapView: View {
     @State private var styleOption: MapStyleOption = .threeD
     @State private var pitch3D: Double = 55          // 0–75° tilt
     @State private var show3DPopup = false           // long-press 3D → popup
+    @State private var showOfflineMaps = false        // offline map packs
     @State private var threeDMode: ThreeDMode = .tilted
     @State private var dashPhase: CGFloat = 0        // animates mesh connection lines
 
@@ -228,6 +229,13 @@ struct SurvivalMapView: View {
                     .presentationDragIndicator(.visible)
                     .presentationBackground(ResilixTheme.backgroundPrimary)
             }
+            .sheet(isPresented: $showOfflineMaps) {
+                OfflineMapSheet()
+                    .environmentObject(app)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(ResilixTheme.backgroundPrimary)
+            }
             .sheet(isPresented: $show3DPopup) {
                 ThreeDPopupSheet(
                     mode: $threeDMode,
@@ -286,6 +294,9 @@ struct SurvivalMapView: View {
             HStack(spacing: 6) {
                 headerIconButton(icon: "square.3.layers.3d", label: "Layers") {
                     showLayers.toggle()
+                }
+                headerIconButton(icon: "square.and.arrow.down", label: "Offline maps") {
+                    showOfflineMaps = true
                 }
                 threeDHeaderButton
                 headerIconButton(icon: "location.fill", label: "Locate") {

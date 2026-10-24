@@ -1,0 +1,641 @@
+# lang	key	value
+hi	Chats	चैट
+hi	Nearby	आस-पास
+hi	Mesh	मेश
+hi	Map	नक्शा
+hi	Assist	सहायता
+hi	Messages	संदेश
+hi	Profile	प्रोफ़ाइल
+hi	Settings	सेटिंग्स
+hi	Cancel	रद्द करें
+hi	OK	ठीक है
+hi	Done	पूर्ण
+hi	Send	भेजें
+hi	Delete	हटाएँ
+hi	Retry	पुनः प्रयास
+hi	Scan for Devices	उपकरण खोजें
+hi	No nearby devices	कोई उपकरण नहीं
+hi	Language	भाषा
+hi	Appearance	रूप
+hi	Version	संस्करण
+hi	Permissions	अनुमतियाँ
+hi	Diagnostics	निदान
+hi	About	परिचय
+hi	Privacy overview	गोपनीयता अवलोकन
+hi	Replay onboarding	परिचय फिर से देखें
+hi	Reset local data	स्थानीय डेटा रीसेट करें
+hi	Location sharing	स्थान साझा करना
+hi	Message expiry	संदेश समाप्ति
+hi	Relay participation	रीले में भाग लेना
+hi	Display name	प्रदर्शित नाम
+hi	Offline AI	ऑफ़लाइन AI
+hi	Running on-device · No internet	डिवाइस पर चल रहा है · कोई इंटरनेट नहीं
+hi	How can I help?	मैं कैसे मदद कर सकता हूँ?
+hi	Running Locally	स्थानीय रूप से चल रहा है
+hi	Message	संदेश
+hi	Destination	गंतव्य
+hi	Reachability	पहुँच
+hi	Broadcast	प्रसारण
+hi	Active SOS	सक्रिय एसओएस
+hi	Loading…	लोड हो रहा है…
+hi	No messages	कोई संदेश नहीं
+hi	Healthy	स्वस्थ
+hi	Members	सदस्य
+hi	Health	स्वास्थ्य
+hi	Routes	रूट
+hi	Relayed	रीले किए गए
+hi	Signal	सिग्नल
+hi	Distance	दूरी
+hi	Connection	कनेक्शन
+hi	Direct	सीधा
+hi	Relay	रीले
+hi	2+ Hop	2+ हॉप
+hi	1 Hop	1 हॉप
+hi	2 Hops	2 हॉप
+hi	Attach	संलग्न करें
+hi	Camera	कैमरा
+hi	Emoji	इमोजी
+hi	Voice message	वॉइस संदेश
+hi	Photo Library	फ़ोटो लाइब्रेरी
+hi	File	फ़ाइल
+hi	Record	रिकॉर्ड
+hi	Mesh Network	मेश नेटवर्क
+hi	Network Diagnostics	नेटवर्क निदान
+hi	Send Test Message	टेस्ट संदेश भेजें
+hi	Auto Route	स्वचालित रूट
+te	Chats	చాట్లు
+te	Nearby	సమీపంలోని
+te	Mesh	మెష్
+te	Map	మ్యాప్
+te	Assist	సహాయం
+te	Messages	సందేశాలు
+te	Profile	ప్రొఫైల్
+te	Settings	సెట్టింగ్‌లు
+te	Cancel	రద్దు
+te	OK	సరే
+te	Done	పూర్తి
+te	Send	పంపు
+te	Delete	తొలగించు
+te	Retry	మళ్లీ ప్రయత్నించు
+te	Scan for Devices	పరికరాలు స్కాన్ చేయండి
+te	No nearby devices	సమీపంలో పరికరాలు లేవు
+te	Language	భాష
+te	Appearance	రూపం
+te	Version	వెర్షన్
+te	Permissions	అనుమతులు
+te	Diagnostics	డైగ్నాస్టిక్స్
+te	About	గురించి
+te	Privacy overview	గోప్యత అవలోకనం
+te	Replay onboarding	ఆన్‌బోర్డింగ్ మళ్లీ చూడండి
+te	Reset local data	స్థానిక డేటా రీసెట్ చేయండి
+te	Location sharing	స్థానం పంచుకోవడం
+te	Message expiry	సందేశ గడువు
+te	Relay participation	రిలేలో పాల్గొనడం
+te	Display name	ప్రదర్శన పేరు
+te	Offline AI	ఆఫ్‌లైన్ AI
+te	Running on-device · No internet	పరికరంలోనే · ఇంటర్నెట్ లేదు
+te	How can I help?	నేను ఎలా సహాయం చేయగలను?
+te	Running Locally	స్థానికంగా రన్ అవుతోంది
+te	Message	సందేశం
+te	Destination	గమ్యం
+te	Reachability	 చేరుకోవగలిగే సామర్థ్యం
+te	Broadcast	ప్రసారం
+te	Active SOS	క్రియాశీల ఎస్‌ఒఎస్
+te	Loading…	లోడ్ అవుతోంది…
+te	No messages	సందేశాలు లేవు
+te	Healthy	ఆరోగ్యకరమైనది
+te	Members	సభ్యులు
+te	Health	ఆరోగ్యం
+te	Routes	మార్గాలు
+te	Relayed	రిలే చేయబడింది
+te	Signal	సిగ్నల్
+te	Distance	దూరం
+te	Connection	కనెక్షన్
+te	Direct	సీधా
+te	Relay	రిలే
+te	2+ Hop	2+ హాప్
+te	1 Hop	1 హాప్
+te	2 Hops	2 హాప్‌లు
+te	Attach	అతికించు
+te	Camera	కెమెరా
+te	Emoji	ఇమోజీ
+te	Voice message	వాయిస్ సందేశం
+te	Photo Library	ఫోటో లైబ్రరీ
+te	File	ఫైల్
+te	Record	రికార్డ్
+te	Mesh Network	మెష్ నెట్‌వర్క్
+te	Network Diagnostics	నెట్‌వర్క్ డైగ్నాస్టిక్స్
+te	Send Test Message	టెస్ట్ సందేశం పంపు
+te	Auto Route	ఆటో రూట్
+ta	Chats	உரையாடல்கள்
+ta	Nearby	அருகில்
+ta	Mesh	மெஷ்
+ta	Map	வரைபடம்
+ta	Assist	உதவி
+ta	Messages	செய்திகள்
+ta	Profile	சுயவிவரம்
+ta	Settings	அமைப்புகள்
+ta	Cancel	ரத்து
+ta	OK	சரி
+ta	Done	முடிந்தது
+ta	Send	அனுப்பு
+ta	Delete	நீக்கு
+ta	Retry	மீண்டும் முயற்சி
+ta	Scan for Devices	சாதனங்களை ஸ்கேன் செய்
+ta	No nearby devices	அருகில் சாதனங்கள் இல்லை
+ta	Language	மொழி
+ta	Appearance	தோற்றம்
+ta	Version	பதிப்பு
+ta	Permissions	அனுமதிகள்
+ta	Diagnostics	நோய்கணிக்கை
+ta	About	பற்றி
+ta	Privacy overview	தனியுரிமை மேலோட்டம்
+ta	Replay onboarding	அறிமுகத்தை மீண்டும் பார்க்க
+ta	Reset local data	உள்ளணி தரவை மீட்டமை
+ta	Location sharing	இருப்பிடத்தைப் பகிர்தல்
+ta	Message expiry	செய்தி காலாவதி
+ta	Relay participation	ரிலேயில் பங்கேற்பு
+ta	Display name	காட்சி பெயர்
+ta	Offline AI	இணைநிலையில் இல்லாத AI
+ta	Running on-device · No internet	சாதனத்திலேயே · இணையம் இல்லை
+ta	How can I help?	எப்படி உதவலாம்?
+ta	Running Locally	உள்ளூராக இயங்குகிறது
+ta	Message	செய்தி
+ta	Destination	சேருமிடம்
+ta	Reachability	எட்டும் திறன்
+ta	Broadcast	ஒரே சமயத்தில் பரவல்
+ta	Active SOS	செயலில் உள்ள எஸ்ஒஎஸ்
+ta	Loading…	ஏற்றுகிறது…
+ta	No messages	செய்திகள் இல்லை
+ta	Healthy	நல்ல நிலை
+ta	Members	உறுப்பினர்கள்
+ta	Health	நல்லி
+ta	Routes	பாதைகள்
+ta	Relayed	ரிலே செய்யப்பட்டவை
+ta	Signal	சி஗்னல்
+ta	Distance	தூரம்
+ta	Connection	இணைப்பு
+ta	Direct	நேரடி
+ta	Relay	ரிலே
+ta	2+ Hop	2+ ஹாப்
+ta	1 Hop	1 ஹாப்
+ta	2 Hops	2 ஹாப்கள்
+ta	Attach	இணை
+ta	Camera	கேமரா
+ta	Emoji	இமோஜி
+ta	Voice message	குரல் செய்தி
+ta	Photo Library	படத்தொகுப்பு
+ta	File	கோப்பு
+ta	Record	பதிவு
+ta	Mesh Network	மெஷ் நெட்வர்க்
+ta	Network Diagnostics	நெட்வர்க் நோய்கணிக்கை
+ta	Send Test Message	சோதனைச் செய்தி அனுப்பு
+ta	Auto Route	தானியங்கி பாதை
+kn	Chats	ಚಾಟ್‌ಗಳು
+kn	Nearby	ಹತ್ತಿನ
+kn	Mesh	ಮೆಶ್
+kn	Map	ನಕ್ಷೆ
+kn	Assist	ಸಹಾಯ
+kn	Messages	ಸಂದೇಶಗಳು
+kn	Profile	ಪ್ರೊಫೈಲ್
+kn	Settings	ಸೆಟ್ಟಿಂಗ್‌ಗಳು
+kn	Cancel	ರದ್ದುಮಾಡಿ
+kn	OK	ಸರಿ
+kn	Done	ಮುಗಿಯಿತು
+kn	Send	ಕಳುಹಿಸಿ
+kn	Delete	ಅಳಿಸಿ
+kn	Retry	ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ
+kn	Scan for Devices	ಸಾಧನಗಳನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ
+kn	No nearby devices	ಹತ್ತಿನ ಸಾಧನಗಳಿಲ್ಲ
+kn	Language	ಭಾಷೆ
+kn	Appearance	ಗೋಚರತೆ
+kn	Version	ಆವೃತ್ತಿ
+kn	Permissions	ಅನುಮತಿಗಳು
+kn	Diagnostics	ರೋಗನಿರ್ಣಯ
+kn	About	ಬಗ್ಗೆ
+kn	Privacy overview	ಗೌಪ್ಯತೆ ಅವಲೋಕನ
+kn	Replay onboarding	ಪರಿಚಯ ಮತ್ತೆ ನೋಡಿ
+kn	Reset local data	ಸ್ಥಳೀಯ ಡೇಟಾ ಮರುಹೊಂದಿಸಿ
+kn	Location sharing	ಸ್ಥಳ ಹಂಚಿಕೆ
+kn	Message expiry	ಸಂದೇಶ ಅವಧಿ
+kn	Relay participation	ರಿಲೇನಲ್ಲಿ ಭಾಗವಹಿಸುವಿಕೆ
+kn	Display name	ಪ್ರದರ್ಶನ ಹೆಸರು
+kn	Offline AI	ಆಫ್‌ಲೈನ್ AI
+kn	Running on-device · No internet	ಸಾಧನದಲ್ಲೇ · ಇಂಟರ್ನೆಟ್ ಇಲ್ಲ
+kn	How can I help?	ನಾನು ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?
+kn	Running Locally	ಸ್ಥಳೀಯವಾಗಿ ನಡೆಯುತ್ತಿದೆ
+kn	Message	ಸಂದೇಶ
+kn	Destination	ಗಮನಾರ್ಹ
+kn	Reachability	ತಲುಪುವಿಕೆ
+kn	Broadcast	ಪ್ರಸಾರ
+kn	Active SOS	ಸಕ್ರಿಯ ಎಸ್‌ಒಎಸ್
+kn	Loading…	ಲೋಡ್ ಆಗುತ್ತಿದೆ…
+kn	No messages	ಸಂದೇಶಗಳಿಲ್ಲ
+kn	Healthy	ಆರೋಗ್ಯಕರ
+kn	Members	ಸದಸ್ಯರು
+kn	Health	ಆರೋಗ್ಯ
+kn	Routes	ಮಾರ್ಗಗಳು
+kn	Relayed	ರಿಲೇ ಮಾಡಲಾದವು
+kn	Signal	ಸಿಗ್ನಲ್
+kn	Distance	ದೂರ
+kn	Connection	ಸಂಪರ್ಕ
+kn	Direct	ನೇರ
+kn	Relay	ರಿಲೇ
+kn	2+ Hop	2+ ಹಾಪ್
+kn	1 Hop	1 ಹಾಪ್
+kn	2 Hops	2 ಹಾಪ್‌ಗಳು
+kn	Attach	ಲಗಾಡಿಸಿ
+kn	Camera	ಕ್ಯಾಮೆರಾ
+kn	Emoji	ಎಮೊಜಿ
+kn	Voice message	ಧ್ವನಿ ಸಂದೇಶ
+kn	Photo Library	ಫೋಟೋ ಗ್ರಂಥಾಲಯ
+kn	File	ಫೈಲ್
+kn	Record	ದಾಖಲಿಸಿ
+kn	Mesh Network	ಮೆಶ್ ನೆಟ್‌ವರ್ಕ್
+kn	Network Diagnostics	ನೆಟ್‌ವರ್ಕ್ ರೋಗನಿರ್ಣಯ
+kn	Send Test Message	ಪರೀಕ್ಷಾ ಸಂದೇಶ ಕಳುಹಿಸಿ
+kn	Auto Route	ಸ್ವಯಂ ಮಾರ್ಗ
+ml	Chats	ചാറ്റുകൾ
+ml	Nearby	അടുത്തു
+ml	Mesh	മെഷ്
+ml	Map	മാപ്പ്
+ml	Assist	സഹായം
+ml	Messages	സന്ദേശങ്ങൾ
+ml	Profile	പ്രൊഫൈൽ
+ml	Settings	ക്രമീകരണങ്ങൾ
+ml	Cancel	റദ്ദാക്കുക
+ml	OK	ശരി
+ml	Done	പൂർത്തിയായി
+ml	Send	അയയ്ക്കുക
+ml	Delete	ഇല്ലാതാക്കുക
+ml	Retry	വീണ്ടും ശ്രമിക്കുക
+ml	Scan for Devices	ഉപകരണങ്ങൾ സ്കാൻ ചെയ്യുക
+ml	No nearby devices	അടുത്തു ഉപകരണങ്ങളില്ല
+ml	Language	ഭാഷ
+ml	Appearance	രൂപം
+ml	Version	പതിപ്പ്
+ml	Permissions	അനുമതികൾ
+ml	Diagnostics	ഡയാഗ്നോസ്റ്റിക്സ്
+ml	About	വിവരം
+ml	Privacy overview	സ്വകാര്യത അവലോകനം
+ml	Replay onboarding	ആദ്യ അറിയിപ്പ് വീണ്ടും കാണുക
+ml	Reset local data	ലോക്കൽ ഡാറ്റ റീസെറ്റ് ചെയ്യുക
+ml	Location sharing	സ്ഥാനം പങ്കിടുക
+ml	Message expiry	സന്ദേശ കാലാവധി
+ml	Relay participation	റിലേയിൽ പങ്കെടുക
+ml	Display name	പ്രദർശന നാമം
+ml	Offline AI	ഓഫ്‌ലൈൻ AI
+ml	Running on-device · No internet	ഉപകരണത്തിൽ തന്നെ · ഇന്റർനെറ്റ് ഇല്ല
+ml	How can I help?	എങ്ങനെ സഹായിക്കാം?
+ml	Running Locally	സ്ഥാനികമായി ഓടുന്നു
+ml	Message	സന്ദേശം
+ml	Destination	ലക്ഷ്യസ്ഥാനം
+ml	Reachability	എത്താക്കുന്ന ശക്തി
+ml	Broadcast	വ്യാപ്തമാക്കുക
+ml	Active SOS	സജീവ എസ്‌ഒഎസ്
+ml	Loading…	ലോഡ് ചെയ്യുന്നു…
+ml	No messages	സന്ദേശങ്ങളില്ല
+ml	Healthy	ആരോഗ്യകരം
+ml	Members	അംഗങ്ങൾ
+ml	Health	ആരോഗ്യം
+ml	Routes	വഴികൾ
+ml	Relayed	റിലേ ചെയ്തവ
+ml	Signal	സിഗ്നൽ
+ml	Distance	ദൂരം
+ml	Connection	കണക്ഷൻ
+ml	Direct	നേരിട്ട്
+ml	Relay	റിലേ
+ml	2+ Hop	2+ ഹോപ്പ്
+ml	1 Hop	1 ഹോപ്പ്
+ml	2 Hops	2 ഹോപ്പുകൾ
+ml	Attach	അറ്റാച്ച് ചെയ്യുക
+ml	Camera	ക്യാമറ
+ml	Emoji	ഇമോജി
+ml	Voice message	വോയ്സ് സന്ദേശം
+ml	Photo Library	ഫോട്ടോ ലൈബ്രറി
+ml	File	ഫയൽ
+ml	Record	റെക്കോർഡ്
+ml	Mesh Network	മെഷ് നെറ്റ്‌വർക്ക്
+ml	Network Diagnostics	നെറ്റ്‌വർക്ക് ഡയാഗ്നോസ്റ്റിക്സ്
+ml	Send Test Message	ടെസ്റ്റ് സന്ദേശം അയയ്ക്കുക
+ml	Auto Route	ഓടോ റൂട്ട്
+mr	Chats	चॅट्स
+mr	Nearby	जवळपास
+mr	Mesh	मेश
+mr	Map	नकाशा
+mr	Assist	मदत
+mr	Messages	संदेश
+mr	Profile	प्रोफाइल
+mr	Settings	सेटिंग्ज
+mr	Cancel	रद्द करा
+mr	OK	ठीक
+mr	Done	पूर्ण
+mr	Send	पाठवा
+mr	Delete	हटवा
+mr	Retry	पुन्हा प्रयत्न
+mr	Scan for Devices	उपकरणे स्कॅन करा
+mr	No nearby devices	जवळपासची उपकरणे नाहीत
+mr	Language	भाषा
+mr	Appearance	रूपरोख
+mr	Version	आवृत्ती
+mr	Permissions	परवानग्या
+mr	Diagnostics	निदान
+mr	About	विषयी
+mr	Privacy overview	गोपनीयता आढावा
+mr	Replay onboarding	ओळखण पुन्हा पहा
+mr	Reset local data	स्थानिक डेटा रिसेट करा
+mr	Location sharing	स्थान सामायिक करणे
+mr	Message expiry	संदेश मुदत
+mr	Relay participation	रिलेमध्ये सहभाग
+mr	Display name	प्रदर्शन नाव
+mr	Offline AI	ऑफलाइन AI
+mr	Running on-device · No internet	उपकरणावरच · इंटरनेट नाही
+mr	How can I help?	मी कसे मदत करू?
+mr	Running Locally	स्थानिक पातळीवर चालते
+mr	Message	संदेश
+mr	Destination	गंतव्य
+mr	Reachability	पोहोचण्याची क्षमता
+mr	Broadcast	प्रसारण
+mr	Active SOS	सक्रिय एसओएस
+mr	Loading…	लोड होत आहे…
+mr	No messages	संदेश नाहीत
+mr	Healthy	निरोगी
+mr	Members	सदस्य
+mr	Health	आरोग्य
+mr	Routes	मार्ग
+mr	Relayed	रीले केलेले
+mr	Signal	सिग्नल
+mr	Distance	अंतर
+mr	Connection	कनेक्शन
+mr	Direct	थेट
+mr	Relay	रीले
+mr	2+ Hop	2+ हॉप
+mr	1 Hop	1 हॉप
+mr	2 Hops	2 हॉप
+mr	Attach	संलग्न करा
+mr	Camera	कॅमेरा
+mr	Emoji	इमोजी
+mr	Voice message	व्हॉइस संदेश
+mr	Photo Library	फोटो लायब्ररी
+mr	File	फाइल
+mr	Record	रेकॉर्ड
+mr	Mesh Network	मेश नेटवर्क
+mr	Network Diagnostics	नेटवर्क निदान
+mr	Send Test Message	चाचणी संदेश पाठवा
+mr	Auto Route	स्वयं राउट
+bn	Chats	চ্যাট
+bn	Nearby	কাছাকাছি
+bn	Mesh	মেশ
+bn	Map	ম্যাপ
+bn	Assist	সহায়তা
+bn	Messages	বার্তা
+bn	Profile	প্রোফাইল
+bn	Settings	সেটিংস
+bn	Cancel	বাতিল
+bn	OK	ঠিক আছে
+bn	Done	সম্পন্ন
+bn	Send	পাঠান
+bn	Delete	মুছুন
+bn	Retry	আবার চেষ্টা
+bn	Scan for Devices	ডিভাইস স্ক্যান করুন
+bn	No nearby devices	কাছাকাছি কোনো ডিভাইস নেই
+bn	Language	ভাষা
+bn	Appearance	চেহারা
+bn	Version	সংস্করণ
+bn	Permissions	অনুমতি
+bn	Diagnostics	ডায়াগনস্টিকস
+bn	About	সম্পর্কে
+bn	Privacy overview	গোপনীয়তার পর্যালোচনা
+bn	Replay onboarding	ভূমিকা আবার দেখুন
+bn	Reset local data	স্থানীয় ডেটা রিসেট করুন
+bn	Location sharing	অবস্থান ভাগ করা
+bn	Message expiry	বার্তার মেয়াদ
+bn	Relay participation	রিলেতে অংশগ্রহণ
+bn	Display name	প্রদর্শন নাম
+bn	Offline AI	অফলাইন AI
+bn	Running on-device · No internet	ডিভাইসেই চলছে · ইন্টারনেট নেই
+bn	How can I help?	আমি কীভাবে সাহায্য করতে পারি?
+bn	Running Locally	স্থানীয়ভাবে চলছে
+bn	Message	বার্তা
+bn	Destination	গন্তব্য
+bn	Reachability	পৌঁছানোর সামর্থ্য
+bn	Broadcast	সম্প্রচার
+bn	Active SOS	সক্রিয় এসওএস
+bn	Loading…	লোড হচ্ছে…
+bn	No messages	কোনো বার্তা নেই
+bn	Healthy	সুস্থ
+bn	Members	সদস্য
+bn	Health	স্বাস্থ্য
+bn	Routes	রাস্তা
+bn	Relayed	রিলে করা হয়েছে
+bn	Signal	সিগন্যাল
+bn	Distance	দূরত্ব
+bn	Connection	সংযোগ
+bn	Direct	সরাসরি
+bn	Relay	রিলে
+bn	2+ Hop	2+ হপ
+bn	1 Hop	1 হপ
+bn	2 Hops	2 হপ
+bn	Attach	সংযুক্ত করুন
+bn	Camera	ক্যামেরা
+bn	Emoji	ইমোজি
+bn	Voice message	ভয়েস বার্তা
+bn	Photo Library	ছবির লাইব্রেরি
+bn	File	ফাইল
+bn	Record	রেকর্ড
+bn	Mesh Network	মেশ নেটওয়ার্ক
+bn	Network Diagnostics	নেটওয়ার্ক ডায়াগনস্টিকস
+bn	Send Test Message	পরীক্ষা বার্তা পাঠান
+bn	Auto Route	স্বয়ং রুট
+gu	Chats	ચેટ
+gu	Nearby	નજીક
+gu	Mesh	મેશ
+gu	Map	નકશો
+gu	Assist	મદદ
+gu	Messages	સંદેશા
+gu	Profile	પ્રોફાઇલ
+gu	Settings	સેટિંગ્સ
+gu	Cancel	રદ કરો
+gu	OK	બરાબર
+gu	Done	પૂર્ણ
+gu	Send	મોકલો
+gu	Delete	કાઢી નાખો
+gu	Retry	ફરી પ્રયાસ
+gu	Scan for Devices	ઉપકરણો સ્કેન કરો
+gu	No nearby devices	નજીકના કોઈ ઉપકરણ નથી
+gu	Language	ભાષા
+gu	Appearance	દેખાવ
+gu	Version	આવૃત્તિ
+gu	Permissions	પરવાનગીઓ
+gu	Diagnostics	ડાયગ્નોસ્ટિક્સ
+gu	About	વિશે
+gu	Privacy overview	ગોપનીયતાની સમીક્ષા
+gu	Replay onboarding	પરિચય ફરી જુઓ
+gu	Reset local data	સ્થાનિક ડેટા રીસેટ કરો
+gu	Location sharing	સ્થાન શેર કરવું
+gu	Message expiry	સંદેશ સમાપ્તિ
+gu	Relay participation	રિલેમાં ભાગ લેવો
+gu	Display name	પ્રદર્શિત નામ
+gu	Offline AI	ઑફલાઇન AI
+gu	Running on-device · No internet	ઉપકરણ પર જ · ઇન્ટરનેટ નથી
+gu	How can I help?	હું કેવી રીતે મદદ કરું?
+gu	Running Locally	સ્થાનિક રીતે ચાલી રહ્યું છે
+gu	Message	સંદેશ
+gu	Destination	ગંતવ્ય
+gu	Reachability	પહોંચાડી શકાય તેવી ક્ષમતા
+gu	Broadcast	પ્રસારણ
+gu	Active SOS	સક્રિય એસઓએસ
+gu	Loading…	લોડ થઈ રહ્યું છે…
+gu	No messages	કોઈ સંદેશ નથી
+gu	Healthy	તંદુરસ્ત
+gu	Members	સભ્યો
+gu	Health	તબિયત
+gu	Routes	રસ્તા
+gu	Relayed	રિલે કરેલા
+gu	Signal	સિગ્નલ
+gu	Distance	અંતર
+gu	Connection	જોડાણ
+gu	Direct	સીધું
+gu	Relay	રિલે
+gu	2+ Hop	2+ હોપ
+gu	1 Hop	1 હોપ
+gu	2 Hops	2 હોપ
+gu	Attach	જોડો
+gu	Camera	કૅમેરા
+gu	Emoji	ઇમોજી
+gu	Voice message	વોઇસ સંદેશ
+gu	Photo Library	ફોટો લાઇબ્રેરી
+gu	File	ફાઇલ
+gu	Record	રેકોર્ડ
+gu	Mesh Network	મેશ નેટવર્ક
+gu	Network Diagnostics	નેટવર્ક ડાયગ્નોસ્ટિક્સ
+gu	Send Test Message	ટેસ્ટ સંદેશ મોકલો
+gu	Auto Route	ઓટો રૂટ
+pa	Chats	ਚੈਟਾਂ
+pa	Nearby	ਨੇੜਲੇ
+pa	Mesh	ਮੈਸ਼
+pa	Map	ਨਕਸ਼ਾ
+pa	Assist	ਮਦਦ
+pa	Messages	ਸੁਨੇਹੇ
+pa	Profile	ਪ੍ਰੋਫਾਈਲ
+pa	Settings	ਸੈਟਿੰਗਾਂ
+pa	Cancel	ਰੱਦ ਕਰੋ
+pa	OK	ਠੀਕ ਹੈ
+pa	Done	ਪੂਰਾ
+pa	Send	ਭੇਜੋ
+pa	Delete	ਮਿਟਾਓ
+pa	Retry	ਦੁਬਾਰਾ
+pa	Scan for Devices	ਡਿਵਾਈਸਾਂ ਸਕੈਨ ਕਰੋ
+pa	No nearby devices	ਨੇੜਲੇ ਕੋਈ ਡਿਵਾਈਸ ਨਹੀਂ
+pa	Language	ਭਾਸ਼ਾ
+pa	Appearance	ਰੂਪ
+pa	Version	ਵਰਜਨ
+pa	Permissions	ਇਜਾਜ਼ਤਾਂ
+pa	Diagnostics	ਡਾਈਗਨੋਸਟਿਕਸ
+pa	About	ਬਾਰੇ
+pa	Privacy overview	ਗੋਪਨੀਯਤਾ ਸਮੀਖਿਆ
+pa	Replay onboarding	ਜਾਣ-ਪਛਾਣ ਦੁਬਾਰਾ ਵੇਖੋ
+pa	Reset local data	ਸਥਾਨਕ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰੋ
+pa	Location sharing	ਟਿਕਾਣਾ ਸਾਂਝਾ ਕਰਨਾ
+pa	Message expiry	ਸੁਨੇਹੇ ਦੀ ਮਿਆਦ
+pa	Relay participation	ਰਿਲੇ ਵਿੱਚ ਹਿੱਸਾ
+pa	Display name	ਦਿਖਾਇਆ ਨਾਮ
+pa	Offline AI	ਆਫਲਾਈਨ AI
+pa	Running on-device · No internet	ਡਿਵਾਈਸ 'ਤੇ ਹੀ · ਇੰਟਰਨੈੱਟ ਨਹੀਂ
+pa	How can I help?	ਮੈਂ ਕਿਵੇ ਮਦਦ ਕਰ ਸਕਾਂ?
+pa	Running Locally	ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਚੱਲ ਰਿਹਾ ਹੈ
+pa	Message	ਸੁਨੇਹਾ
+pa	Destination	ਮੁਕਾਮਾ
+pa	Reachability	ਪਹੁੰਚਣਯੋਗਤਾ
+pa	Broadcast	ਪ੍ਰਸਾਰਣ
+pa	Active SOS	ਸਰਗਰਮ ਐਸਓਐਸ
+pa	Loading…	ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…
+pa	No messages	ਕੋਈ ਸੁਨੇਹਾ ਨਹੀਂ
+pa	Healthy	ਤੰਦੁਰਸਤ
+pa	Members	ਮੈਂਬਰ
+pa	Health	ਸਿਹਤ
+pa	Routes	ਰਾਹਾਂ
+pa	Relayed	ਰਿਲੇ ਕੀਤੇ
+pa	Signal	ਸਿਗਨਲ
+pa	Distance	ਦੂਰੀ
+pa	Connection	ਕਨੈਕਸ਼ਨ
+pa	Direct	ਸਿੱਧਾ
+pa	Relay	ਰਿਲੇ
+pa	2+ Hop	2+ ਹੌਪ
+pa	1 Hop	1 ਹੌਪ
+pa	2 Hops	2 ਹੌਪ
+pa	Attach	ਲਗਾਓ
+pa	Camera	ਕੈਮਰਾ
+pa	Emoji	ਈਮੋਜੀ
+pa	Voice message	ਵੌਇਸ ਸੁਨੇਹਾ
+pa	Photo Library	ਫੋਟੋ ਲਾਇਬ੍ਰੇਰੀ
+pa	File	ਫਾਈਲ
+pa	Record	ਰਿਕਾਰਡ
+pa	Mesh Network	ਮੈਸ਼ ਨੈੱਟਵਰਕ
+pa	Network Diagnostics	ਨੈੱਟਵਰਕ ਡਾਈਗਨੋਸਟਿਕਸ
+pa	Send Test Message	ਟੈਸਟ ਸੁਨੇਹਾ ਭੇਜੋ
+pa	Auto Route	ਆਟੋ ਰੂਟ
+ur	Chats	چیٹس
+ur	Nearby	قریب
+ur	Mesh	میش
+ur	Map	نقشہ
+ur	Assist	مدد
+ur	Messages	پیغامات
+ur	Profile	پروفائل
+ur	Settings	ترتیبات
+ur	Cancel	منسوخ
+ur	OK	ٹھیک ہے
+ur	Done	مکمل
+ur	Send	بھیجیں
+ur	Delete	حذف کریں
+ur	Retry	دوبارہ
+ur	Scan for Devices	آلات اسکین کریں
+ur	No nearby devices	قریبی کوئی آلہ نہیں
+ur	Language	زبان
+ur	Appearance	ظاہری شکل
+ur	Version	ورژن
+ur	Permissions	اجازتیں
+ur	Diagnostics	تشخیص
+ur	About	تعارف
+ur	Privacy overview	رازداری کا جائزہ
+ur	Replay onboarding	تعارف دوبارہ دیکھیں
+ur	Reset local data	مقامی ڈیٹا ری سیٹ کریں
+ur	Location sharing	مقام شیئر کرنا
+ur	Message expiry	پیغام کی میعاد
+ur	Relay participation	ریلے میں شرکت
+ur	Display name	ظاہری نام
+ur	Offline AI	آف لائن AI
+ur	Running on-device · No internet	ڈیوائس پر ہی · انٹرنیٹ نہیں
+ur	How can I help?	میں کیسے مدد کر سکتا ہوں؟
+ur	Running Locally	مقامی طور پر چل رہا ہے
+ur	Message	پیغام
+ur	Destination	منزل
+ur	Reachability	پہنچنے کی صلاحیت
+ur	Broadcast	پھیلاؤ
+ur	Active SOS	فعال ایس او ایس
+ur	Loading…	لوڈ ہو رہا ہے…
+ur	No messages	کوئی پیغام نہیں
+ur	Healthy	صحت مند
+ur	Members	اراکین
+ur	Health	صحت
+ur	Routes	راستے
+ur	Relayed	ریلے کیے گئے
+ur	Signal	سیگنل
+ur	Distance	فاصلہ
+ur	Connection	کنکشن
+ur	Direct	براہ راست
+ur	Relay	ریلے
+ur	2+ Hop	2+ ہاپ
+ur	1 Hop	1 ہاپ
+ur	2 Hops	2 ہاپ
+ur	Attach	منسلک کریں
+ur	Camera	کیمرہ
+ur	Emoji	ایموجی
+ur	Voice message	وائس پیغام
+ur	Photo Library	فوٹو لائبریری
+ur	File	فائل
+ur	Record	ریکارڈ
+ur	Mesh Network	میش نیٹ ورک
+ur	Network Diagnostics	نیٹ ورک تشخیص
+ur	Send Test Message	ٹیسٹ پیغام بھیجیں
+ur	Auto Route	خودکار راستہ

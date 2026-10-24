@@ -4,29 +4,64 @@ import XCTest
 final class MeshPacketTests: XCTestCase {
     func testEncodeDecode() throws {
         let payload = Data("hello".utf8)
-        let packet = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: payload, priority: .normal)
+        let packet = makePacket(payload: payload)
         let data = try FrameCodec.encode(packet)
         let decoded = try FrameCodec.decode(data)
         XCTAssertEqual(packet.id, decoded.id)
         XCTAssertEqual(packet.type, decoded.type)
+        XCTAssertEqual(packet.payloadEnvelope, decoded.payloadEnvelope)
     }
+
     func testTTLExpiry() throws {
-        var p = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: Data(), priority: .normal, ttl: 1)
-        p = p.withDecrementedTTL()
-        XCTAssertEqual(p.ttl, 0)
-        XCTAssertThrowsError(try PacketValidator.validate(p))
+        var packet = makePacket(ttl: 1)
+        packet = packet.withDecrementedTTL()
+        XCTAssertEqual(packet.ttl, 0)
+        XCTAssertThrowsError(try PacketValidator.validate(packet))
     }
+
     func testExpiredPacketRejected() throws {
-        var p = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: Data(), priority: .normal)
-        p.expiresAt = Date().addingTimeInterval(-10)
-        p.integrityTag = Data([1,2,3])
-        XCTAssertThrowsError(try PacketValidator.validate(p))
+        var packet = makePacket()
+        packet.expiresAt = Date().addingTimeInterval(-10)
+        XCTAssertThrowsError(try PacketValidator.validate(packet))
     }
+
     func testMalformedMissingID() {
-        var p = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: Data(), priority: .normal)
-        p.id = ""
-        XCTAssertThrowsError(try PacketValidator.validate(p))
+        var packet = makePacket()
+        packet.id = ""
+        XCTAssertThrowsError(try PacketValidator.validate(packet))
     }
+
+    func testMalformedMissingOrigin() {
+        var packet = makePacket()
+        packet.originNodeID = ""
+        XCTAssertThrowsError(try PacketValidator.validate(packet))
+    }
+
+    func testOversizedPayloadRejected() {
+        var packet = makePacket()
+        packet.payloadEnvelope = Data(repeating: 0, count: ResilixConstants.maxPacketSizeBytes + 1)
+        XCTAssertThrowsError(try PacketValidator.validate(packet))
+    }
+
+    func testMissingIntegrityTagRejected() {
+        var packet = makePacket()
+        packet.integrityTag = Data()
+        XCTAssertThrowsError(try PacketValidator.validate(packet))
+    }
+
+    func testHopLimitEnforced() {
+        var packet = makePacket()
+        packet.hopCount = ResilixConstants.maxHops + 1
+        XCTAssertThrowsError(try PacketValidator.validate(packet))
+    }
+
+    func testVisitedListPreventsLoop() {
+        var packet = makePacket()
+        packet = packet.markedVisited(by: "B")
+        XCTAssertTrue(packet.hasVisited("B"))
+        XCTAssertFalse(packet.hasVisited("C"))
+    }
+
     func testDuplicateSuppression() async {
         let store = DeduplicationStore(maxSize: 10)
         let id = UUID().uuidString
@@ -34,32 +69,34 @@ final class MeshPacketTests: XCTestCase {
         XCTAssertTrue(await store.isDuplicate(id))
         XCTAssertFalse(await store.insert(id))
     }
+
     func testSOSPriorityOverNormal() {
         XCTAssertTrue(PacketPriority.sos > PacketPriority.normal)
     }
+
     func testQueueBoundaries() async throws {
-        let q = RelayQueue(maxLength: 2, maxBytes: 1000)
-        let p1 = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: Data(repeating: 0, count: 100), priority: .normal)
-        let p2 = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: Data(repeating: 0, count: 100), priority: .normal)
-        let p3 = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: Data(repeating: 0, count: 100), priority: .normal)
-        try await q.enqueue(p1); try await q.enqueue(p2)
-        do { try await q.enqueue(p3); XCTFail() } catch {}
+        let queue = RelayQueue(maxLength: 2, maxBytes: 1000)
+        let packet = makePacket(payload: Data(repeating: 0, count: 100))
+        try await queue.enqueue(packet)
+        try await queue.enqueue(packet)
+        do {
+            try await queue.enqueue(packet)
+            XCTFail("The queue must reject a third packet")
+        } catch {
+            XCTAssertTrue(error is ResilixError)
+        }
     }
+
     func testMockTransport() async throws {
         let mock = MockMeshTransport()
-        let payload = Data("test".utf8)
-        let p = PacketBuilder.makePacket(type: .chat, source: "A", destination: "C", payload: payload, priority: .normal)
-        let data = try FrameCodec.encode(p)
+        let packet = makePacket(payload: Data("test".utf8))
+        let data = try FrameCodec.encode(packet)
         try await mock.sendFrame(data, to: "C")
-        // should not throw
     }
-    func testDemoRoute() async throws {
+
+    func testMockTransportReportsPeers() {
         let mock = MockMeshTransport()
-        mock.simulatePeer(MeshNode(id:"A", alias:"Node A", lastSeen:Date(), isRelay:false))
+        mock.simulatePeer(MeshNode(id: "A", alias: "Node A", lastSeen: Date(), isRelay: false))
         XCTAssertEqual(mock.discoveredPeers.count, 1)
-    }
-    func testNoInternetDependency() {
-        // Ensure mesh controller does not import URLSession for core flow
-        XCTAssertTrue(true)
     }
 }

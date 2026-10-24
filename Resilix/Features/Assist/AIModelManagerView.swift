@@ -1,0 +1,201 @@
+import SwiftUI
+import UniformTypeIdentifiers
+
+/// Management of the local AI models.
+///
+/// The sheet shows the exact model identifiers, the licence, the runtime
+/// requirement and the real state of every option. A model that is not
+/// installed or whose runtime is missing is labelled with the reason — the
+/// app never pretends that a model is available.
+struct AIModelManagerView: View {
+    @EnvironmentObject var app: ResilixAppModel
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var showImporter = false
+    @State private var importTargetID: String?
+    @State private var message: String?
+
+    private var service: LocalAIService { app.aiService }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                ResilixTheme.backgroundPrimary.ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: ResilixTheme.space16) {
+                        Text("On-device models")
+                            .font(ResilixTheme.font(22, .bold))
+                            .foregroundStyle(ResilixTheme.textPrimary)
+
+                        Text("Every model runs completely on this device. No answer ever leaves the phone.")
+                            .font(ResilixTheme.font(13, .regular))
+                            .foregroundStyle(ResilixTheme.textSecondary)
+
+                        ForEach(service.selectableModes) { model in
+                            modelCard(model)
+                        }
+                    }
+                    .padding(.horizontal, ResilixTheme.space20)
+                    .padding(.vertical, ResilixTheme.space16)
+                }
+            }
+            .navigationTitle("AI Models")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                        .font(ResilixTheme.font(15, .semibold))
+                }
+            }
+            .fileImporter(isPresented: $showImporter,
+                          allowedContentTypes: [.data],
+                          allowsMultipleSelection: false) { result in
+                switch result {
+                case .success(let urls):
+                    if let url = urls.first, let target = importTargetID {
+                        Task { await importModel(url, target: target) }
+                    }
+                case .failure:
+                    message = "The model file could not be opened."
+                }
+            }
+            .alert("AI Models", isPresented: .constant(message != nil), presenting: message) { _ in
+                Button("OK") { message = nil }
+            } message: { text in
+                Text(text)
+            }
+        }
+    }
+
+    // MARK: - Card
+
+    private func modelCard(_ model: LocalModelDescriptor) -> some View {
+        VStack(alignment: .leading, spacing: ResilixTheme.space8) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(model.displayName)
+                        .font(ResilixTheme.font(16, .semibold))
+                        .foregroundStyle(ResilixTheme.textPrimary)
+                    Text(model.modelID)
+                        .font(ResilixTheme.font(11, .regular))
+                        .foregroundStyle(ResilixTheme.textTertiary)
+                }
+                Spacer()
+                stateBadge(for: model)
+            }
+
+            if let artifact = model.artifactID {
+                Text("Artifact: \(artifact)")
+                    .font(ResilixTheme.font(11, .regular))
+                    .foregroundStyle(ResilixTheme.textTertiary)
+            }
+
+            Text(model.runtimeRequirement)
+                .font(ResilixTheme.font(12, .regular))
+                .foregroundStyle(ResilixTheme.textSecondary)
+
+            Text(model.notes)
+                .font(ResilixTheme.font(12, .regular))
+                .foregroundStyle(ResilixTheme.textSecondary)
+
+            if model.approximateBytes > 0 {
+                Text("Download size: about \(model.formattedSize)")
+                    .font(ResilixTheme.font(11, .regular))
+                    .foregroundStyle(ResilixTheme.textTertiary)
+            }
+
+            Text("Licence: \(model.license)")
+                .font(ResilixTheme.font(11, .regular))
+                .foregroundStyle(ResilixTheme.textTertiary)
+
+            if let reason = service.unavailableReason(for: model), model.id != LocalAIService.knowledgeBaseModeID {
+                Text(reason)
+                    .font(ResilixTheme.font(11, .regular))
+                    .foregroundStyle(ResilixTheme.brandAmber)
+            }
+
+            HStack(spacing: ResilixTheme.space12) {
+                Button {
+                    Task { await service.select(modelID: model.id) }
+                } label: {
+                    Text(service.activeModelID == model.id ? "Selected" : "Use")
+                        .font(ResilixTheme.font(14, .semibold))
+                        .foregroundStyle(service.activeModelID == model.id ? ResilixTheme.textSecondary : .white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(service.activeModelID == model.id
+                                    ? ResilixTheme.surfacePrimary
+                                    : ResilixTheme.brandCyan)
+                        .clipShape(RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusMedium, style: .continuous))
+                }
+                .buttonStyle(.plain)
+
+                if model.family != .apple {
+                    Button {
+                        importTargetID = model.id
+                        showImporter = true
+                    } label: {
+                        Text(model.isDownloaded ? "Replace file" : "Install file")
+                            .font(ResilixTheme.font(14, .semibold))
+                            .foregroundStyle(ResilixTheme.textPrimary)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(ResilixTheme.surfacePrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusMedium, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+
+                    if model.isDownloaded {
+                        Button {
+                            Task { await service.deleteModel(modelID: model.id) }
+                        } label: {
+                            Text("Remove")
+                                .font(ResilixTheme.font(14, .semibold))
+                                .foregroundStyle(ResilixTheme.emergencyRed)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                Spacer()
+            }
+        }
+        .padding(ResilixTheme.space16)
+        .background(ResilixTheme.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusLarge, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusLarge, style: .continuous)
+                .stroke(ResilixTheme.separator.opacity(0.6), lineWidth: 0.6)
+        )
+    }
+
+    private func stateBadge(for model: LocalModelDescriptor) -> some View {
+        let text: String
+        let color: Color
+        switch model.availability {
+        case .ready:
+            text = "Ready"
+            color = ResilixTheme.successGreen
+        case .notInstalled:
+            text = "Not installed"
+            color = ResilixTheme.brandAmber
+        case .runtimeUnavailable:
+            text = "No runtime"
+            color = ResilixTheme.brandAmber
+        case .unusable:
+            text = "Unusable"
+            color = ResilixTheme.emergencyRed
+        }
+        return ResilixStatusBadge(text: text, color: color)
+    }
+
+    private func importModel(_ url: URL, target: String) async {
+        do {
+            try await service.importModel(from: url, for: target)
+            await service.select(modelID: target)
+            message = "The model file was installed."
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+}

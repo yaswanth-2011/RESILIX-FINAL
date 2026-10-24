@@ -3,10 +3,14 @@
 Resilix is a **phone-only offline mesh messenger** for emergencies. Phones relay packets multi-hop (A → B → C) without internet, cellular, or external hardware.
 
 ## Architecture
-- **Phone-only transports**: Bluetooth (CoreBluetooth) + Peer-to-Peer Wi-Fi (Network.framework via NWBrowser/NWListener). Wi-Fi Aware is optional and availability-checked.
+- **Phone-only transports**: Bluetooth (CoreBluetooth, central *and* peripheral role) + Peer-to-Peer Wi-Fi (Network.framework via NWBrowser/NWListener, Bonjour `_resilix._tcp`, peer-to-peer parameters). Wi-Fi Aware is optional and reports an honest “not available” state without the Apple entitlement.
 - **No LoRa**: iPhones have no built-in LoRa radio; no external accessory required.
-- **Application-layer forwarding**: `MeshRoutingEngine` selects next hops transport-agnostically; `RelayManager` queues/flood-controls; `DeduplicationStore` prevents loops.
-- **Security**: CryptoKit AES-GCM end-to-end for private chat; relays forward ciphertext; Keychain for identity key.
+- **Application-layer forwarding**: `MeshRoutingEngine` is a distance-vector engine (split horizon, hysteresis, failure penalties); `MeshController` owns the packet pipeline (validate → dedup → signature check → decrypt → deliver / relay); `RelayQueue` is a persistent store-and-forward queue; `DeduplicationStore` is persisted and prevents loops.
+- **Security**: persistent Curve25519 identity (key agreement + Ed25519 signing) in the Keychain, HKDF-SHA256 session keys, per-recipient AES-GCM `SecureEnvelope` (a relay only ever sees ciphertext), pinned peer keys in `PeerKeyStore` (a changed key is rejected).
+- **Messaging**: text, voice (AAC `.m4a`), photos and files. Media travels as chunked packets (`TransferService`: offer → accept → chunks → SHA-256 verification) with progress, cancel and retry.
+- **Offline maps**: MBTiles packs are imported into the app container and rendered through `OfflineTileOverlay` (SQLite read, no network).
+- **On-device AI**: Gemma 4 E2B and Qwen3-0.6B through LiteRT-LM, Apple Foundation Models (AFM 3) through the system framework, plus the bundled offline first-aid knowledge base. No cloud fallback — a missing runtime or model file is reported with the exact reason.
+- **Localisation**: 11 languages, persisted in the settings and applied through `LocalizationManager`.
 
 ## A → B → C Relay
 Phone B verifies packet metadata (version, TTL, expiry, integrity), checks deduplication, decrements TTL, and forwards toward C. Demo Mode simulates this on a single simulator.

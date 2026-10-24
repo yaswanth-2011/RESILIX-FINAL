@@ -1,0 +1,326 @@
+# lang	key	value
+mr	mesh.title	मेश
+mr	mesh.peers	पीअर्स
+mr	mesh.routes	मार्ग
+mr	mesh.relay	रिले
+mr	mesh.available	मेश उपलब्ध आहे
+mr	mesh.connected	मेश जोडले आहे
+mr	mesh.searching	जवळपासची उपकरणे शोधत आहे
+mr	mesh.unavailable	मेश उपलब्ध नाही
+mr	messages.title	संदेश
+mr	messages.new	नवीन संदेश
+mr	messages.send	पाठवा
+mr	messages.delete	हटवा
+mr	messages.retry	पुन्हा प्रयत्न करा
+mr	messages.destination	गंतव्य
+mr	messages.expiry	मुदत
+mr	messages.noExpiry	मुदत नाही
+mr	delivery.queued	मेशसाठी रांगेत
+mr	delivery.sending	पाठवत आहे
+mr	delivery.relaying	रिले करत आहे
+mr	delivery.delivered	पोहोचवले
+mr	delivery.expired	मुदत संपली
+mr	delivery.failed	मार्ग उपलब्ध नाही
+mr	settings.title	सेटिंग्ज
+mr	settings.appearance	रूपरोख
+mr	settings.dark	गडद
+mr	settings.light	फिकट
+mr	settings.system	प्रणाली
+mr	settings.about	विषयी
+mr	settings.diagnostics	निदान
+mr	settings.clearData	सर्व स्थानिक डेटा हटवा
+mr	settings.autoRelay	जोडल्यावर आपोआप रिले करा
+mr	settings.privacy	गोपनीयता आणि सुरक्षा
+mr	profile.title	प्रोफाइल
+mr	profile.displayName	प्रदर्शन नाव
+mr	profile.locationSharing	स्थान सामायिक करणे
+mr	profile.messageExpiry	संदेश मुदत
+mr	profile.relayParticipation	रिलेमध्ये सहभाग
+mr	profile.permissions	परवानग्या
+mr	profile.privacy	गोपनीयता आढावा
+mr	profile.diagnostics	निदान
+mr	profile.onboarding	ओळखण पुन्हा पहा
+mr	profile.resetData	स्थानिक डेटा रिसेट करा
+mr	map.title	सर्व्हायव्ह मॅप
+mr	map.all	सर्व
+mr	map.filter	फिल्टर
+mr	map.verified	तपासलेले
+mr	assist.title	प्रथमोपचार
+mr	assist.search	प्रथमोपचार शोधा
+mr	assist.offline	ऑफलाइन
+mr	assist.whenToSeekHelp	व्यावसायिक मदत कधी घ्यावी
+mr	permissions.bluetooth	ब्लूटूथ
+mr	permissions.localNetwork	स्थानिक नेटवर्क
+mr	permissions.location	स्थान
+mr	permissions.openSettings	सेटिंग्ज उघडा
+mr	diagnostics.transports	वहन माध्यमे
+mr	diagnostics.mesh	मेश
+mr	diagnostics.system	प्रणाली
+mr	diagnostics.refresh	ताजे करा
+mr	sos.title	एसओएस
+mr	sos.send	एसओएस पाठवा
+mr	sos.cancel	रद्द करा
+mr	sos.confirm	एसओएसची खात्री करा
+mr	sos.category	श्रेणी
+mr	sos.severity	तीव्रता
+mr	sos.note	ऐच्छिक टीप
+bn	mesh.title	মেশ
+bn	mesh.peers	পিয়ার
+bn	mesh.routes	রাস্তা
+bn	mesh.relay	রিলে
+bn	mesh.available	মেশ উপলব্ধ
+bn	mesh.connected	মেশ সংযুক্ত
+bn	mesh.searching	কাছাকাছি ডিভাইস খোঁজা হচ্ছে
+bn	mesh.unavailable	মেশ উপলব্ধ নয়
+bn	messages.title	বার্তা
+bn	messages.new	নতুন বার্তা
+bn	messages.send	পাঠান
+bn	messages.delete	মুছুন
+bn	messages.retry	আবার চেষ্টা করুন
+bn	messages.destination	গন্তব্য
+bn	messages.expiry	মেয়াদ
+bn	messages.noExpiry	কোনো মেয়াদ নেই
+bn	delivery.queued	মেশের সারিতে
+bn	delivery.sending	পাঠানো হচ্ছে
+bn	delivery.relaying	রিলে করা হচ্ছে
+bn	delivery.delivered	পৌঁছেছে
+bn	delivery.expired	মেয়াদ শেষ
+bn	delivery.failed	কোনো রাস্তা নেই
+bn	settings.title	সেটিংস
+bn	settings.appearance	চেহারা
+bn	settings.dark	গাঢ়
+bn	settings.light	উজ্জ্বল
+bn	settings.system	সিস্টেম
+bn	settings.about	সম্পর্কে
+bn	settings.diagnostics	ডায়াগনস্টিকস
+bn	settings.clearData	সব স্থানীয় ডেটা মুছুন
+bn	settings.autoRelay	সংযুক্ত হলে স্বয়ংক্রিয় রিলে
+bn	settings.privacy	গোপনীয়তা ও নিরাপত্তা
+bn	profile.title	প্রোফাইল
+bn	profile.displayName	প্রদর্শন নাম
+bn	profile.locationSharing	অবস্থান ভাগ করা
+bn	profile.messageExpiry	বার্তার মেয়াদ
+bn	profile.relayParticipation	রিলেতে অংশগ্রহণ
+bn	profile.permissions	অনুমতি
+bn	profile.privacy	গোপনীয়তার পর্যালোচনা
+bn	profile.diagnostics	ডায়াগনস্টিকস
+bn	profile.onboarding	ভূমিকা আবার দেখুন
+bn	profile.resetData	স্থানীয় ডেটা রিসেট করুন
+bn	map.title	সারভাইভাল ম্যাপ
+bn	map.all	সব
+bn	map.filter	ফিল্টার
+bn	map.verified	যাচাই করা
+bn	assist.title	প্রাথমিক চিকিৎসা
+bn	assist.search	প্রাথমিক চিকিৎসা খুঁজুন
+bn	assist.offline	অফলাইন
+bn	assist.whenToSeekHelp	কখন পেশাদার সাহায্য নেবেন
+bn	permissions.bluetooth	ব্লুটুথ
+bn	permissions.localNetwork	লোকাল নেটওয়ার্ক
+bn	permissions.location	অবস্থান
+bn	permissions.openSettings	সেটিংস খুলুন
+bn	diagnostics.transports	ট্রান্সপোর্ট
+bn	diagnostics.mesh	মেশ
+bn	diagnostics.system	সিস্টেম
+bn	diagnostics.refresh	রিফ্রেশ
+bn	sos.title	এসওএস
+bn	sos.send	এসওএস পাঠান
+bn	sos.cancel	বাতিল
+bn	sos.confirm	এসওএস নিশ্চিত করুন
+bn	sos.category	বিভাগ
+bn	sos.severity	তীব্রতা
+bn	sos.note	ঐচ্ছিক নোট
+gu	mesh.title	મેશ
+gu	mesh.peers	પિયર
+gu	mesh.routes	રસ્તા
+gu	mesh.relay	રિલે
+gu	mesh.available	મેશ ઉપલબ્ધ છે
+gu	mesh.connected	મેશ જોડાયું
+gu	mesh.searching	નજીકના ઉપકરણો શોધી રહ્યા છીએ
+gu	mesh.unavailable	મેશ ઉપલબ્ધ નથી
+gu	messages.title	સંદેશા
+gu	messages.new	નવો સંદેશ
+gu	messages.send	મોકલો
+gu	messages.delete	કાઢી નાખો
+gu	messages.retry	ફરી પ્રયાસ કરો
+gu	messages.destination	ગંતવ્ય
+gu	messages.expiry	સમાપ્તિ
+gu	messages.noExpiry	કોઈ સમાપ્તિ નથી
+gu	delivery.queued	મેશ માટે કતારમાં
+gu	delivery.sending	મોકલાય છે
+gu	delivery.relaying	રિલે થઈ રહ્યું છે
+gu	delivery.delivered	પહોંચાડેલું
+gu	delivery.expired	સમાપ્ત થઈ ગયું
+gu	delivery.failed	કોઈ રસ્તો નથી
+gu	settings.title	સેટિંગ્સ
+gu	settings.appearance	દેખાવ
+gu	settings.dark	ઘેરું
+gu	settings.light	આછું
+gu	settings.system	સિસ્ટમ
+gu	settings.about	વિશે
+gu	settings.diagnostics	ડાયગ્નોસ્ટિક્સ
+gu	settings.clearData	બધો સ્થાનિક ડેટા સાફ કરો
+gu	settings.autoRelay	જોડાય ત્યારે આપોઆપ રિલે કરો
+gu	settings.privacy	ગોપનીયતા અને સુરક્ષા
+gu	profile.title	પ્રોફાઇલ
+gu	profile.displayName	પ્રદર્શિત નામ
+gu	profile.locationSharing	સ્થાન શેર કરવું
+gu	profile.messageExpiry	સંદેશ સમાપ્તિ
+gu	profile.relayParticipation	રિલેમાં ભાગ લેવો
+gu	profile.permissions	પરવાનગીઓ
+gu	profile.privacy	ગોપનીયતાની સમીક્ષા
+gu	profile.diagnostics	ડાયગ્નોસ્ટિક્સ
+gu	profile.onboarding	પરિચય ફરી જુઓ
+gu	profile.resetData	સ્થાનિક ડેટા રીસેટ કરો
+gu	map.title	સર્વાઇવલ મેપ
+gu	map.all	બધા
+gu	map.filter	ફિલ્ટર
+gu	map.verified	ચકાસાયેલ
+gu	assist.title	પ્રથમ પરાયશ
+gu	assist.search	પ્રથમ પરાયશ શોધો
+gu	assist.offline	ઑફલાઇન
+gu	assist.whenToSeekHelp	વ્યાવસાયિક મદદ ક્યારે લેવી
+gu	permissions.bluetooth	બ્લૂટૂથ
+gu	permissions.localNetwork	લોકલ નેટવર્ક
+gu	permissions.location	સ્થાન
+gu	permissions.openSettings	સેટિંગ્સ ખોલો
+gu	diagnostics.transports	ટ્રાન્સપોર્ટ
+gu	diagnostics.mesh	મેશ
+gu	diagnostics.system	સિસ્ટમ
+gu	diagnostics.refresh	રિફ્રેશ
+gu	sos.title	એસઓએસ
+gu	sos.send	એસઓએસ મોકલો
+gu	sos.cancel	રદ કરો
+gu	sos.confirm	એસઓએસની પુષ્ટિ કરો
+gu	sos.category	શ્રેણી
+gu	sos.severity	ગંભીરતા
+gu	sos.note	વૈકલ્પિક નોંધ
+pa	mesh.title	ਮੈਸ਼
+pa	mesh.peers	ਪੀਅਰ
+pa	mesh.routes	ਰਾਹਾਂ
+pa	mesh.relay	ਰਿਲੇ
+pa	mesh.available	ਮੈਸ਼ ਉਪਲਬਧ ਹੈ
+pa	mesh.connected	ਮੈਸ਼ ਜੁੜਿਆ ਹੋਇਆ ਹੈ
+pa	mesh.searching	ਨੇੜਲੇ ਡਿਵਾਈਸਾਂ ਲੱਭ ਰਹੇ ਹਾਂ
+pa	mesh.unavailable	ਮੈਸ਼ ਉਪਲਬਧ ਨਹੀਂ
+pa	messages.title	ਸੁਨੇਹੇ
+pa	messages.new	ਨਵਾਂ ਸੁਨੇਹਾ
+pa	messages.send	ਭੇਜੋ
+pa	messages.delete	ਮਿਟਾਓ
+pa	messages.retry	ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ
+pa	messages.destination	ਮੁਕਾਮਾ
+pa	messages.expiry	ਮਿਆਦ
+pa	messages.noExpiry	ਕੋਈ ਮਿਆਦ ਨਹੀਂ
+pa	delivery.queued	ਮੈਸ਼ ਲਈ ਕਤਾਰ ਵਿੱਚ
+pa	delivery.sending	ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ
+pa	delivery.relaying	ਰਿਲੇ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ
+pa	delivery.delivered	ਪਹੁੰਚਾ ਦਿੱਤਾ
+pa	delivery.expired	ਮਿਆਦ ਪੁੱਗੀ
+pa	delivery.failed	ਕੋਈ ਰਾਹ ਨਹੀਂ
+pa	settings.title	ਸੈਟਿੰਗਾਂ
+pa	settings.appearance	ਰੂਪ
+pa	settings.dark	ਗੂੜਾ
+pa	settings.light	ਹਲਕਾ
+pa	settings.system	ਸਿਸਟਮ
+pa	settings.about	ਬਾਰੇ
+pa	settings.diagnostics	ਡਾਇਗਨੋਸਟਿਕਸ
+pa	settings.clearData	ਸਾਰਾ ਸਥਾਨਕ ਡਾਟਾ ਮਿਟਾਓ
+pa	settings.autoRelay	ਜੁੜਨ 'ਤੇ ਆਪੇ ਰਿਲੇ ਕਰੋ
+pa	settings.privacy	ਗੋਪਨੀਯਤਾ ਅਤੇ ਸੁਰੱਖਿਆ
+pa	profile.title	ਪ੍ਰੋਫਾਈਲ
+pa	profile.displayName	ਦਿਖਾਇਆ ਨਾਮ
+pa	profile.locationSharing	ਟਿਕਾਣਾ ਸਾਂਝਾ ਕਰਨਾ
+pa	profile.messageExpiry	ਸੁਨੇਹੇ ਦੀ ਮਿਆਦ
+pa	profile.relayParticipation	ਰਿਲੇ ਵਿੱਚ ਹਿੱਸਾ
+pa	profile.permissions	ਇਜਾਜ਼ਤਾਂ
+pa	profile.privacy	ਗੋਪਨੀਯਤਾ ਦੀ ਸਮੀਖਿਆ
+pa	profile.diagnostics	ਡਾਇਗਨੋਸਟਿਕਸ
+pa	profile.onboarding	ਜਾਣ-ਪਛਾਣ ਦੁਬਾਰਾ ਵੇਖੋ
+pa	profile.resetData	ਸਥਾਨਕ ਡਾਟਾ ਰੀਸੈੱਟ ਕਰੋ
+pa	map.title	ਸਰਵਾਈਵਲ ਨਕਸ਼ਾ
+pa	map.all	ਸਭ
+pa	map.filter	ਫਿਲਟਰ
+pa	map.verified	ਪ੍ਰਮਾਣਿਤ
+pa	assist.title	ਪਹਿਲੀ ਮਦਦ
+pa	assist.search	ਪਹਿਲੀ ਮਦਦ ਲੱਭੋ
+pa	assist.offline	ਆਫਲਾਈਨ
+pa	assist.whenToSeekHelp	ਪੇਸ਼ੇਦਾਰ ਮਦਦ ਕਦੋਂ ਲਵੀ
+pa	permissions.bluetooth	ਬਲੂਟੂਥ
+pa	permissions.localNetwork	ਲੋਕਲ ਨੈੱਟਵਰਕ
+pa	permissions.location	ਟਿਕਾਣਾ
+pa	permissions.openSettings	ਸੈਟਿੰਗਾਂ ਖੋਲ੍ਹੋ
+pa	diagnostics.transports	ਟ੍ਰਾਂਸਪੋਰਟ
+pa	diagnostics.mesh	ਮੈਸ਼
+pa	diagnostics.system	ਸਿਸਟਮ
+pa	diagnostics.refresh	ਰਿਫਰੈਸ਼
+pa	sos.title	ਐਸਓਐਸ
+pa	sos.send	ਐਸਓਐਸ ਭੇਜੋ
+pa	sos.cancel	ਰੱਦ ਕਰੋ
+pa	sos.confirm	ਐਸਓਐਸ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ
+pa	sos.category	ਸ਼੍ਰੇਣੀ
+pa	sos.severity	ਗੰਭੀਰਤਾ
+pa	sos.note	ਵਿਕਲਪਿਕ ਨੋਟ
+ur	mesh.title	میش
+ur	mesh.peers	ہم پیئرز
+ur	mesh.routes	راستے
+ur	mesh.relay	ریلے
+ur	mesh.available	میش دستیاب ہے
+ur	mesh.connected	میش منسلک ہے
+ur	mesh.searching	قریبی آلات تلاش کیے جا رہے ہیں
+ur	mesh.unavailable	میش دستیاب نہیں
+ur	messages.title	پیغامات
+ur	messages.new	نیا پیغام
+ur	messages.send	بھیجیں
+ur	messages.delete	حذف کریں
+ur	messages.retry	دوبارہ کوشش کریں
+ur	messages.destination	منزل
+ur	messages.expiry	انقضا
+ur	messages.noExpiry	کوئی انقضا نہیں
+ur	delivery.queued	میش کے لیے قطار میں
+ur	delivery.sending	بھیجا جا رہا ہے
+ur	delivery.relaying	ریلے کیا جا رہا ہے
+ur	delivery.delivered	پہنچا دیا گیا
+ur	delivery.expired	میعاد ختم
+ur	delivery.failed	کوئی راستہ دستیاب نہیں
+ur	settings.title	ترتیبات
+ur	settings.appearance	ظاہری شکل
+ur	settings.dark	گہرا
+ur	settings.light	ہلکا
+ur	settings.system	سسٹم
+ur	settings.about	تعارف
+ur	settings.diagnostics	تشخیص
+ur	settings.clearData	تمام مقامی ڈیٹا حذف کریں
+ur	settings.autoRelay	منسلک ہونے پر خودکار ریلے
+ur	settings.privacy	رازداری اور حفاظت
+ur	profile.title	پروفائل
+ur	profile.displayName	ظاہری نام
+ur	profile.locationSharing	مقام شیئر کرنا
+ur	profile.messageExpiry	پیغام کی میعاد
+ur	profile.relayParticipation	ریلے میں شرکت
+ur	profile.permissions	اجازتیں
+ur	profile.privacy	رازداری کا جائزہ
+ur	profile.diagnostics	تشخیص
+ur	profile.onboarding	تعارف دوبارہ دیکھیں
+ur	profile.resetData	مقامی ڈیٹا دوبارہ ترتیب دیں
+ur	map.title	سرووایول نقشہ
+ur	map.all	تمام
+ur	map.filter	چھانٹیں
+ur	map.verified	تصدیق شدہ
+ur	assist.title	ابتدائی طبی امداد
+ur	assist.search	ابتدائی طبی امداد تلاش کریں
+ur	assist.offline	آف لائن
+ur	assist.whenToSeekHelp	پیشہ ور مدد کب لیں
+ur	permissions.bluetooth	بلوٹوث
+ur	permissions.localNetwork	مقامی نیٹ ورک
+ur	permissions.location	مقام
+ur	permissions.openSettings	ترتیبات کھولیں
+ur	diagnostics.transports	ٹرانسپورٹ
+ur	diagnostics.mesh	میش
+ur	diagnostics.system	سسٹم
+ur	diagnostics.refresh	تازہ کریں
+ur	sos.title	ایس او ایس
+ur	sos.send	ایس او ایس بھیجیں
+ur	sos.cancel	منسوخ
+ur	sos.confirm	ایس او ایس کی تصدیق کریں
+ur	sos.category	زمرہ
+ur	sos.severity	شدت
+ur	sos.note	اختیاری نوٹ

@@ -8,7 +8,7 @@ struct SettingsView: View {
     @EnvironmentObject var app: ResilixAppModel
     @Environment(\.dismiss) var dismiss
 
-    @AppStorage("appearance") private var appearance: String = Appearance.system.rawValue
+    @AppStorage("appearance") private var appearance: String = Appearance.dark.rawValue
     @AppStorage("language") private var language: Language = .english
     @AppStorage("autoRelay") private var autoRelay = false
     @AppStorage("showDebugInfo") private var showDebugInfo = false
@@ -118,6 +118,11 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showLanguagePicker) {
             LanguagePickerView(selectedLanguage: $language)
+                .environmentObject(app)
+        }
+        .onChange(of: language) { _, newValue in
+            LocalizationManager.shared.apply(newValue.rawValue)
+            Task { await app.updateSettings { $0.language = newValue.rawValue } }
         }
         .confirmationDialog("Appearance", isPresented: $showAppearance, titleVisibility: .visible) {
             ForEach(Appearance.allCases) { option in
@@ -401,30 +406,136 @@ struct MeshSettingsView: View {
 }
 
 struct OfflineAISettingsView: View {
-    @AppStorage("offlineAIEnabled") private var offlineAIEnabled = true
+    @EnvironmentObject var app: ResilixAppModel
 
     var body: some View {
         Form {
-            SettingsToggleRow(icon: "sparkles", title: "Offline AI", subtitle: "On-device Assist without internet", isOn: $offlineAIEnabled)
+            Section {
+                SettingsToggleRow(icon: "sparkles",
+                                  title: "Keep conversation history",
+                                  subtitle: "Stored on this device only",
+                                  isOn: Binding(
+                                    get: { app.settings.aiConversationPersistence },
+                                    set: { newValue in Task { await app.updateSettings { $0.aiConversationPersistence = newValue } } }
+                                  ))
+            }
+
+            Section(header: Text("Active model")) {
+                HStack {
+                    Text(app.aiService.activeModel?.displayName ?? "None")
+                        .foregroundStyle(ResilixTheme.textPrimary)
+                    Spacer()
+                    Text(statusText)
+                        .font(.caption)
+                        .foregroundStyle(ResilixTheme.textTertiary)
+                }
+                NavigationLink {
+                    AIModelManagerView()
+                        .environmentObject(app)
+                } label: {
+                    Label("Manage models", systemImage: "cpu")
+                }
+            }
+
+            Section {
+                Button("Clear conversation") {
+                    Task { await app.aiService.clearConversation() }
+                }
+            }
         }
         .scrollContentBackground(.hidden)
         .background(ResilixTheme.backgroundPrimary)
         .navigationTitle("Offline AI")
         .navigationBarTitleDisplayMode(.inline)
     }
+
+    private var statusText: String {
+        guard let model = app.aiService.activeModel else { return "—" }
+        switch model.availability {
+        case .ready: return "Ready"
+        case .notInstalled: return "Not installed"
+        case .runtimeUnavailable: return "No runtime"
+        case .unusable: return "Unusable"
+        }
+    }
 }
 
 struct MapSettingsView: View {
-    @AppStorage("offlineMapsEnabled") private var offlineMapsEnabled = true
+    @EnvironmentObject var app: ResilixAppModel
+    @State private var showImporter = false
+    @State private var message: String?
 
     var body: some View {
         Form {
-            SettingsToggleRow(icon: "map.fill", title: "Offline Maps", subtitle: "Cached survival maps without internet", isOn: $offlineMapsEnabled)
+            Section(header: Text("Installed packs")) {
+                if app.mapPackService.packs.isEmpty {
+                    Text("No offline map is installed. The map screen uses the online Apple tiles until a pack is imported.")
+                        .font(.caption)
+                        .foregroundStyle(ResilixTheme.textSecondary)
+                } else {
+                    ForEach(app.mapPackService.packs) { pack in
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack {
+                                Text(pack.name)
+                                    .foregroundStyle(ResilixTheme.textPrimary)
+                                Spacer()
+                                if app.mapPackService.activePackID == pack.id {
+                                    ResilixStatusBadge(text: "Active", color: ResilixTheme.successGreen)
+                                }
+                            }
+                            Text("Zoom \(pack.minZoom)–\(pack.maxZoom) · \(ByteCountFormatter.string(fromByteCount: Int64(pack.byteCount), countStyle: .file))")
+                                .font(.caption2)
+                                .foregroundStyle(ResilixTheme.textTertiary)
+                        }
+                    }
+                    .onDelete { offsets in
+                        for index in offsets {
+                            let pack = app.mapPackService.packs[index]
+                            Task { await app.mapPackService.deletePack(pack.id) }
+                        }
+                    }
+                }
+            }
+
+            Section {
+                Button {
+                    showImporter = true
+                } label: {
+                    Label("Import map pack", systemImage: "square.and.arrow.down")
+                }
+                Text("Storage used: \(ByteCountFormatter.string(fromByteCount: Int64(app.mapPackService.storageUsedBytes), countStyle: .file))")
+                    .font(.caption)
+                    .foregroundStyle(ResilixTheme.textTertiary)
+            }
         }
         .scrollContentBackground(.hidden)
         .background(ResilixTheme.backgroundPrimary)
         .navigationTitle("Maps")
         .navigationBarTitleDisplayMode(.inline)
+        .fileImporter(isPresented: $showImporter,
+                      allowedContentTypes: [.data],
+                      allowsMultipleSelection: false) { result in
+            switch result {
+            case .success(let urls):
+                if let url = urls.first {
+                    Task {
+                        do {
+                            _ = try await app.mapPackService.importPack(from: url)
+                            message = "The map pack was imported."
+                        } catch {
+                            message = error.localizedDescription
+                        }
+                    }
+                }
+            case .failure:
+                message = "The map pack could not be opened."
+            }
+        }
+        .alert("Maps", isPresented: .constant(message != nil), presenting: message) { _ in
+            Button("OK") { message = nil }
+        } message: { text in
+            Text(text)
+        }
     }
 }
 
@@ -442,6 +553,7 @@ struct LanguagePickerView: View {
                         ForEach(Array(SettingsView.Language.allCases.enumerated()), id: \.element) { index, lang in
                             Button {
                                 selectedLanguage = lang
+                                LocalizationManager.shared.apply(lang.rawValue)
                                 dismiss()
                             } label: {
                                 HStack(spacing: ResilixTheme.space12) {

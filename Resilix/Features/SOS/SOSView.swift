@@ -23,13 +23,13 @@ struct SOSView: View {
                     .font(.subheadline)
                     .foregroundStyle(ResilixTheme.textSecondary)
                 
-                Picker(String(localized: "sos.category"), selection: $category) {
+                Picker(L("sos.category"), selection: $category) {
                     ForEach(SOSCategory.allCases, id: \.self) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.menu)
                 .accessibilityLabel("SOS category")
                 
-                Picker(String(localized: "sos.severity"), selection: $severity) {
+                Picker(L("sos.severity"), selection: $severity) {
                     ForEach(SOSSeverity.allCases, id: \.self) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.segmented)
@@ -46,11 +46,11 @@ struct SOSView: View {
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel("Priority: \(scoring.reason)")
                 
-                TextField(String(localized: "sos.note"), text: $note)
+                TextField(L("sos.note"), text: $note)
                     .textFieldStyle(.roundedBorder)
                     .accessibilityLabel("Optional note")
                 
-                Toggle(String(localized: "sos.shareLocation"), isOn: $shareLocation)
+                Toggle(L("sos.shareLocation"), isOn: $shareLocation)
                     .tint(ResilixTheme.brandTeal)
                     .accessibilityLabel("Share approximate location")
                 
@@ -68,7 +68,7 @@ struct SOSView: View {
                             .fill(ResilixTheme.emergencyRed)
                             .frame(width: progress * (geo.size.width - 32), height: 56)
                             .animation(.linear, value: progress)
-                    Text(isHolding ? "Hold to send…" : String(localized: "sos.holdToSend"))
+                    Text(isHolding ? "Hold to send…" : L("sos.holdToSend"))
                         .font(.headline)
                         .foregroundStyle(isHolding ? .white : ResilixTheme.emergencyRed)
                     }
@@ -91,7 +91,7 @@ struct SOSView: View {
                 .accessibilityAddTraits(.isButton)
                 
                 // Alternative tap-to-send for accessibility
-                Button(String(localized: "sos.send")) {
+                Button(L("sos.send")) {
                     showAlternativeConfirm = true
                 }
                 .font(.caption.weight(.medium))
@@ -118,7 +118,7 @@ struct SOSView: View {
                 }
                 
                 if let inc = app.sosService.incidents.first {
-                    Text("Delivery: \(inc.acknowledged ? "Delivered" : String(localized: "delivery.queued"))")
+                    Text("Delivery: \(inc.acknowledged ? "Delivered" : L("delivery.queued"))")
                         .font(.caption)
                         .foregroundStyle(ResilixTheme.textSecondary)
                 }
@@ -126,10 +126,10 @@ struct SOSView: View {
             .padding(ResilixTheme.space16)
         }
         .background(ResilixTheme.bgPrimary)
-        .navigationTitle(String(localized: "sos.title"))
+        .navigationTitle(L("sos.title"))
         .navigationBarTitleDisplayMode(.inline)
-        .alert(String(localized: "sos.confirm"), isPresented: $showConfirm) {
-            Button(String(localized: "sos.cancel"), role: .cancel) {}
+        .alert(L("sos.confirm"), isPresented: $showConfirm) {
+            Button(L("sos.cancel"), role: .cancel) {}
             Button("Send", role: .destructive) {
                 Task {
                     try? await app.sosService.dispatch(
@@ -145,8 +145,8 @@ struct SOSView: View {
         } message: {
             Text("Send \(severity.label.lowercased()) \(category.label.lowercased()) alert via mesh?")
         }
-        .alert(String(localized: "sos.confirm"), isPresented: $showAlternativeConfirm) {
-            Button(String(localized: "sos.cancel"), role: .cancel) {}
+        .alert(L("sos.confirm"), isPresented: $showAlternativeConfirm) {
+            Button(L("sos.cancel"), role: .cancel) {}
             Button("Send", role: .destructive) {
                 Task {
                     try? await app.sosService.dispatch(

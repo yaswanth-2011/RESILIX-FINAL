@@ -355,19 +355,12 @@ struct NearbyView: View {
         }
     }
 
+    /// The pins are placed on the positions the peers really shared.
     private func generateDeviceCoordinates() {
-        let count = Int.random(in: 4...6)
         var coords: [CLLocationCoordinate2D] = []
-        for _ in 0..<count {
-            // small random offset ~ 500-900m around user
-            let latDelta = Double.random(in: -0.004...0.004)
-            let lonDelta = Double.random(in: -0.004...0.004)
-            coords.append(
-                CLLocationCoordinate2D(
-                    latitude: userCoordinate.latitude + latDelta,
-                    longitude: userCoordinate.longitude + lonDelta
-                )
-            )
+        for node in app.meshController.peers {
+            guard let latitude = node.latitude, let longitude = node.longitude else { continue }
+            coords.append(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
         }
         deviceCoordinates = coords
     }
@@ -380,6 +373,10 @@ struct NearbyView: View {
         return palette[idx % palette.count]
     }
 
+    /// Fills the list with the peers that were really discovered.
+    ///
+    /// The distance is only shown when the peer shared its position, the
+    /// signal value comes from the link quality of the transport.
     private func loadDemoDevices() {
         if app.demoController.isDemoMode {
             devices = [
@@ -389,144 +386,33 @@ struct NearbyView: View {
                 NearbyDevice(name: "James R.", distance: "780m", hopType: .twoHops, signalPercent: 44),
                 NearbyDevice(name: "Emma T.", distance: "1.1km", hopType: .twoHops, signalPercent: 38),
             ]
-        } else {
-            var allPeers: [MeshNode] = []
-            for t in app.meshController.availableTransports { allPeers.append(contentsOf: t.discoveredPeers) }
-            devices = allPeers.prefix(6).enumerated().map { idx, node in
-                let distances = ["80m", "150m", "320m", "490m", "670m", "1.2km"]
-                let hops: [NearbyDevice.HopType] = [.direct, .direct, .oneHop, .oneHop, .twoHops, .twoHops]
-                let signals = [95, 88, 72, 63, 48, 35]
-                return NearbyDevice(
-                    node: node,
-                    distance: distances[safe: idx] ?? "??m",
-                    hopType: hops[safe: idx] ?? .direct,
-                    signalPercent: signals[safe: idx] ?? 50
-                )
-            }
-            if devices.isEmpty { generateDeviceCoordinates() }
+            return
         }
-        if deviceCoordinates.isEmpty { generateDeviceCoordinates() }
-    }
-}
 
-// MARK: - Safe Array
-private extension Array {
-    subscript(safe index: Int) -> Element? { indices.contains(index) ? self[index] : nil }
-}
-
-// MARK: - Device Card (liquid glass, ResilixTheme fonts/colors — same as Chats)
-private struct NearbyDeviceCard: View {
-    let device: NearbyDevice
-    let action: () -> Void
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            // Avatar — vibrant unique gradient per profile (red/orange/blue/purple/sea green)
-            ZStack {
-                Circle()
-                    .fill(device.accentGradient)
-                    .frame(width: 52, height: 52)
-                    .shadow(color: AvatarView.color(for: device.name).opacity(0.35), radius: 6, y: 2)
-                if device.isRelay {
-                    Image(systemName: "server.rack")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundStyle(.white)
-                } else {
-                    Image(systemName: "person.2.fill")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.95))
-                }
+        let nodes = app.meshController.peers
+        devices = nodes.prefix(6).map { node in
+            let connected = app.meshController.isConnected(to: node.id)
+            let route = app.meshController.routing.routes.first { $0.destination == node.id }
+            let hops = route?.hopCount ?? 1
+            let hopType: NearbyDevice.HopType
+            if connected || hops <= 1 {
+                hopType = .direct
+            } else if hops == 2 {
+                hopType = .oneHop
+            } else {
+                hopType = .twoHops
             }
-            .overlay(
-                Circle()
-                    .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
-            )
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(device.name)
-                    .font(ResilixTheme.font(16, .semibold))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-
-                HStack(spacing: 6) {
-                    HStack(spacing: 3) {
-                        Image(systemName: "location.fill")
-                            .font(.system(size: 9, weight: .medium))
-                            .foregroundStyle(Color.white.opacity(0.4))
-                        Text(device.distance)
-                            .font(ResilixTheme.font(13, .medium))
-                            .foregroundStyle(Color.white.opacity(0.55))
-                    }
-
-                    Text(device.hopType.rawValue)
-                        .font(ResilixTheme.font(11, .bold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 3)
-                        .background(device.hopType.badgeColor)
-                        .clipShape(Capsule())
-                }
-
-                Text("\(device.signalPercent)% signal")
-                    .font(ResilixTheme.font(12, .regular))
-                    .foregroundStyle(Color.white.opacity(0.38))
+            var distance = "—"
+            if let latitude = node.latitude, let longitude = node.longitude {
+                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                distance = app.locationService.formattedDistance(to: coordinate) ?? "—"
             }
-
-            Spacer(minLength: 6)
-
-            // 4-bar signal — properly bottom-aligned, vertically centered in card
-            SignalBarsView(percent: device.signalPercent)
-
-            // Message button — nearby low-opacity liquid glass capsule
-            Button(action: action) {
-                Text("Message")
-                    .font(ResilixTheme.font(14, .semibold))
-                    .foregroundStyle(ResilixTheme.textOnAccent)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 9)
-                    .background(
-                        LinearGradient(
-                            colors: [ResilixTheme.brandCyan, ResilixTheme.brandTeal],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
-                    .clipShape(Capsule())
-                    .nearbyGlassCapsule(interactive: true)
-                    .shadow(color: ResilixTheme.cyanGlowStrong, radius: 6, y: 2)
-            }
-            .buttonStyle(.plain)
+            return NearbyDevice(node: node,
+                                distance: distance,
+                                hopType: hopType,
+                                signalPercent: app.meshController.signalStrength(for: node.id) ?? 0)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.white.opacity(0.015))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(Color.white.opacity(0.03), lineWidth: 0.7)
-                )
-        )
-        .nearbyGlassRounded(cornerRadius: 18, interactive: false)
     }
-}
-
-// MARK: - Signal Bars (always 4 vertical bars, bottom-aligned, middle of card)
-private struct SignalBarsView: View {
-    let percent: Int
-
-    var body: some View {
-        HStack(alignment: .bottom, spacing: 2.5) {
-            ForEach(0..<4, id: \.self) { i in
-                RoundedRectangle(cornerRadius: 1.5, style: .continuous)
-                    .fill(barColor(for: i))
-                    .frame(width: 3.5, height: barHeight(for: i))
-            }
-        }
-        .accessibilityLabel("\(percent) percent signal, \(filledCount) of 4 bars")
-    }
-
-    private var filledCount: Int { min(4, max(0, Int(ceil(Double(percent) / 25.0)))) }
 
     private func barHeight(for index: Int) -> CGFloat {
         let h: [CGFloat] = [5, 8, 11, 14]

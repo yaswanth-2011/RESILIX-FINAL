@@ -83,7 +83,7 @@ struct MessagesView: View {
                     Spacer()
                     DeliveryStateView(state: message.deliveryState)
                 }
-                Text(message.text)
+                Text(message.previewText)
                     .font(.subheadline)
                     .foregroundStyle(ResilixTheme.textSecondary)
                     .lineLimit(2)

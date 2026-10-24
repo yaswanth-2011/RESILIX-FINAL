@@ -10,66 +10,77 @@ import UIKit
 enum ResilixTheme {
 
     // MARK: - Dynamic color helper
+    /// Opaque colour components (0...1).
+    struct RGB {
+        var r: Double, g: Double, b: Double
+    }
+    /// Colour components with alpha (0...1).
+    struct RGBA {
+        var r: Double, g: Double, b: Double, a: Double
+    }
+    static func rgb(_ r: Double, _ g: Double, _ b: Double) -> RGB { RGB(r: r, g: g, b: b) }
+    static func rgba(_ r: Double, _ g: Double, _ b: Double, _ a: Double) -> RGBA { RGBA(r: r, g: g, b: b, a: a) }
+
     #if canImport(UIKit)
-    private static func dynamic(_ light: (Double, Double, Double), _ dark: (Double, Double, Double)) -> Color {
+    private static func adaptive(_ light: RGB, _ dark: RGB) -> Color {
         Color(UIColor { trait in
             let v = trait.userInterfaceStyle == .dark ? dark : light
-            return UIColor(red: v.0, green: v.1, blue: v.2, alpha: 1)
+            return UIColor(red: v.r, green: v.g, blue: v.b, alpha: 1)
         })
     }
-    private static func dynamic(_ light: (Double, Double, Double, Double), _ dark: (Double, Double, Double, Double)) -> Color {
+    private static func adaptive(_ light: RGBA, _ dark: RGBA) -> Color {
         Color(UIColor { trait in
             let v = trait.userInterfaceStyle == .dark ? dark : light
-            return UIColor(red: v.0, green: v.1, blue: v.2, alpha: v.3)
+            return UIColor(red: v.r, green: v.g, blue: v.b, alpha: v.a)
         })
     }
     #else
-    private static func dynamic(_ light: (Double, Double, Double), _ dark: (Double, Double, Double)) -> Color {
-        Color(red: light.0, green: light.1, blue: light.2)
+    private static func adaptive(_ light: RGB, _ dark: RGB) -> Color {
+        Color(red: light.r, green: light.g, blue: light.b)
     }
-    private static func dynamic(_ light: (Double, Double, Double, Double), _ dark: (Double, Double, Double, Double)) -> Color {
-        Color(red: light.0, green: light.1, blue: light.2, opacity: light.3)
+    private static func adaptive(_ light: RGBA, _ dark: RGBA) -> Color {
+        Color(red: light.r, green: light.g, blue: light.b, opacity: light.a)
     }
     #endif
 
     // MARK: - Surfaces & backgrounds
     // Light: soft off-white background, white cards. Dark: PURE BLACK, near-black surfaces.
-    static var backgroundPrimary: Color { dynamic((0.965, 0.968, 0.975), (0.00, 0.00, 0.00)) }    // Off-white / pure black
-    static var backgroundSecondary: Color { dynamic((0.93, 0.935, 0.95), (0.04, 0.045, 0.055)) }  // Slightly elevated
-    static var surfacePrimary: Color { dynamic((1.00, 1.00, 1.00), (0.055, 0.06, 0.075)) }       // Card surfaces
-    static var surfaceSecondary: Color { dynamic((0.945, 0.95, 0.96), (0.085, 0.09, 0.105)) }    // Secondary surfaces
-    static var surfaceElevated: Color { dynamic((1.00, 1.00, 1.00), (0.11, 0.12, 0.14)) }        // Elevated surfaces
-    static var separator: Color { dynamic((0.85, 0.86, 0.89), (0.16, 0.175, 0.20)) }             // Subtle borders
+    static var backgroundPrimary: Color { adaptive(rgb(0.965, 0.968, 0.975), rgb(0.00, 0.00, 0.00)) }    // Off-white / pure black
+    static var backgroundSecondary: Color { adaptive(rgb(0.93, 0.935, 0.95), rgb(0.04, 0.045, 0.055)) }  // Slightly elevated
+    static var surfacePrimary: Color { adaptive(rgb(1.00, 1.00, 1.00), rgb(0.055, 0.06, 0.075)) }       // Card surfaces
+    static var surfaceSecondary: Color { adaptive(rgb(0.945, 0.95, 0.96), rgb(0.085, 0.09, 0.105)) }    // Secondary surfaces
+    static var surfaceElevated: Color { adaptive(rgb(1.00, 1.00, 1.00), rgb(0.11, 0.12, 0.14)) }        // Elevated surfaces
+    static var separator: Color { adaptive(rgb(0.85, 0.86, 0.89), rgb(0.16, 0.175, 0.20)) }             // Subtle borders
 
     // MARK: - Text
-    static var textPrimary: Color { dynamic((0.09, 0.12, 0.18), (1.00, 1.00, 1.00)) }          // Deep navy / white
-    static var textSecondary: Color { dynamic((0.38, 0.43, 0.50), (0.65, 0.69, 0.75)) }        // Steel blue-grey / cool grey
-    static var textTertiary: Color { dynamic((0.55, 0.59, 0.66), (0.45, 0.49, 0.55)) }         // Muted grey
-    static var textOnAccent: Color { dynamic((1.00, 1.00, 1.00), (0.02, 0.03, 0.05)) }         // On-accent text
+    static var textPrimary: Color { adaptive(rgb(0.09, 0.12, 0.18), rgb(1.00, 1.00, 1.00)) }          // Deep navy / white
+    static var textSecondary: Color { adaptive(rgb(0.38, 0.43, 0.50), rgb(0.65, 0.69, 0.75)) }        // Steel blue-grey / cool grey
+    static var textTertiary: Color { adaptive(rgb(0.55, 0.59, 0.66), rgb(0.45, 0.49, 0.55)) }         // Muted grey
+    static var textOnAccent: Color { adaptive(rgb(1.00, 1.00, 1.00), rgb(0.02, 0.03, 0.05)) }         // On-accent text
 
     // MARK: - Brand — grey-blue palette (NO cyan/teal)
-    static var brandNavy: Color { dynamic((0.16, 0.23, 0.35), (0.13, 0.19, 0.30)) }            // Deep navy / grey-blue
-    static var brandBlueGray: Color { dynamic((0.42, 0.51, 0.62), (0.52, 0.60, 0.70)) }        // Muted steel blue
-    static var brandCyan: Color { dynamic((0.33, 0.44, 0.57), (0.56, 0.66, 0.77)) }            // Legacy token → grey-blue accent
-    static var brandTeal: Color { dynamic((0.30, 0.41, 0.54), (0.52, 0.62, 0.73)) }            // Legacy token → grey-blue accent
-    static var brandTealSoft: Color { dynamic((0.87, 0.90, 0.94), (0.13, 0.16, 0.21)) }        // Soft grey-blue background
-    static var brandSlate: Color { dynamic((0.38, 0.45, 0.54), (0.42, 0.49, 0.58)) }           // Slate for secondary
-    static var brandAmber: Color { dynamic((0.82, 0.56, 0.18), (0.87, 0.64, 0.28)) }           // Muted amber
-    static var emergencyRed: Color { dynamic((0.85, 0.25, 0.25), (0.92, 0.32, 0.32)) }        // Red for SOS only
-    static var successGreen: Color { dynamic((0.22, 0.62, 0.42), (0.30, 0.68, 0.48)) }        // Muted green
-    static var warningYellow: Color { dynamic((0.85, 0.62, 0.18), (0.92, 0.70, 0.26)) }       // Muted yellow
+    static var brandNavy: Color { adaptive(rgb(0.16, 0.23, 0.35), rgb(0.13, 0.19, 0.30)) }            // Deep navy / grey-blue
+    static var brandBlueGray: Color { adaptive(rgb(0.42, 0.51, 0.62), rgb(0.52, 0.60, 0.70)) }        // Muted steel blue
+    static var brandCyan: Color { adaptive(rgb(0.33, 0.44, 0.57), rgb(0.56, 0.66, 0.77)) }            // Legacy token → grey-blue accent
+    static var brandTeal: Color { adaptive(rgb(0.30, 0.41, 0.54), rgb(0.52, 0.62, 0.73)) }            // Legacy token → grey-blue accent
+    static var brandTealSoft: Color { adaptive(rgb(0.87, 0.90, 0.94), rgb(0.13, 0.16, 0.21)) }        // Soft grey-blue background
+    static var brandSlate: Color { adaptive(rgb(0.38, 0.45, 0.54), rgb(0.42, 0.49, 0.58)) }           // Slate for secondary
+    static var brandAmber: Color { adaptive(rgb(0.82, 0.56, 0.18), rgb(0.87, 0.64, 0.28)) }           // Muted amber
+    static var emergencyRed: Color { adaptive(rgb(0.85, 0.25, 0.25), rgb(0.92, 0.32, 0.32)) }        // Red for SOS only
+    static var successGreen: Color { adaptive(rgb(0.22, 0.62, 0.42), rgb(0.30, 0.68, 0.48)) }        // Muted green
+    static var warningYellow: Color { adaptive(rgb(0.85, 0.62, 0.18), rgb(0.92, 0.70, 0.26)) }       // Muted yellow
 
     static var destructiveText: Color { emergencyRed }
-    static var destructiveSurface: Color { dynamic((0.25, 0.08, 0.08), (0.20, 0.06, 0.06)) }
+    static var destructiveSurface: Color { adaptive(rgb(0.25, 0.08, 0.08), rgb(0.20, 0.06, 0.06)) }
 
     // MARK: - Liquid Glass
-    static var glassBackground: Color { dynamic((0.92, 0.94, 0.98, 0.65), (0.08, 0.09, 0.11, 0.18)) }
-    static var glassBorder: Color { dynamic((0.10, 0.13, 0.18, 0.22), (1.00, 1.00, 1.00, 0.18)) }
-    static var glassHighlight: Color { dynamic((1.00, 1.00, 1.00, 0.70), (1.00, 1.00, 1.00, 0.12)) }
+    static var glassBackground: Color { adaptive(rgba(0.92, 0.94, 0.98, 0.65), rgba(0.08, 0.09, 0.11, 0.18)) }
+    static var glassBorder: Color { adaptive(rgba(0.10, 0.13, 0.18, 0.22), rgba(1.00, 1.00, 1.00, 0.18)) }
+    static var glassHighlight: Color { adaptive(rgba(1.00, 1.00, 1.00, 0.70), rgba(1.00, 1.00, 1.00, 0.12)) }
 
     // MARK: - Accent glow (grey-blue; legacy name kept for existing call sites)
-    static var cyanGlow: Color { dynamic((0.33, 0.44, 0.57, 0.25), (0.56, 0.66, 0.77, 0.35)) }
-    static var cyanGlowStrong: Color { dynamic((0.33, 0.44, 0.57, 0.4), (0.56, 0.66, 0.77, 0.5)) }
+    static var cyanGlow: Color { adaptive(rgba(0.33, 0.44, 0.57, 0.25), rgba(0.56, 0.66, 0.77, 0.35)) }
+    static var cyanGlowStrong: Color { adaptive(rgba(0.33, 0.44, 0.57, 0.4), rgba(0.56, 0.66, 0.77, 0.5)) }
 
     // MARK: - Typography (Avenir Next)
     enum FontWeight {

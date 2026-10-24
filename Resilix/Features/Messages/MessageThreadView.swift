@@ -16,6 +16,8 @@ struct MessageThreadView: View {
     @State private var showPhotoPicker = false
     @State private var showVoiceRecorder = false
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showFileImporter = false
+    @State private var transferMessage: String?
     @FocusState private var inputFocused: Bool
 
     var body: some View {
@@ -325,7 +327,23 @@ struct MessageThreadView: View {
         .confirmationDialog("Attach", isPresented: $showAttachmentOptions, titleVisibility: .visible) {
             Button("Photo Library") { showPhotoPicker = true }
             Button("Camera") { showCamera = true }
+            Button("File") { showFileImporter = true }
             Button("Cancel", role: .cancel) {}
+        }
+        .fileImporter(isPresented: $showFileImporter,
+                      allowedContentTypes: [.item],
+                      allowsMultipleSelection: false) { result in
+            switch result {
+            case .success(let urls):
+                if let url = urls.first { sendFile(url) }
+            case .failure:
+                transferMessage = "The file could not be opened."
+            }
+        }
+        .alert("Transfer", isPresented: .constant(transferMessage != nil), presenting: transferMessage) { _ in
+            Button("OK") { transferMessage = nil }
+        } message: { message in
+            Text(message)
         }
         .sheet(isPresented: $showCamera) {
             CameraPicker { image in
@@ -350,67 +368,131 @@ struct MessageThreadView: View {
         }
     }
 
-    private func send() {
-        let text = draft.trimmingCharacters(in: .whitespaces)
-        guard !text.isEmpty else { return }
-        let new = ThreadMessage(
-            id: UUID().uuidString,
-            text: text,
-            fromMe: true,
-            createdAt: Date(),
-            delivered: true
-        )
-        messages.append(new)
-        draft = ""
-        Task { try? await app.messageService.send(text: text, to: message.destinationNodeID, from: app.nodeID) }
+    /// Destination of the thread: the peer id or "" for a broadcast.
+    private var destination: String {
+        message.threadID == "broadcast" ? "" : message.threadID
     }
 
-    private func loadMessages() {
-        let name = message.threadID
-        if name == "Sarah K." {
-            messages = [
-                ThreadMessage(id: "m1", text: "Hey — mesh just connected! Are you okay?",
-                              fromMe: false, createdAt: Date().addingTimeInterval(-360), delivered: true),
-                ThreadMessage(id: "m2", text: "Yes! Lost power but the app works. Where are you?",
-                              fromMe: true, createdAt: Date().addingTimeInterval(-300), delivered: true),
-                ThreadMessage(id: "m3", text: "Community center on Main St, about 600m from you.",
-                              fromMe: false, createdAt: Date().addingTimeInterval(-240), delivered: true),
-                ThreadMessage(id: "m4", text: "I can see you in the mesh map. Heading your way.",
-                              fromMe: true, createdAt: Date().addingTimeInterval(-180), delivered: true),
-                ThreadMessage(id: "m5", text: "Are you safe? We're at the community shelter on Main St",
-                              fromMe: false, createdAt: Date().addingTimeInterval(-120), delivered: true),
-            ]
-        } else {
-            messages = [
-                ThreadMessage(id: "m1", text: message.text,
-                              fromMe: false, createdAt: message.createdAt, delivered: true)
-            ]
+    private func send() {
+        let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        draft = ""
+        Task {
+            do {
+                _ = try await app.messageService.send(text: text,
+                                                      to: destination,
+                                                      from: app.nodeID)
+                loadMessages()
+            } catch {
+                transferMessage = error.localizedDescription
+            }
         }
     }
 
-    private func sendImage(_ image: UIImage) {
-        let new = ThreadMessage(
-            id: UUID().uuidString,
-            text: "[Image]",
-            fromMe: true,
-            createdAt: Date(),
-            delivered: true
-        )
-        messages.append(new)
-        // In a real app, you'd upload the image and send a reference
-        Task { try? await app.messageService.send(text: "[Image sent]", to: message.destinationNodeID, from: app.nodeID) }
+    /// Reads the thread from the message service (the persisted history).
+    private func loadMessages() {
+        messages = app.messageService.messages(in: message.threadID).map { stored in
+            ThreadMessage(id: stored.id,
+                          text: stored.previewText,
+                          fromMe: stored.isOutgoing,
+                          createdAt: stored.createdAt,
+                          delivered: stored.deliveryState == .delivered)
+        }
     }
 
+    /// Stores an image and sends it as a chunked attachment.
+    private func sendImage(_ image: UIImage) {
+        guard let data = image.jpegData(compressionQuality: 0.8) else { return }
+        let fileName = "img-\(UUID().uuidString).jpg"
+        Task {
+            do {
+                try await app.persistence.write(data, to: "\(ResilixConstants.mediaDirectoryName)/\(fileName)")
+                let attachment = AttachmentDescriptor(fileName: fileName,
+                                                     mimeType: "image/jpeg",
+                                                     byteCount: data.count,
+                                                     localFileName: fileName,
+                                                     sha256: PacketCrypto.sha256Hex(data))
+                let sent = try await app.messageService.sendMedia(kind: .image,
+                                                                  attachment: attachment,
+                                                                  text: "",
+                                                                  to: destination,
+                                                                  from: app.nodeID)
+                let url = app.persistence.baseURL
+                    .appendingPathComponent(ResilixConstants.mediaDirectoryName, isDirectory: true)
+                    .appendingPathComponent(fileName)
+                try await app.transferService.send(fileURL: url,
+                                                   to: destination,
+                                                   messageID: sent.id,
+                                                   mimeType: "image/jpeg")
+                loadMessages()
+            } catch {
+                transferMessage = error.localizedDescription
+            }
+        }
+    }
+
+    /// Sends a recorded voice note.
     private func sendVoiceMessage(_ audioURL: URL) {
-        let new = ThreadMessage(
-            id: UUID().uuidString,
-            text: "[Voice message]",
-            fromMe: true,
-            createdAt: Date(),
-            delivered: true
-        )
-        messages.append(new)
-        Task { try? await app.messageService.send(text: "[Voice message sent]", to: message.destinationNodeID, from: app.nodeID) }
+        Task {
+            do {
+                let data = try Data(contentsOf: audioURL)
+                let fileName = "voice-\(UUID().uuidString).m4a"
+                try await app.persistence.write(data, to: "\(ResilixConstants.mediaDirectoryName)/\(fileName)")
+                let attachment = AttachmentDescriptor(fileName: fileName,
+                                                     mimeType: "audio/mp4",
+                                                     byteCount: data.count,
+                                                     localFileName: fileName,
+                                                     sha256: PacketCrypto.sha256Hex(data))
+                let sent = try await app.messageService.sendMedia(kind: .voice,
+                                                                  attachment: attachment,
+                                                                  text: "",
+                                                                  to: destination,
+                                                                  from: app.nodeID)
+                let url = app.persistence.baseURL
+                    .appendingPathComponent(ResilixConstants.mediaDirectoryName, isDirectory: true)
+                    .appendingPathComponent(fileName)
+                try await app.transferService.send(fileURL: url,
+                                                   to: destination,
+                                                   messageID: sent.id,
+                                                   mimeType: "audio/mp4")
+                loadMessages()
+            } catch {
+                transferMessage = error.localizedDescription
+            }
+        }
+    }
+
+    /// Sends any other file.
+    private func sendFile(_ url: URL) {
+        Task {
+            do {
+                let scoped = url.startAccessingSecurityScopedResource()
+                defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+                let data = try Data(contentsOf: url)
+                let fileName = "file-\(UUID().uuidString)-\(url.lastPathComponent)"
+                try await app.persistence.write(data, to: "\(ResilixConstants.mediaDirectoryName)/\(fileName)")
+                let attachment = AttachmentDescriptor(fileName: url.lastPathComponent,
+                                                     mimeType: "application/octet-stream",
+                                                     byteCount: data.count,
+                                                     localFileName: fileName,
+                                                     sha256: PacketCrypto.sha256Hex(data))
+                let sent = try await app.messageService.sendMedia(kind: .file,
+                                                                  attachment: attachment,
+                                                                  text: "",
+                                                                  to: destination,
+                                                                  from: app.nodeID)
+                let stored = app.persistence.baseURL
+                    .appendingPathComponent(ResilixConstants.mediaDirectoryName, isDirectory: true)
+                    .appendingPathComponent(fileName)
+                try await app.transferService.send(fileURL: stored,
+                                                   to: destination,
+                                                   messageID: sent.id,
+                                                   mimeType: "application/octet-stream")
+                loadMessages()
+            } catch {
+                transferMessage = error.localizedDescription
+            }
+        }
     }
 }
 
@@ -511,6 +593,9 @@ struct VoiceRecorderView: View {
     @State private var isRecording = false
     @State private var audioRecorder: AVAudioRecorder?
     @State private var recordingURL: URL?
+    @State private var errorMessage: String?
+    @State private var recordingDuration: TimeInterval = 0
+    @State private var durationTimer: Timer?
     
     var body: some View {
         NavigationStack {
@@ -520,7 +605,7 @@ struct VoiceRecorderView: View {
                     .foregroundStyle(isRecording ? ResilixTheme.emergencyRed : ResilixTheme.brandCyan)
                     .symbolEffect(.pulse, isActive: isRecording)
                 
-                Text(isRecording ? "Recording..." : "Tap to record")
+                Text(isRecording ? "Recording \(Int(recordingDuration))s" : "Tap to record")
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                 
@@ -528,6 +613,13 @@ struct VoiceRecorderView: View {
                     Text("Recorded: \(url.lastPathComponent)")
                         .font(.caption)
                         .foregroundStyle(ResilixTheme.textSecondary)
+                }
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundStyle(ResilixTheme.emergencyRed)
+                        .multilineTextAlignment(.center)
                 }
                 
                 Button {
@@ -548,7 +640,14 @@ struct VoiceRecorderView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel") {
+                        audioRecorder?.stop()
+                        durationTimer?.invalidate()
+                        if let recordingURL {
+                            try? FileManager.default.removeItem(at: recordingURL)
+                        }
+                        dismiss()
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Send") {
@@ -569,28 +668,64 @@ struct VoiceRecorderView: View {
     }
     
     private func startRecording() {
+        Task {
+            let granted: Bool = await withCheckedContinuation { continuation in
+                if #available(iOS 17.0, *) {
+                    AVAudioApplication.requestRecordPermission { allowed in
+                        continuation.resume(returning: allowed)
+                    }
+                } else {
+                    AVAudioSession.sharedInstance().requestRecordPermission { allowed in
+                        continuation.resume(returning: allowed)
+                    }
+                }
+            }
+            guard granted else {
+                errorMessage = "Microphone access is required to record a voice message."
+                return
+            }
+            await MainActor.run { beginRecording() }
+        }
+    }
+
+    private func beginRecording() {
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let url = documents.appendingPathComponent("voice_\(Date().timeIntervalSince1970).m4a")
         recordingURL = url
-        
+
         let settings: [String: Any] = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 44100,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
-        
+
         do {
-            audioRecorder = try AVAudioRecorder(url: url, settings: settings)
-            audioRecorder?.record()
+            let recorder = try AVAudioRecorder(url: url, settings: settings)
+            recorder.isMeteringEnabled = true
+            audioRecorder = recorder
+            recorder.record()
             isRecording = true
+            recordingDuration = 0
+            durationTimer?.invalidate()
+            let timer = Timer(timeInterval: 0.2, repeats: true) { [weak self] _ in
+                Task { @MainActor in
+                    guard let self, let recorder = self.audioRecorder else { return }
+                    self.recordingDuration = recorder.currentTime
+                }
+            }
+            RunLoop.main.add(timer, forMode: .common)
+            durationTimer = timer
         } catch {
-            print("Failed to start recording: \(error)")
+            errorMessage = "The recording could not be started: \(error.localizedDescription)"
+            isRecording = false
         }
     }
-    
+
     private func stopRecording() {
         audioRecorder?.stop()
+        durationTimer?.invalidate()
+        durationTimer = nil
         isRecording = false
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct ProfileView: View {
     @EnvironmentObject var app: ResilixAppModel
@@ -6,13 +7,30 @@ struct ProfileView: View {
     @State private var showPrivacy = false
     @State private var showOnboarding = false
     @State private var showResetConfirm = false
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var photoMessage: String?
+
+    /// The stored profile photo (or the logo placeholder).
+    private var profilePhoto: UIImage? {
+        app.profileService.loadPhoto()
+    }
     
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     HStack(spacing: 12) {
-                        LogoView(variant: .stacked, height: 48, showTagline: false)
+                        if let photo = profilePhoto {
+                            Image(uiImage: photo)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 48, height: 48)
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(ResilixTheme.separator.opacity(0.6), lineWidth: 0.6))
+                                .accessibilityLabel("Profile photo")
+                        } else {
+                            LogoView(variant: .stacked, height: 48, showTagline: false)
+                        }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(app.settings.displayName)
                                 .font(.headline)
@@ -28,6 +46,27 @@ struct ProfileView: View {
                     .padding(.vertical, 4)
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Profile: \(app.settings.displayName), mesh ID \(app.nodeID.prefix(8))")
+
+                    HStack(spacing: ResilixTheme.space12) {
+                        PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                            Label("Choose photo", systemImage: "photo")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel("Choose a profile photo")
+
+                        if profilePhoto != nil {
+                            Button {
+                                Task {
+                                    await app.profileService.clearPhoto()
+                                    await app.updateSettings { $0.profilePhotoFileName = nil }
+                                    photoMessage = "The profile photo was removed."
+                                }
+                            } label: {
+                                Text("Remove photo")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
                 }
                 
                 Section(header: Text("Mesh")) {
@@ -38,11 +77,17 @@ struct ProfileView: View {
                     .tint(ResilixTheme.brandTeal)
                     .accessibilityLabel("Enable relay participation")
                     
-                    Toggle("Location sharing", isOn: $app.settings.locationSharingEnabled)
+                    Toggle("Location sharing", isOn: Binding(
+                        get: { app.settings.locationSharingEnabled },
+                        set: { newValue in Task { await app.updateSettings { $0.locationSharingEnabled = newValue } } }
+                    ))
                         .tint(ResilixTheme.brandTeal)
                         .accessibilityLabel("Share location in SOS and map")
-                    
-                    Toggle("Message expiry", isOn: $app.settings.messageExpiryEnabled)
+
+                    Toggle("Message expiry", isOn: Binding(
+                        get: { app.settings.messageExpiryEnabled },
+                        set: { newValue in Task { await app.updateSettings { $0.messageExpiryEnabled = newValue } } }
+                    ))
                         .tint(ResilixTheme.brandTeal)
                         .accessibilityLabel("Enable message expiry")
                     
@@ -79,6 +124,14 @@ struct ProfileView: View {
             .background(ResilixTheme.bgPrimary)
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: selectedPhoto) { _, item in
+                Task { await savePhoto(item) }
+            }
+            .alert("Profile", isPresented: .constant(photoMessage != nil), presenting: photoMessage) { _ in
+                Button("OK") { photoMessage = nil }
+            } message: { message in
+                Text(message)
+            }
             .sheet(isPresented: $showPrivacy) { PrivacyView() }
             .sheet(isPresented: $showOnboarding) { OnboardingView() }
             .alert("Reset All Data?", isPresented: $showResetConfirm) {
@@ -89,6 +142,20 @@ struct ProfileView: View {
             } message: {
                 Text("This will delete all messages, contacts, resources, and settings. This cannot be undone.")
             }
+        }
+    }
+}
+
+extension ProfileView {
+    /// Stores the selected photo and keeps the settings in sync.
+    func savePhoto(_ item: PhotosPickerItem?) async {
+        guard let item, let data = try? await item.loadTransferable(type: Data.self),
+              let image = UIImage(data: data) else { return }
+        if await app.profileService.setPhoto(image) {
+            await app.updateSettings { $0.profilePhotoFileName = app.profileService.photoFileName }
+            photoMessage = "The profile photo was saved."
+        } else {
+            photoMessage = "The photo could not be stored."
         }
     }
 }

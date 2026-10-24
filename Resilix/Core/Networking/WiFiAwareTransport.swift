@@ -20,6 +20,8 @@ final class WiFiAwareTransport: MeshTransport, @unchecked Sendable {
     private var eventContinuation: AsyncStream<MeshTransportEvent>.Continuation?
     private var browser: NWBrowser?
     private var listener: NWListener?
+    private var hellos: [String: PeerHello] = [:]
+    private var connected: Set<String> = []
 
     init() {
         var fc: AsyncStream<(Data, String)>.Continuation?
@@ -33,6 +35,11 @@ final class WiFiAwareTransport: MeshTransport, @unchecked Sendable {
         checkAvailability()
     }
 
+    deinit {
+        frameContinuation?.finish()
+        eventContinuation?.finish()
+    }
+
     private func checkAvailability() {
         // The Wi-Fi Aware entitlement is not present in the default
         // signing profile, so the honest state is "not supported on this
@@ -44,22 +51,25 @@ final class WiFiAwareTransport: MeshTransport, @unchecked Sendable {
         #endif
     }
 
+    var connectedPeerIDs: Set<String> { connected }
+
+    func configure(nodeID: String, alias: String, hello: PeerHello) async {}
+
+    func peerHello(for peerID: String) -> PeerHello? { hellos[peerID] }
+
     func startDiscovery() async {
         guard isAvailable else { return }
 
         let params = NWParameters()
         params.includePeerToPeer = true
 
-        let descriptor = NWBrowser.Descriptor.bonjour(type: "_resilix-aware._tcp", domain: nil)
+        let descriptor = NWBrowser.Descriptor.bonjour(type: ResilixConstants.bonjourServiceTypeAware, domain: nil)
         let browser = NWBrowser(for: descriptor, using: params)
         self.browser = browser
 
         browser.stateUpdateHandler = { [weak self] state in
-            switch state {
-            case .failed(let error):
+            if case .failed(let error) = state {
                 self?.eventContinuation?.yield(.error(error.localizedDescription))
-            default:
-                break
             }
         }
         browser.browseResultsChangedHandler = { [weak self] results, _ in

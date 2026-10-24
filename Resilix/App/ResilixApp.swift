@@ -6,9 +6,8 @@ import SwiftUI
 @main
 struct ResilixApp: App {
     @StateObject private var appModel = ResilixAppModel()
-    @AppStorage("appearance") private var appearance: String = "System"
+    @AppStorage("appearance") private var appearance: String = "Dark"
     @AppStorage("isAuthenticated") private var isAuthenticated = false
-    @State private var hasResetAuth = false
 
     private var colorScheme: ColorScheme? {
         switch appearance {
@@ -31,13 +30,7 @@ struct ResilixApp: App {
             }
             .tint(ResilixTheme.brandCyan)
             .preferredColorScheme(colorScheme) // respects Settings → Appearance
-            .onAppear {
-                // Ensure login appears first on every fresh launch
-                if !hasResetAuth {
-                    hasResetAuth = true
-                    isAuthenticated = false
-                }
-            }
+            .environment(\.locale, appModel.localization.locale)
         }
     }
 }
@@ -73,12 +66,12 @@ struct WelcomeFlowView: View {
 class ResilixAppModel: ObservableObject {
     let persistence = PersistenceController.shared
     let routingEngine = MeshRoutingEngine()
-    
+
     // Production transports only - MockMeshTransport is DEBUG only
     #if DEBUG
     let mockTransport = MockMeshTransport()
     #endif
-    
+
     lazy var transports: [any MeshTransport] = {
         var t: [any MeshTransport] = [BluetoothTransport(), PeerToPeerWiFiTransport(), WiFiAwareTransport()]
         #if DEBUG
@@ -86,46 +79,192 @@ class ResilixAppModel: ObservableObject {
         #endif
         return t
     }()
-    
+
     lazy var meshController: MeshController = MeshController(routingEngine: routingEngine, transports: transports)
     lazy var relayManager = RelayManager()
-    lazy var messageService: MessageService = MessageService(meshController: meshController)
+    lazy var transferService = TransferService(meshController: meshController)
+    lazy var messageService: MessageService = MessageService(meshController: meshController,
+                                                             transferService: transferService)
     lazy var sosService: SOSService = SOSService(meshController: meshController)
     lazy var resourceService = ResourceService()
     lazy var permissionService = PermissionService()
     lazy var diagnosticsService = DiagnosticsService()
-    
+    lazy var profileService = ProfileService()
+    lazy var locationService = LocationService()
+    lazy var voiceService = VoiceService()
+    lazy var mapPackService = MapPackService()
+    lazy var aiService = LocalAIService()
+    let localization = LocalizationManager.shared
+
     #if DEBUG
     lazy var demoController: DemoModeController = DemoModeController(meshController: meshController, mock: mockTransport)
     #else
     lazy var demoController: DemoModeController = DemoModeController(meshController: meshController, mock: MockMeshTransport())
     #endif
-    
+
     lazy var lifecycle = AppLifecycleService()
 
     @Published var settings = AppSettings()
     @Published var nodeID: String = ""
+    @Published var isMeshRunning = false
+
+    private var locationTask: Task<Void, Never>?
 
     init() {
         Task { @MainActor in
-            self.settings = await persistence.loadSettings()
-            self.nodeID = await loadOrCreateNodeID()
-            try? await SecurityManager().setupIdentityIfNeeded(nodeID: nodeID)
-            
-            // Configure lifecycle
-            lifecycle.configure(meshController: meshController, relayManager: relayManager)
-            lifecycle.onLaunch()
-            
-            await meshController.start()
-            
-            #if DEBUG
-            if settings.isDemoMode {
-                await demoController.startDemo()
-            }
-            #endif
+            await bootstrap()
         }
     }
-    
+
+    /// Loads the persisted state and starts the mesh.
+    private func bootstrap() async {
+        settings = await persistence.loadSettings()
+        nodeID = await loadOrCreateNodeID()
+
+        // The identity lives in the keychain and is created once per device.
+        let security = SecurityManager()
+        try? await security.setupIdentityIfNeeded(nodeID: nodeID)
+
+        // Interface language.
+        localization.apply(settings.language)
+
+        // Profile.
+        await profileService.load(settings: settings)
+
+        // Mesh identity.
+        let hello = await makeHello()
+        await meshController.configure(nodeID: nodeID,
+                                        alias: settings.displayName,
+                                        hello: hello)
+        wireMeshCallbacks()
+
+        // Configure lifecycle
+        lifecycle.configure(meshController: meshController, relayManager: relayManager)
+        lifecycle.onLaunch()
+
+        await meshController.start()
+        isMeshRunning = true
+
+        // Location sharing (only when the user enabled it).
+        startLocationSharingIfEnabled()
+
+        // Offline map packs and AI models.
+        await mapPackService.load()
+        await aiService.load()
+        if let modelID = settings.selectedAIModelID {
+            await aiService.select(modelID: modelID)
+        }
+
+        #if DEBUG
+        if settings.isDemoMode {
+            await demoController.startDemo()
+        }
+        #endif
+    }
+
+    /// Shares the own position with the mesh when the user allowed it.
+    private func startLocationSharingIfEnabled() {
+        locationTask?.cancel()
+        guard settings.locationSharingEnabled else {
+            locationService.stopUpdates()
+            return
+        }
+        locationService.requestPermission()
+        locationService.startUpdates()
+        var lastLatitude: Double?
+        var lastLongitude: Double?
+        locationTask = Task { @MainActor in
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 15_000_000_000)
+                guard let coordinate = locationService.coordinate else { continue }
+                let changed = lastLatitude.map { abs($0 - coordinate.latitude) > 0.0005 } ?? true
+                guard changed else { continue }
+                lastLatitude = coordinate.latitude
+                lastLongitude = coordinate.longitude
+                await meshController.broadcastLocation(latitude: coordinate.latitude,
+                                                       longitude: coordinate.longitude)
+            }
+        }
+    }
+
+    /// Builds the handshake payload that identifies this node.
+    private func makeHello() async -> PeerHello {
+        let security = SecurityManager()
+        let agreement = (try? await security.agreementPublicKey()) ?? Data()
+        let signing = (try? await security.signingPublicKey()) ?? Data()
+        return PeerHello(nodeID: nodeID,
+                         alias: settings.displayName,
+                         agreementPublicKey: agreement,
+                         signingPublicKey: signing,
+                         supportsRelay: settings.relayEnabled,
+                         protocolVersion: ResilixConstants.protocolVersion)
+    }
+
+    /// Connects the mesh controller with the application services.
+    private func wireMeshCallbacks() {
+        meshController.onPacketReceived = { [weak self] delivered in
+            guard let self else { return }
+            Task { @MainActor in
+                await self.route(delivered)
+            }
+        }
+        meshController.onDeliveryUpdate = { [weak self] packetID, state in
+            guard let self else { return }
+            Task { @MainActor in
+                await self.messageService.updateDelivery(packetID: packetID, state: state)
+            }
+        }
+        // Only chat, media and SOS packets are forwarded by this device.
+        meshController.relayDecision = { packet in
+            switch packet.type {
+            case .chat, .mediaChunk, .mediaControl, .sos:
+                return true
+            case .acknowledgement, .routeAdvertisement, .capabilityAdvertisement,
+                 .healthCheck, .resourceReport:
+                return false
+            }
+        }
+    }
+
+    /// Distributes a decrypted packet to the service that understands it.
+    private func route(_ delivered: DeliveredPayload) async {
+        switch delivered.packet.type {
+        case .chat:
+            await messageService.handleIncoming(delivered)
+        case .mediaChunk:
+            guard let chunk = TransferService.parseChunk(delivered.plaintext) else { return }
+            await transferService.handleChunk(transferID: chunk.transferID,
+                                              index: chunk.index,
+                                              chunk: chunk.chunk)
+        case .mediaControl:
+            guard let control = try? JSONDecoder().decode(MediaTransferControl.self,
+                                                          from: delivered.plaintext) else { return }
+            await transferService.handle(control: control, from: delivered.originNodeID)
+        case .sos:
+            await sosService.handleIncoming(delivered)
+        default:
+            break
+        }
+    }
+
+    /// Stores the settings and keeps the mesh identity in sync.
+    func updateSettings(_ change: (inout AppSettings) -> Void) async {
+        change(&settings)
+        try? await persistence.saveSettings(settings)
+        if settings.language != localization.currentLanguageName {
+            localization.apply(settings.language)
+        }
+        if settings.locationSharingEnabled != (locationTask != nil) {
+            startLocationSharingIfEnabled()
+        }
+        if settings.displayName != meshController.localAlias {
+            let hello = await makeHello()
+            await meshController.configure(nodeID: nodeID,
+                                            alias: settings.displayName,
+                                            hello: hello)
+        }
+    }
+
     private func loadOrCreateNodeID() async -> String {
         if let existing = UserDefaults.standard.string(forKey: "resilix.nodeID") {
             return existing
@@ -206,5 +345,3 @@ struct ActiveSOSBanner: View {
         .accessibilityLabel("Active SOS \(packet.category.label) \(packet.severity.label)")
     }
 }
-
-

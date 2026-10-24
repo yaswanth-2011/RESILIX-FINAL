@@ -6,21 +6,21 @@ struct PermissionStatusView: View {
     var body: some View {
         List {
             StatusRow(
-                title: String(localized: "permissions.bluetooth"),
+                title: L("permissions.bluetooth"),
                 state: app.permissionService.bluetoothState,
                 detail: "Mesh discovery requires Bluetooth. Enable in Settings if denied."
             )
             StatusRow(
-                title: String(localized: "permissions.localNetwork"),
+                title: L("permissions.localNetwork"),
                 state: app.permissionService.localNetworkState,
                 detail: "P2P Wi-Fi uses local network discovery. Denied limits peer discovery."
             )
             StatusRow(
-                title: String(localized: "permissions.location"),
+                title: L("permissions.location"),
                 state: app.permissionService.locationState,
                 detail: "Map and SOS location sharing need location. Denied limits map features."
             )
-            Button(String(localized: "permissions.openSettings")) {
+            Button(L("permissions.openSettings")) {
                 app.permissionService.openSettings()
             }
             .foregroundStyle(ResilixTheme.brandTeal)

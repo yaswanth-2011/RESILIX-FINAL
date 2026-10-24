@@ -103,6 +103,8 @@ final class AssistViewModel: ObservableObject {
     @Published var isTyping = false
     @Published var hasUserSentMessage: Bool = false
     @Published var settings = AISettings()
+    /// The local model service of the app (set by the view).
+    var aiService: LocalAIService?
     private let knowledge = OfflineFirstAidStore.allTopics
     private let engine: ResilixLocalAI = OfflineAIEngine()
 
@@ -116,10 +118,47 @@ final class AssistViewModel: ObservableObject {
         input = ""
         isTyping = true
         Task {
-            let result = await engine.respond(to: trimmed, knowledge: knowledge)
-            isTyping = false
-            messages.append(ChatMessage(role: .assistant, text: result.text, source: result.source))
+            if let service = aiService,
+               let model = service.activeModel,
+               model.id != LocalAIService.knowledgeBaseModeID {
+                await answerWithModel(service, prompt: trimmed)
+            } else {
+                // No language model selected: the bundled offline knowledge
+                // base answers (this is a local retrieval, not a model).
+                let result = await engine.respond(to: trimmed, knowledge: knowledge)
+                isTyping = false
+                messages.append(ChatMessage(role: .assistant, text: result.text, source: result.source))
+            }
         }
+    }
+
+    /// Streams the answer of the selected on-device model.
+    private func answerWithModel(_ service: LocalAIService, prompt: String) async {
+        var answer = ""
+        var index: Int?
+        do {
+            for try await piece in service.ask(prompt: prompt) {
+                answer += piece
+                if let index {
+                    messages[index].text = answer
+                } else {
+                    messages.append(ChatMessage(role: .assistant,
+                                               text: answer,
+                                               source: service.activeModel?.displayName))
+                    index = messages.count - 1
+                }
+            }
+        } catch {
+            let text = "The local model could not answer: \(error.localizedDescription)"
+            if let index {
+                messages[index].text = text
+            } else {
+                messages.append(ChatMessage(role: .assistant,
+                                           text: text,
+                                           source: service.activeModel?.displayName))
+            }
+        }
+        isTyping = false
     }
 
     func sendQuickAction(_ action: QuickAction) {
@@ -195,10 +234,12 @@ private enum AssistGlass {
 
 // MARK: - Root View
 struct AssistView: View {
+    @EnvironmentObject var app: ResilixAppModel
     @StateObject private var vm = AssistViewModel()
     @StateObject private var store = OfflineFirstAidService()
     @State private var showClearConfirm = false
     @State private var showSettings = false
+    @State private var showModelManager = false
     @FocusState private var focused: Bool
 
     var body: some View {
@@ -265,6 +306,17 @@ struct AssistView: View {
                 .presentationDragIndicator(.visible)
                 .presentationBackground(ResilixTheme.backgroundPrimary)
             }
+            .sheet(isPresented: $showModelManager) {
+                AIModelManagerView()
+                    .environmentObject(app)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(ResilixTheme.backgroundPrimary)
+            }
+            .task {
+                vm.aiService = app.aiService
+                await app.aiService.refreshAvailability()
+            }
             .alert("Clear conversation?", isPresented: $showClearConfirm) {
                 Button("Cancel", role: .cancel) {}
                 Button("Clear", role: .destructive) { vm.clear() }
@@ -307,17 +359,39 @@ struct AssistView: View {
                     Circle()
                         .fill(ResilixTheme.successGreen)
                         .frame(width: 6, height: 6)
-                    Text("Running on-device · No internet")
+                    Text(modelStatusLine)
                         .font(ResilixTheme.font(12, .medium))
                         .foregroundStyle(ResilixTheme.textSecondary)
                         .lineLimit(1)
                 }
             }
             Spacer()
+            AIGlassCircleButton(systemImage: "cpu") { showModelManager = true }
+                .accessibilityLabel("AI models")
             AIGlassCircleButton(systemImage: "gearshape") { showSettings = true }
                 .accessibilityLabel("AI settings")
             AIGlassCircleButton(systemImage: "square.and.pencil") { vm.newChat() }
                 .accessibilityLabel("New chat")
+        }
+    }
+
+    /// Truthful description of the engine that answers the questions.
+    private var modelStatusLine: String {
+        guard let model = app.aiService.activeModel else {
+            return "Offline knowledge base · No internet"
+        }
+        if model.id == LocalAIService.knowledgeBaseModeID {
+            return "Offline knowledge base · No internet"
+        }
+        switch model.availability {
+        case .ready:
+            return "\(model.displayName) · On-device"
+        case .notInstalled:
+            return "\(model.displayName) · Not installed"
+        case .runtimeUnavailable:
+            return "\(model.displayName) · Runtime missing"
+        case .unusable:
+            return "\(model.displayName) · Unusable"
         }
     }
 
