@@ -1,0 +1,780 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0D6F3CCC46B34AFABEB1C7A6 /* Core/Services/DemoModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D194FE9541E54395B301B108 /* Core/Services/DemoModeController.swift */; };
+		0E04A5853DAB45858D84B73D /* Core/Services/AppLifecycleService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D0CDDB248F43B7A44C9FDE /* Core/Services/AppLifecycleService.swift */; };
+		148580DB623C43F7997D771E /* Core/Models/ResourceCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C39392B592F40AD942E0794 /* Core/Models/ResourceCategory.swift */; };
+		156CD5621AAF4773BD90EB58 /* Features/Mesh/RouteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F3D233B2AB4B1CA3AFA32B /* Features/Mesh/RouteDetailView.swift */; };
+		16B5BB1AE452412F96E37B16 /* Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D8D78C4B4EA4CDAB3704C09 /* Resources/Assets.xcassets */; };
+		18585AD26BF64E18A75BDFEC /* Core/Services/SOSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A17A49F9DE4E9DAB4F7CED /* Core/Services/SOSService.swift */; };
+		1D21C41867BA4280B7301C0A /* Core/Services/PermissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF26F37FFDE84E6BBB4E067C /* Core/Services/PermissionService.swift */; };
+		2463A5E6EDEC497A86FD3737 /* Core/Models/LinkQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB5C750CEE84007B1FD70D0 /* Core/Models/LinkQuality.swift */; };
+		27E7527965374302AFECAF3A /* Core/Routing/RelayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE02A6E6573B4E31B340E7BB /* Core/Routing/RelayQueue.swift */; };
+		2875771B74344FBF8EA4A839 /* Core/Models/AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE2B00E1286F4E8082AFB341 /* Core/Models/AppSettings.swift */; };
+		288EC62214B5481F9B91245D /* Core/Models/SOSPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A8C00D9ED54F999E271D06 /* Core/Models/SOSPacket.swift */; };
+		28F757EAD40141A1805DE43A /* Core/Models/DeliveryState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2ED006A563F48B0A0D4D38D /* Core/Models/DeliveryState.swift */; };
+		2A3D2AECBD264935BFC96997 /* Core/Persistence/PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848C31DEB1F640909E3A992E /* Core/Persistence/PersistenceController.swift */; };
+		2B1C0A0A1B2C3D4E5F607081 /* Resources/Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 2B8357521CE84BD8A10DB176 /* Resources/Localizable.xcstrings */; };
+		2B95994F75D24317BE105704 /* Core/Services/DemoDataFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F46CC291C544A0BCBB15CF /* Core/Services/DemoDataFactory.swift */; };
+		2C8321FD3D8B4DB4BC926B44 /* Core/Routing/RouteTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D375ACE123CF43858EA876B8 /* Core/Routing/RouteTable.swift */; };
+		2D6C78A4D22744A5813029BF /* Core/Networking/BluetoothTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9864845D1E946C786BA481B /* Core/Networking/BluetoothTransport.swift */; };
+		2E949E420EF048BBB145C9DF /* Core/Models/RouteHop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EE32497439745ECA88B43BC /* Core/Models/RouteHop.swift */; };
+		3454846191C145EA843F3AAC /* Features/Messages/MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9428A723006447A883F02251 /* Features/Messages/MessagesView.swift */; };
+		38D07931B7524CC3B08428A6 /* Core/Networking/MeshTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6A82BEA96344E48368DFB6 /* Core/Networking/MeshTransport.swift */; };
+		393229AC1DED49BE862C57E0 /* Features/Mesh/Mesh3DView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F431CE81354B4A3EA0193929 /* Features/Mesh/Mesh3DView.swift */; };
+		3A6AD9CED64C4FB2B5DF92B8 /* Core/Services/SeverityScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9918275BA064C0BA01B29E2 /* Core/Services/SeverityScoringEngine.swift */; };
+		3D646D94FB4C4AF2A1EBDE11 /* Core/Utilities/Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FCD3611AAC42D7AA9E237E /* Core/Utilities/Constants.swift */; };
+		40E3051454D5444B81E57E85 /* SharedUI/LogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5562AFB29ECB44B5BE23CFA5 /* SharedUI/LogoView.swift */; };
+		46F5D5C24E2C43C2AD3B8B22 /* Core/Models/ResourcePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446F206B974E48B8A40B33FC /* Core/Models/ResourcePacket.swift */; };
+		4772283D8C394D2BBEA2A750 /* Features/CommandCenter/IncidentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35541D0734A349EAB6E7F9CC /* Features/CommandCenter/IncidentListView.swift */; };
+		4D0918F6A638473C95BFBD93 /* Security/SecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BF7F46B7DD48DFAF0A3312 /* Security/SecurityTests.swift */; };
+		4D8B651EBD4246449988F18F /* Core/Models/SOSCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6F8592619B341EDB8483286 /* Core/Models/SOSCategory.swift */; };
+		504E73CDB85E45108F64A206 /* Core/Routing/MeshRoutingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC3330A4E0C417FB324BEF3 /* Core/Routing/MeshRoutingEngine.swift */; };
+		5170E5B2CCD14B81B297A955 /* Core/Models/MapResource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1BF02C258A242BCB7B1663A /* Core/Models/MapResource.swift */; };
+		518256C5DDE144A693763549 /* Core/Models/ResilixContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC54C2E14F864C2F95D93982 /* Core/Models/ResilixContact.swift */; };
+		56AFD0C365674CE0A00BD572 /* Core/Models/DemoNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6621F1D2E0D34A9BAF505FE3 /* Core/Models/DemoNode.swift */; };
+		5D86856E84E14AEFA0C2402D /* Core/Services/MessageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59C83FD4F3A4182AF3E30CA /* Core/Services/MessageService.swift */; };
+		6309474896734051BB97D34B /* Features/Nearby/NearbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E7824F4E0244F0B39A8D54 /* Features/Nearby/NearbyView.swift */; };
+		6CE51CDC8CF045AF8C559D11 /* Features/Profile/ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09156B6C3A04C9D9CB49BA3 /* Features/Profile/ProfileView.swift */; };
+		6FDD268AFAD548958CEC9E1B /* Features/Assist/AssistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABA1B68F6F34E47A65EA43B /* Features/Assist/AssistView.swift */; };
+		77FC3AA6432E4AF48EA5A8F8 /* Core/Networking/PeerToPeerWiFiTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8947D8B4F56941C08E79F521 /* Core/Networking/PeerToPeerWiFiTransport.swift */; };
+		792C42A85D934EF4A5FC80B1 /* Features/Profile/DiagnosticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19A30AB5AE5A4E7E9721B473 /* Features/Profile/DiagnosticsView.swift */; };
+		79778EB6E85D4D82A74B0693 /* Core/Models/Incident.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D357FAD626434284F48886 /* Core/Models/Incident.swift */; };
+		7DA00F91E55343FBBE3898EF /* Features/SOS/SOSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382EDE28827E4C47BDDB5AC7 /* Features/SOS/SOSView.swift */; };
+		8529D77C1E854909BC2DEE89 /* Core/Models/MeshMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2E7A208C580473BBEEABA36 /* Core/Models/MeshMessage.swift */; };
+		85AFD72E8B084A9EBF42008C /* Features/Mesh/MeshView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585F58955C8E444E8CA707EA /* Features/Mesh/MeshView.swift */; };
+		8922BBAF97AD48A4963B9A06 /* Core/Models/MeshNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F08DBF5D9F44A29E8832E9 /* Core/Models/MeshNode.swift */; };
+		8F78694BF2BF4D86AB1462D3 /* Features/Profile/PermissionStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70C73D71F4B4F84819BF610 /* Features/Profile/PermissionStatusView.swift */; };
+		914355D67348461EBDCE7FD1 /* Features/CommandCenter/IncidentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 462CDAEBBCFC4FFA97113F54 /* Features/CommandCenter/IncidentDetailView.swift */; };
+		91E2CD4DB1E74A18930774FD /* SharedUI/ResilixComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF4221626F646948476C27D /* SharedUI/ResilixComponents.swift */; };
+		995E1D09111B421BB82E78F4 /* Features/Profile/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63596E4AB8B042EEB0886C09 /* Features/Profile/SettingsView.swift */; };
+		9BCBEDEA112946D78703A427 /* Core/Routing/PacketBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6D976D0F094E5199FEAE4D /* Core/Routing/PacketBuilder.swift */; };
+		9FADCFB65A1841098BDF29EE /* Core/Routing/PacketValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30337F15A12455389990498 /* Core/Routing/PacketValidator.swift */; };
+		A0E96A17E77743EEBA916525 /* Features/Map/SurvivalMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD1BA77D2314704B9D54527 /* Features/Map/SurvivalMapView.swift */; };
+		AC698F2E7DE94FF39D12F0D4 /* Core/Services/DiagnosticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B9196FDB5B47DBB6662247 /* Core/Services/DiagnosticsService.swift */; };
+		AF7BDAC6AF7C40AEA1CA8B60 /* Features/Home/HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970CB3B4C8B9436895099091 /* Features/Home/HomeView.swift */; };
+		B19927A0130A4D679EE1A4D6 /* Networking/MeshPacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E995709655194A70AAAFC3DD /* Networking/MeshPacketTests.swift */; };
+		B582D171F4ED484A85771CDC /* Core/Routing/MeshPeerRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE80C48D28F64F6CBF526625 /* Core/Routing/MeshPeerRegistry.swift */; };
+		B7C0CBFF58904818886B8D27 /* Core/Services/ResourceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815AD62861934FF6AC6E9F8C /* Core/Services/ResourceService.swift */; };
+		BA1625B80D81423F9F3EAFB7 /* Core/Networking/BLEConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD347FCBB3924D178DD0F244 /* Core/Networking/BLEConstants.swift */; };
+		BBBEED28EFCF4FEC9136075C /* Features/Launch/SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A553061BF84797A21BB504 /* Features/Launch/SplashView.swift */; };
+		BCB0B5B798404430B05FB316 /* Core/Services/MeshController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03B5292F5794150A5BFB475 /* Core/Services/MeshController.swift */; };
+		BD222003145B40B5A708689D /* Core/Utilities/ResilixError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6354F86F58A7401DA6231743 /* Core/Utilities/ResilixError.swift */; };
+		BE73242CA4984F0895E62176 /* App/ResilixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 603CF83036C54565A65F416E /* App/ResilixApp.swift */; };
+		C29D84D6097F4BB5AD6A18E4 /* Core/Networking/FrameCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AC1841CF87467E8781B154 /* Core/Networking/FrameCodec.swift */; };
+		C3CBA4BEB38C4ACEAEB93BF4 /* Core/Models/SOSSeverity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FD0C0F61BEB49D18DF4FFB2 /* Core/Models/SOSSeverity.swift */; };
+		C740C526217A40CC92B18978 /* Core/Models/MeshRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30CCF1EED53047ED9BC2935D /* Core/Models/MeshRoute.swift */; };
+		CAAF821DAFE3455A88159D85 /* Core/Networking/MockMeshTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC80BA8DD4B4014A868C71C /* Core/Networking/MockMeshTransport.swift */; };
+		CCC7D156A10F475196805FFE /* Core/Networking/WiFiAwareTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9917D8CE1AD04359ADFEB2C5 /* Core/Networking/WiFiAwareTransport.swift */; };
+		CD08F63949914B1990BB4589 /* Features/Profile/PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F2DFA1F885E4E608ED05F67 /* Features/Profile/PrivacyView.swift */; };
+		D2C44AB006054E8E9FF795FB /* Core/Models/PacketPriority.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B68474BECF455FAD649E8B /* Core/Models/PacketPriority.swift */; };
+		D4337D8ED45F49B7B2F23D12 /* Features/Profile/OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEACEDA22FF431489B49D39 /* Features/Profile/OnboardingView.swift */; };
+		D48D850D5074436885C5F7E8 /* Features/Messages/MessageComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093585264B4C46D1B5976C93 /* Features/Messages/MessageComposerView.swift */; };
+		D4CCC97831274444B2094745 /* Core/Models/DiagnosticsSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C3A9C93E0F64F07A2AF4959 /* Core/Models/DiagnosticsSnapshot.swift */; };
+		DA38912CC8C44653B46CA41F /* Routing/RoutingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065FB20AC5D8464791DFB9A2 /* Routing/RoutingTests.swift */; };
+		DAA7FDFC21C94EB1837A1011 /* Core/Models/ResourceVerificationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9336D33C58C244D8B570E6D7 /* Core/Models/ResourceVerificationState.swift */; };
+		DAE9C05589154A369C4A5819 /* Core/Models/MeshTransportKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E08F4F6C16649CD9CC7E966 /* Core/Models/MeshTransportKind.swift */; };
+		DBF6902FCBA548F5B5F2E3CB /* Persistence/PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6402A2423D034BA2B53526CC /* Persistence/PersistenceTests.swift */; };
+		E021412C2E5C4379933B7E9A /* Features/Messages/MessageThreadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D462C01DC4141A1BE8B8E45 /* Features/Messages/MessageThreadView.swift */; };
+		E25C4F48038B4C6D8670C216 /* Core/Models/PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4F44992FB241B889761D40 /* Core/Models/PermissionState.swift */; };
+		E406102C42D3497886E1C6FE /* Core/Security/SecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7071F059BE49289BF4149E /* Core/Security/SecurityManager.swift */; };
+		E453D7AE1F7F4533AC7DDB35 /* Core/Models/MeshPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = B299F89E7049418EA7BC61A8 /* Core/Models/MeshPacket.swift */; };
+		E6035F910D934E359607A36E /* Core/Models/FirstAidTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9481C4BC2DEB467AAE394464 /* Core/Models/FirstAidTopic.swift */; };
+		E979BE11D1504DD28B70939C /* Core/Routing/DeduplicationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12F43287621B4A29AFCFBB0A /* Core/Routing/DeduplicationStore.swift */; };
+		E9DF02852AFC4DA09FB89DE5 /* App/InfoPlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E11A9D647F4E4C9C8B76C0 /* App/InfoPlist.swift */; };
+		EBF5822A275F40EEAA5EDFF4 /* Core/Theme/ResilixTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4935F40836A340A7AD5E91B8 /* Core/Theme/ResilixTheme.swift */; };
+		ED320A4899FE4801838EA30A /* Features/CommandCenter/CommandCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17A7839FED548238AB0BB82 /* Features/CommandCenter/CommandCenterView.swift */; };
+		F1A2B3C4D5E6F7A8B9C0D1E2 /* Features/Auth/AuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E8C9A2B3D4E5F6A7B8C9D0 /* Features/Auth/AuthViews.swift */; };
+		F5F06A9881A4449FA990F67C /* Core/Services/OfflineFirstAidService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC24173AA5924AB592803D9A /* Core/Services/OfflineFirstAidService.swift */; };
+		FA15AE2EDCDC4222BD5C20DD /* Core/Models/MeshConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B063AC94BAE0440A96779E09 /* Core/Models/MeshConnectionState.swift */; };
+		FB9140406D494CC78ACF2789 /* Core/Services/ConnectivityCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70838A7248E4D4D8D9D97E0 /* Core/Services/ConnectivityCoordinator.swift */; };
+		FC9F422ECAF6475AADACE6B2 /* Core/Services/RelayManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 936DEAB68F1047D58F5B75D3 /* Core/Services/RelayManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		01D357FAD626434284F48886 /* Core/Models/Incident.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/Incident.swift; sourceTree = "<group>"; };
+		065FB20AC5D8464791DFB9A2 /* Routing/RoutingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Routing/RoutingTests.swift; sourceTree = "<group>"; };
+		06E11A9D647F4E4C9C8B76C0 /* App/InfoPlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/InfoPlist.swift; sourceTree = "<group>"; };
+		093585264B4C46D1B5976C93 /* Features/Messages/MessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Messages/MessageComposerView.swift; sourceTree = "<group>"; };
+		0C3A9C93E0F64F07A2AF4959 /* Core/Models/DiagnosticsSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DiagnosticsSnapshot.swift; sourceTree = "<group>"; };
+		10E8C9A2B3D4E5F6A7B8C9D0 /* Features/Auth/AuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Auth/AuthViews.swift; sourceTree = "<group>"; };
+		12F43287621B4A29AFCFBB0A /* Core/Routing/DeduplicationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/DeduplicationStore.swift; sourceTree = "<group>"; };
+		14FCD3611AAC42D7AA9E237E /* Core/Utilities/Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Utilities/Constants.swift; sourceTree = "<group>"; };
+		19A30AB5AE5A4E7E9721B473 /* Features/Profile/DiagnosticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/DiagnosticsView.swift; sourceTree = "<group>"; };
+		1A7071F059BE49289BF4149E /* Core/Security/SecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Security/SecurityManager.swift; sourceTree = "<group>"; };
+		1D36D5DA9FD04358808BC742 /* ResilixTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResilixTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1F2DFA1F885E4E608ED05F67 /* Features/Profile/PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/PrivacyView.swift; sourceTree = "<group>"; };
+		2B8357521CE84BD8A10DB176 /* Resources/Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Resources/Localizable.xcstrings; sourceTree = "<group>"; };
+		2DD1BA77D2314704B9D54527 /* Features/Map/SurvivalMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Map/SurvivalMapView.swift; sourceTree = "<group>"; };
+		2F973316B9494F1CA643A708 /* Resilix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Resilix.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		30CCF1EED53047ED9BC2935D /* Core/Models/MeshRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshRoute.swift; sourceTree = "<group>"; };
+		35541D0734A349EAB6E7F9CC /* Features/CommandCenter/IncidentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/CommandCenter/IncidentListView.swift; sourceTree = "<group>"; };
+		382EDE28827E4C47BDDB5AC7 /* Features/SOS/SOSView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/SOS/SOSView.swift; sourceTree = "<group>"; };
+		3ABA1B68F6F34E47A65EA43B /* Features/Assist/AssistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Assist/AssistView.swift; sourceTree = "<group>"; };
+		3EE32497439745ECA88B43BC /* Core/Models/RouteHop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/RouteHop.swift; sourceTree = "<group>"; };
+		3FC80BA8DD4B4014A868C71C /* Core/Networking/MockMeshTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/MockMeshTransport.swift; sourceTree = "<group>"; };
+		403B1334657C44EEA23512DB /* Resilix.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Resilix.entitlements; sourceTree = "<group>"; };
+		40B68474BECF455FAD649E8B /* Core/Models/PacketPriority.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/PacketPriority.swift; sourceTree = "<group>"; };
+		446F206B974E48B8A40B33FC /* Core/Models/ResourcePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/ResourcePacket.swift; sourceTree = "<group>"; };
+		45A553061BF84797A21BB504 /* Features/Launch/SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Launch/SplashView.swift; sourceTree = "<group>"; };
+		462CDAEBBCFC4FFA97113F54 /* Features/CommandCenter/IncidentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/CommandCenter/IncidentDetailView.swift; sourceTree = "<group>"; };
+		48BF7F46B7DD48DFAF0A3312 /* Security/SecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Security/SecurityTests.swift; sourceTree = "<group>"; };
+		4935F40836A340A7AD5E91B8 /* Core/Theme/ResilixTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Theme/ResilixTheme.swift; sourceTree = "<group>"; };
+		4E08F4F6C16649CD9CC7E966 /* Core/Models/MeshTransportKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshTransportKind.swift; sourceTree = "<group>"; };
+		5562AFB29ECB44B5BE23CFA5 /* SharedUI/LogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedUI/LogoView.swift; sourceTree = "<group>"; };
+		585F58955C8E444E8CA707EA /* Features/Mesh/MeshView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Mesh/MeshView.swift; sourceTree = "<group>"; };
+		5D462C01DC4141A1BE8B8E45 /* Features/Messages/MessageThreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Messages/MessageThreadView.swift; sourceTree = "<group>"; };
+		5DF4221626F646948476C27D /* SharedUI/ResilixComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedUI/ResilixComponents.swift; sourceTree = "<group>"; };
+		603CF83036C54565A65F416E /* App/ResilixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/ResilixApp.swift; sourceTree = "<group>"; };
+		6354F86F58A7401DA6231743 /* Core/Utilities/ResilixError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Utilities/ResilixError.swift; sourceTree = "<group>"; };
+		63596E4AB8B042EEB0886C09 /* Features/Profile/SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/SettingsView.swift; sourceTree = "<group>"; };
+		6402A2423D034BA2B53526CC /* Persistence/PersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence/PersistenceTests.swift; sourceTree = "<group>"; };
+		6621F1D2E0D34A9BAF505FE3 /* Core/Models/DemoNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DemoNode.swift; sourceTree = "<group>"; };
+		6C39392B592F40AD942E0794 /* Core/Models/ResourceCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/ResourceCategory.swift; sourceTree = "<group>"; };
+		74F46CC291C544A0BCBB15CF /* Core/Services/DemoDataFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/DemoDataFactory.swift; sourceTree = "<group>"; };
+		7FD0C0F61BEB49D18DF4FFB2 /* Core/Models/SOSSeverity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/SOSSeverity.swift; sourceTree = "<group>"; };
+		815AD62861934FF6AC6E9F8C /* Core/Services/ResourceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/ResourceService.swift; sourceTree = "<group>"; };
+		82821CF5DECF4FE1967F0494 /* Resources/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Resources/Info.plist; sourceTree = "<group>"; };
+		848C31DEB1F640909E3A992E /* Core/Persistence/PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Persistence/PersistenceController.swift; sourceTree = "<group>"; };
+		87A8C00D9ED54F999E271D06 /* Core/Models/SOSPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/SOSPacket.swift; sourceTree = "<group>"; };
+		8947D8B4F56941C08E79F521 /* Core/Networking/PeerToPeerWiFiTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/PeerToPeerWiFiTransport.swift; sourceTree = "<group>"; };
+		8D8D78C4B4EA4CDAB3704C09 /* Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
+		8EC3330A4E0C417FB324BEF3 /* Core/Routing/MeshRoutingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/MeshRoutingEngine.swift; sourceTree = "<group>"; };
+		91B2C666508A4CEF9DDAA092 /* Resources/LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Resources/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9336D33C58C244D8B570E6D7 /* Core/Models/ResourceVerificationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/ResourceVerificationState.swift; sourceTree = "<group>"; };
+		936DEAB68F1047D58F5B75D3 /* Core/Services/RelayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/RelayManager.swift; sourceTree = "<group>"; };
+		9428A723006447A883F02251 /* Features/Messages/MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Messages/MessagesView.swift; sourceTree = "<group>"; };
+		9481C4BC2DEB467AAE394464 /* Core/Models/FirstAidTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/FirstAidTopic.swift; sourceTree = "<group>"; };
+		970CB3B4C8B9436895099091 /* Features/Home/HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Home/HomeView.swift; sourceTree = "<group>"; };
+		9917D8CE1AD04359ADFEB2C5 /* Core/Networking/WiFiAwareTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/WiFiAwareTransport.swift; sourceTree = "<group>"; };
+		9EB5C750CEE84007B1FD70D0 /* Core/Models/LinkQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/LinkQuality.swift; sourceTree = "<group>"; };
+		A2E7A208C580473BBEEABA36 /* Core/Models/MeshMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshMessage.swift; sourceTree = "<group>"; };
+		A2ED006A563F48B0A0D4D38D /* Core/Models/DeliveryState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DeliveryState.swift; sourceTree = "<group>"; };
+		AA6D976D0F094E5199FEAE4D /* Core/Routing/PacketBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/PacketBuilder.swift; sourceTree = "<group>"; };
+		AC24173AA5924AB592803D9A /* Core/Services/OfflineFirstAidService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/OfflineFirstAidService.swift; sourceTree = "<group>"; };
+		AE02A6E6573B4E31B340E7BB /* Core/Routing/RelayQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/RelayQueue.swift; sourceTree = "<group>"; };
+		B063AC94BAE0440A96779E09 /* Core/Models/MeshConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshConnectionState.swift; sourceTree = "<group>"; };
+		B299F89E7049418EA7BC61A8 /* Core/Models/MeshPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshPacket.swift; sourceTree = "<group>"; };
+		B4B9196FDB5B47DBB6662247 /* Core/Services/DiagnosticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/DiagnosticsService.swift; sourceTree = "<group>"; };
+		B9864845D1E946C786BA481B /* Core/Networking/BluetoothTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/BluetoothTransport.swift; sourceTree = "<group>"; };
+		BC54C2E14F864C2F95D93982 /* Core/Models/ResilixContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/ResilixContact.swift; sourceTree = "<group>"; };
+		C3F08DBF5D9F44A29E8832E9 /* Core/Models/MeshNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MeshNode.swift; sourceTree = "<group>"; };
+		C4E7824F4E0244F0B39A8D54 /* Features/Nearby/NearbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Nearby/NearbyView.swift; sourceTree = "<group>"; };
+		C6A17A49F9DE4E9DAB4F7CED /* Core/Services/SOSService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/SOSService.swift; sourceTree = "<group>"; };
+		CE80C48D28F64F6CBF526625 /* Core/Routing/MeshPeerRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/MeshPeerRegistry.swift; sourceTree = "<group>"; };
+		D194FE9541E54395B301B108 /* Core/Services/DemoModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/DemoModeController.swift; sourceTree = "<group>"; };
+		D1BF02C258A242BCB7B1663A /* Core/Models/MapResource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/MapResource.swift; sourceTree = "<group>"; };
+		D1F3D233B2AB4B1CA3AFA32B /* Features/Mesh/RouteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Mesh/RouteDetailView.swift; sourceTree = "<group>"; };
+		D375ACE123CF43858EA876B8 /* Core/Routing/RouteTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/RouteTable.swift; sourceTree = "<group>"; };
+		D6AC1841CF87467E8781B154 /* Core/Networking/FrameCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/FrameCodec.swift; sourceTree = "<group>"; };
+		D6F8592619B341EDB8483286 /* Core/Models/SOSCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/SOSCategory.swift; sourceTree = "<group>"; };
+		DE2B00E1286F4E8082AFB341 /* Core/Models/AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/AppSettings.swift; sourceTree = "<group>"; };
+		DF26F37FFDE84E6BBB4E067C /* Core/Services/PermissionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/PermissionService.swift; sourceTree = "<group>"; };
+		E03B5292F5794150A5BFB475 /* Core/Services/MeshController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/MeshController.swift; sourceTree = "<group>"; };
+		E09156B6C3A04C9D9CB49BA3 /* Features/Profile/ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/ProfileView.swift; sourceTree = "<group>"; };
+		E17A7839FED548238AB0BB82 /* Features/CommandCenter/CommandCenterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/CommandCenter/CommandCenterView.swift; sourceTree = "<group>"; };
+		E30337F15A12455389990498 /* Core/Routing/PacketValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/PacketValidator.swift; sourceTree = "<group>"; };
+		E59C83FD4F3A4182AF3E30CA /* Core/Services/MessageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/MessageService.swift; sourceTree = "<group>"; };
+		E5D0CDDB248F43B7A44C9FDE /* Core/Services/AppLifecycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/AppLifecycleService.swift; sourceTree = "<group>"; };
+		E70838A7248E4D4D8D9D97E0 /* Core/Services/ConnectivityCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/ConnectivityCoordinator.swift; sourceTree = "<group>"; };
+		E70C73D71F4B4F84819BF610 /* Features/Profile/PermissionStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/PermissionStatusView.swift; sourceTree = "<group>"; };
+		E9918275BA064C0BA01B29E2 /* Core/Services/SeverityScoringEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/SeverityScoringEngine.swift; sourceTree = "<group>"; };
+		E995709655194A70AAAFC3DD /* Networking/MeshPacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking/MeshPacketTests.swift; sourceTree = "<group>"; };
+		ED6A82BEA96344E48368DFB6 /* Core/Networking/MeshTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/MeshTransport.swift; sourceTree = "<group>"; };
+		EDEACEDA22FF431489B49D39 /* Features/Profile/OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/OnboardingView.swift; sourceTree = "<group>"; };
+		F431CE81354B4A3EA0193929 /* Features/Mesh/Mesh3DView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Mesh/Mesh3DView.swift; sourceTree = "<group>"; };
+		FD347FCBB3924D178DD0F244 /* Core/Networking/BLEConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/BLEConstants.swift; sourceTree = "<group>"; };
+		FE4F44992FB241B889761D40 /* Core/Models/PermissionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/PermissionState.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		20C58223C88947BB88CF3297 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7E7CEB4023D34654BA4812E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		116C44ED43B94B6F94C3EF42 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2F973316B9494F1CA643A708 /* Resilix.app */,
+				1D36D5DA9FD04358808BC742 /* ResilixTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4A28A448D526473EB9CE4AD1 /* Resilix */ = {
+			isa = PBXGroup;
+			children = (
+				403B1334657C44EEA23512DB /* Resilix.entitlements */,
+				1A7071F059BE49289BF4149E /* Core/Security/SecurityManager.swift */,
+				3FC80BA8DD4B4014A868C71C /* Core/Networking/MockMeshTransport.swift */,
+				B9864845D1E946C786BA481B /* Core/Networking/BluetoothTransport.swift */,
+				9917D8CE1AD04359ADFEB2C5 /* Core/Networking/WiFiAwareTransport.swift */,
+				8947D8B4F56941C08E79F521 /* Core/Networking/PeerToPeerWiFiTransport.swift */,
+				FD347FCBB3924D178DD0F244 /* Core/Networking/BLEConstants.swift */,
+				ED6A82BEA96344E48368DFB6 /* Core/Networking/MeshTransport.swift */,
+				D6AC1841CF87467E8781B154 /* Core/Networking/FrameCodec.swift */,
+				C3F08DBF5D9F44A29E8832E9 /* Core/Models/MeshNode.swift */,
+				FE4F44992FB241B889761D40 /* Core/Models/PermissionState.swift */,
+				7FD0C0F61BEB49D18DF4FFB2 /* Core/Models/SOSSeverity.swift */,
+				87A8C00D9ED54F999E271D06 /* Core/Models/SOSPacket.swift */,
+				4E08F4F6C16649CD9CC7E966 /* Core/Models/MeshTransportKind.swift */,
+				DE2B00E1286F4E8082AFB341 /* Core/Models/AppSettings.swift */,
+				6C39392B592F40AD942E0794 /* Core/Models/ResourceCategory.swift */,
+				30CCF1EED53047ED9BC2935D /* Core/Models/MeshRoute.swift */,
+				B063AC94BAE0440A96779E09 /* Core/Models/MeshConnectionState.swift */,
+				0C3A9C93E0F64F07A2AF4959 /* Core/Models/DiagnosticsSnapshot.swift */,
+				446F206B974E48B8A40B33FC /* Core/Models/ResourcePacket.swift */,
+				B299F89E7049418EA7BC61A8 /* Core/Models/MeshPacket.swift */,
+				01D357FAD626434284F48886 /* Core/Models/Incident.swift */,
+				D6F8592619B341EDB8483286 /* Core/Models/SOSCategory.swift */,
+				3EE32497439745ECA88B43BC /* Core/Models/RouteHop.swift */,
+				BC54C2E14F864C2F95D93982 /* Core/Models/ResilixContact.swift */,
+				D1BF02C258A242BCB7B1663A /* Core/Models/MapResource.swift */,
+				9EB5C750CEE84007B1FD70D0 /* Core/Models/LinkQuality.swift */,
+				A2E7A208C580473BBEEABA36 /* Core/Models/MeshMessage.swift */,
+				6621F1D2E0D34A9BAF505FE3 /* Core/Models/DemoNode.swift */,
+				A2ED006A563F48B0A0D4D38D /* Core/Models/DeliveryState.swift */,
+				9336D33C58C244D8B570E6D7 /* Core/Models/ResourceVerificationState.swift */,
+				40B68474BECF455FAD649E8B /* Core/Models/PacketPriority.swift */,
+				14FCD3611AAC42D7AA9E237E /* Core/Utilities/Constants.swift */,
+				6354F86F58A7401DA6231743 /* Core/Utilities/ResilixError.swift */,
+				4935F40836A340A7AD5E91B8 /* Core/Theme/ResilixTheme.swift */,
+				848C31DEB1F640909E3A992E /* Core/Persistence/PersistenceController.swift */,
+				12F43287621B4A29AFCFBB0A /* Core/Routing/DeduplicationStore.swift */,
+				AE02A6E6573B4E31B340E7BB /* Core/Routing/RelayQueue.swift */,
+				8EC3330A4E0C417FB324BEF3 /* Core/Routing/MeshRoutingEngine.swift */,
+				D375ACE123CF43858EA876B8 /* Core/Routing/RouteTable.swift */,
+				AA6D976D0F094E5199FEAE4D /* Core/Routing/PacketBuilder.swift */,
+				CE80C48D28F64F6CBF526625 /* Core/Routing/MeshPeerRegistry.swift */,
+				E30337F15A12455389990498 /* Core/Routing/PacketValidator.swift */,
+				C6A17A49F9DE4E9DAB4F7CED /* Core/Services/SOSService.swift */,
+				B4B9196FDB5B47DBB6662247 /* Core/Services/DiagnosticsService.swift */,
+				74F46CC291C544A0BCBB15CF /* Core/Services/DemoDataFactory.swift */,
+				936DEAB68F1047D58F5B75D3 /* Core/Services/RelayManager.swift */,
+				E9918275BA064C0BA01B29E2 /* Core/Services/SeverityScoringEngine.swift */,
+				AC24173AA5924AB592803D9A /* Core/Services/OfflineFirstAidService.swift */,
+				E5D0CDDB248F43B7A44C9FDE /* Core/Services/AppLifecycleService.swift */,
+				E03B5292F5794150A5BFB475 /* Core/Services/MeshController.swift */,
+				D194FE9541E54395B301B108 /* Core/Services/DemoModeController.swift */,
+				815AD62861934FF6AC6E9F8C /* Core/Services/ResourceService.swift */,
+				E59C83FD4F3A4182AF3E30CA /* Core/Services/MessageService.swift */,
+				E70838A7248E4D4D8D9D97E0 /* Core/Services/ConnectivityCoordinator.swift */,
+				DF26F37FFDE84E6BBB4E067C /* Core/Services/PermissionService.swift */,
+				06E11A9D647F4E4C9C8B76C0 /* App/InfoPlist.swift */,
+				603CF83036C54565A65F416E /* App/ResilixApp.swift */,
+				5DF4221626F646948476C27D /* SharedUI/ResilixComponents.swift */,
+				91B2C666508A4CEF9DDAA092 /* Resources/LaunchScreen.storyboard */,
+				45A553061BF84797A21BB504 /* Features/Launch/SplashView.swift */,
+				F431CE81354B4A3EA0193929 /* Features/Mesh/Mesh3DView.swift */,
+				C4E7824F4E0244F0B39A8D54 /* Features/Nearby/NearbyView.swift */,
+				5562AFB29ECB44B5BE23CFA5 /* SharedUI/LogoView.swift */,
+				2B8357521CE84BD8A10DB176 /* Resources/Localizable.xcstrings */,
+				82821CF5DECF4FE1967F0494 /* Resources/Info.plist */,
+				D1F3D233B2AB4B1CA3AFA32B /* Features/Mesh/RouteDetailView.swift */,
+				585F58955C8E444E8CA707EA /* Features/Mesh/MeshView.swift */,
+				970CB3B4C8B9436895099091 /* Features/Home/HomeView.swift */,
+				3ABA1B68F6F34E47A65EA43B /* Features/Assist/AssistView.swift */,
+				9428A723006447A883F02251 /* Features/Messages/MessagesView.swift */,
+				093585264B4C46D1B5976C93 /* Features/Messages/MessageComposerView.swift */,
+				10E8C9A2B3D4E5F6A7B8C9D0 /* Features/Auth/AuthViews.swift */,
+				5D462C01DC4141A1BE8B8E45 /* Features/Messages/MessageThreadView.swift */,
+				E17A7839FED548238AB0BB82 /* Features/CommandCenter/CommandCenterView.swift */,
+				35541D0734A349EAB6E7F9CC /* Features/CommandCenter/IncidentListView.swift */,
+				462CDAEBBCFC4FFA97113F54 /* Features/CommandCenter/IncidentDetailView.swift */,
+				2DD1BA77D2314704B9D54527 /* Features/Map/SurvivalMapView.swift */,
+				63596E4AB8B042EEB0886C09 /* Features/Profile/SettingsView.swift */,
+				1F2DFA1F885E4E608ED05F67 /* Features/Profile/PrivacyView.swift */,
+				E09156B6C3A04C9D9CB49BA3 /* Features/Profile/ProfileView.swift */,
+				E70C73D71F4B4F84819BF610 /* Features/Profile/PermissionStatusView.swift */,
+				19A30AB5AE5A4E7E9721B473 /* Features/Profile/DiagnosticsView.swift */,
+				EDEACEDA22FF431489B49D39 /* Features/Profile/OnboardingView.swift */,
+				382EDE28827E4C47BDDB5AC7 /* Features/SOS/SOSView.swift */,
+				8D8D78C4B4EA4CDAB3704C09 /* Resources/Assets.xcassets */,
+			);
+			path = Resilix;
+			sourceTree = "<group>";
+		};
+		BAB8849A303EF4E2000B9D6B /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				9481C4BC2DEB467AAE394464 /* Core/Models/FirstAidTopic.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		E04B49A431CC4D20A2A62746 = {
+			isa = PBXGroup;
+			children = (
+				4A28A448D526473EB9CE4AD1 /* Resilix */,
+				FF13072B530143CD9B6C74FF /* ResilixTests */,
+				116C44ED43B94B6F94C3EF42 /* Products */,
+				BAB8849A303EF4E2000B9D6B /* Recovered References */,
+			);
+			sourceTree = "<group>";
+		};
+		FF13072B530143CD9B6C74FF /* ResilixTests */ = {
+			isa = PBXGroup;
+			children = (
+				48BF7F46B7DD48DFAF0A3312 /* Security/SecurityTests.swift */,
+				E995709655194A70AAAFC3DD /* Networking/MeshPacketTests.swift */,
+				6402A2423D034BA2B53526CC /* Persistence/PersistenceTests.swift */,
+				065FB20AC5D8464791DFB9A2 /* Routing/RoutingTests.swift */,
+			);
+			path = ResilixTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0A5CB0120720446B8C967F89 /* ResilixTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 07A39E4DA208438B9BD6F47A /* Build configuration list for PBXNativeTarget "ResilixTests" */;
+			buildPhases = (
+				0CC2FA91197C44C38EA94356 /* Sources */,
+				20C58223C88947BB88CF3297 /* Frameworks */,
+				FD379611E3B04D149409F449 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ResilixTests;
+			productName = ResilixTests;
+			productReference = 1D36D5DA9FD04358808BC742 /* ResilixTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		5651F888C9A744C3B46AEB7E /* Resilix */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 99164327C29C4CA3BEA8FE62 /* Build configuration list for PBXNativeTarget "Resilix" */;
+			buildPhases = (
+				84CCD72FD41F4315B1EAA070 /* Sources */,
+				7E7CEB4023D34654BA4812E4 /* Frameworks */,
+				FD379611E3B04D149409F448 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Resilix;
+			productName = Resilix;
+			productReference = 2F973316B9494F1CA643A708 /* Resilix.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6B71AFD0D4604E479789F94B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					0A5CB0120720446B8C967F89 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = 5651F888C9A744C3B46AEB7E;
+					};
+					5651F888C9A744C3B46AEB7E = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 6C54AC6649DA4A30BAC6E765 /* Build configuration list for PBXProject "Resilix" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E04B49A431CC4D20A2A62746;
+			productRefGroup = 116C44ED43B94B6F94C3EF42 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5651F888C9A744C3B46AEB7E /* Resilix */,
+				0A5CB0120720446B8C967F89 /* ResilixTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FD379611E3B04D149409F448 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16B5BB1AE452412F96E37B16 /* Resources/Assets.xcassets in Resources */,
+				2B1C0A0A1B2C3D4E5F607081 /* Resources/Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FD379611E3B04D149409F449 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0CC2FA91197C44C38EA94356 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D0918F6A638473C95BFBD93 /* Security/SecurityTests.swift in Sources */,
+				B19927A0130A4D679EE1A4D6 /* Networking/MeshPacketTests.swift in Sources */,
+				DBF6902FCBA548F5B5F2E3CB /* Persistence/PersistenceTests.swift in Sources */,
+				DA38912CC8C44653B46CA41F /* Routing/RoutingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84CCD72FD41F4315B1EAA070 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E406102C42D3497886E1C6FE /* Core/Security/SecurityManager.swift in Sources */,
+				CAAF821DAFE3455A88159D85 /* Core/Networking/MockMeshTransport.swift in Sources */,
+				2D6C78A4D22744A5813029BF /* Core/Networking/BluetoothTransport.swift in Sources */,
+				CCC7D156A10F475196805FFE /* Core/Networking/WiFiAwareTransport.swift in Sources */,
+				77FC3AA6432E4AF48EA5A8F8 /* Core/Networking/PeerToPeerWiFiTransport.swift in Sources */,
+				BA1625B80D81423F9F3EAFB7 /* Core/Networking/BLEConstants.swift in Sources */,
+				38D07931B7524CC3B08428A6 /* Core/Networking/MeshTransport.swift in Sources */,
+				C29D84D6097F4BB5AD6A18E4 /* Core/Networking/FrameCodec.swift in Sources */,
+				8922BBAF97AD48A4963B9A06 /* Core/Models/MeshNode.swift in Sources */,
+				E25C4F48038B4C6D8670C216 /* Core/Models/PermissionState.swift in Sources */,
+				C3CBA4BEB38C4ACEAEB93BF4 /* Core/Models/SOSSeverity.swift in Sources */,
+				288EC62214B5481F9B91245D /* Core/Models/SOSPacket.swift in Sources */,
+				DAE9C05589154A369C4A5819 /* Core/Models/MeshTransportKind.swift in Sources */,
+				2875771B74344FBF8EA4A839 /* Core/Models/AppSettings.swift in Sources */,
+				E6035F910D934E359607A36E /* Core/Models/FirstAidTopic.swift in Sources */,
+				148580DB623C43F7997D771E /* Core/Models/ResourceCategory.swift in Sources */,
+				C740C526217A40CC92B18978 /* Core/Models/MeshRoute.swift in Sources */,
+				FA15AE2EDCDC4222BD5C20DD /* Core/Models/MeshConnectionState.swift in Sources */,
+				D4CCC97831274444B2094745 /* Core/Models/DiagnosticsSnapshot.swift in Sources */,
+				46F5D5C24E2C43C2AD3B8B22 /* Core/Models/ResourcePacket.swift in Sources */,
+				E453D7AE1F7F4533AC7DDB35 /* Core/Models/MeshPacket.swift in Sources */,
+				79778EB6E85D4D82A74B0693 /* Core/Models/Incident.swift in Sources */,
+				4D8B651EBD4246449988F18F /* Core/Models/SOSCategory.swift in Sources */,
+				2E949E420EF048BBB145C9DF /* Core/Models/RouteHop.swift in Sources */,
+				518256C5DDE144A693763549 /* Core/Models/ResilixContact.swift in Sources */,
+				5170E5B2CCD14B81B297A955 /* Core/Models/MapResource.swift in Sources */,
+				2463A5E6EDEC497A86FD3737 /* Core/Models/LinkQuality.swift in Sources */,
+				8529D77C1E854909BC2DEE89 /* Core/Models/MeshMessage.swift in Sources */,
+				56AFD0C365674CE0A00BD572 /* Core/Models/DemoNode.swift in Sources */,
+				28F757EAD40141A1805DE43A /* Core/Models/DeliveryState.swift in Sources */,
+				DAA7FDFC21C94EB1837A1011 /* Core/Models/ResourceVerificationState.swift in Sources */,
+				D2C44AB006054E8E9FF795FB /* Core/Models/PacketPriority.swift in Sources */,
+				3D646D94FB4C4AF2A1EBDE11 /* Core/Utilities/Constants.swift in Sources */,
+				BD222003145B40B5A708689D /* Core/Utilities/ResilixError.swift in Sources */,
+				EBF5822A275F40EEAA5EDFF4 /* Core/Theme/ResilixTheme.swift in Sources */,
+				2A3D2AECBD264935BFC96997 /* Core/Persistence/PersistenceController.swift in Sources */,
+				E979BE11D1504DD28B70939C /* Core/Routing/DeduplicationStore.swift in Sources */,
+				27E7527965374302AFECAF3A /* Core/Routing/RelayQueue.swift in Sources */,
+				504E73CDB85E45108F64A206 /* Core/Routing/MeshRoutingEngine.swift in Sources */,
+				2C8321FD3D8B4DB4BC926B44 /* Core/Routing/RouteTable.swift in Sources */,
+				9BCBEDEA112946D78703A427 /* Core/Routing/PacketBuilder.swift in Sources */,
+				B582D171F4ED484A85771CDC /* Core/Routing/MeshPeerRegistry.swift in Sources */,
+				9FADCFB65A1841098BDF29EE /* Core/Routing/PacketValidator.swift in Sources */,
+				18585AD26BF64E18A75BDFEC /* Core/Services/SOSService.swift in Sources */,
+				AC698F2E7DE94FF39D12F0D4 /* Core/Services/DiagnosticsService.swift in Sources */,
+				2B95994F75D24317BE105704 /* Core/Services/DemoDataFactory.swift in Sources */,
+				FC9F422ECAF6475AADACE6B2 /* Core/Services/RelayManager.swift in Sources */,
+				3A6AD9CED64C4FB2B5DF92B8 /* Core/Services/SeverityScoringEngine.swift in Sources */,
+				F5F06A9881A4449FA990F67C /* Core/Services/OfflineFirstAidService.swift in Sources */,
+				0E04A5853DAB45858D84B73D /* Core/Services/AppLifecycleService.swift in Sources */,
+				BCB0B5B798404430B05FB316 /* Core/Services/MeshController.swift in Sources */,
+				0D6F3CCC46B34AFABEB1C7A6 /* Core/Services/DemoModeController.swift in Sources */,
+				B7C0CBFF58904818886B8D27 /* Core/Services/ResourceService.swift in Sources */,
+				5D86856E84E14AEFA0C2402D /* Core/Services/MessageService.swift in Sources */,
+				FB9140406D494CC78ACF2789 /* Core/Services/ConnectivityCoordinator.swift in Sources */,
+				1D21C41867BA4280B7301C0A /* Core/Services/PermissionService.swift in Sources */,
+				E9DF02852AFC4DA09FB89DE5 /* App/InfoPlist.swift in Sources */,
+				BE73242CA4984F0895E62176 /* App/ResilixApp.swift in Sources */,
+				91E2CD4DB1E74A18930774FD /* SharedUI/ResilixComponents.swift in Sources */,
+				40E3051454D5444B81E57E85 /* SharedUI/LogoView.swift in Sources */,
+				156CD5621AAF4773BD90EB58 /* Features/Mesh/RouteDetailView.swift in Sources */,
+				85AFD72E8B084A9EBF42008C /* Features/Mesh/MeshView.swift in Sources */,
+				AF7BDAC6AF7C40AEA1CA8B60 /* Features/Home/HomeView.swift in Sources */,
+				BBBEED28EFCF4FEC9136075C /* Features/Launch/SplashView.swift in Sources */,
+				6309474896734051BB97D34B /* Features/Nearby/NearbyView.swift in Sources */,
+				393229AC1DED49BE862C57E0 /* Features/Mesh/Mesh3DView.swift in Sources */,
+				6FDD268AFAD548958CEC9E1B /* Features/Assist/AssistView.swift in Sources */,
+				3454846191C145EA843F3AAC /* Features/Messages/MessagesView.swift in Sources */,
+				D48D850D5074436885C5F7E8 /* Features/Messages/MessageComposerView.swift in Sources */,
+				F1A2B3C4D5E6F7A8B9C0D1E2 /* Features/Auth/AuthViews.swift in Sources */,
+				E021412C2E5C4379933B7E9A /* Features/Messages/MessageThreadView.swift in Sources */,
+				ED320A4899FE4801838EA30A /* Features/CommandCenter/CommandCenterView.swift in Sources */,
+				4772283D8C394D2BBEA2A750 /* Features/CommandCenter/IncidentListView.swift in Sources */,
+				914355D67348461EBDCE7FD1 /* Features/CommandCenter/IncidentDetailView.swift in Sources */,
+				A0E96A17E77743EEBA916525 /* Features/Map/SurvivalMapView.swift in Sources */,
+				995E1D09111B421BB82E78F4 /* Features/Profile/SettingsView.swift in Sources */,
+				CD08F63949914B1990BB4589 /* Features/Profile/PrivacyView.swift in Sources */,
+				6CE51CDC8CF045AF8C559D11 /* Features/Profile/ProfileView.swift in Sources */,
+				8F78694BF2BF4D86AB1462D3 /* Features/Profile/PermissionStatusView.swift in Sources */,
+				792C42A85D934EF4A5FC80B1 /* Features/Profile/DiagnosticsView.swift in Sources */,
+				D4337D8ED45F49B7B2F23D12 /* Features/Profile/OnboardingView.swift in Sources */,
+				7DA00F91E55343FBBE3898EF /* Features/SOS/SOSView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1779B82DDE954CF9BE68CFC8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3A4ED110C1D34FA1A0EB4131 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5F318A859E4C4CEEA60D1B6C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = Resilix/Resilix.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = YES;
+				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
+				INFOPLIST_FILE = Resilix/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resilix.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		6EF009C5D1124E52A3613A7D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_ENTITLEMENTS = Resilix/Resilix.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = YES;
+				ENABLE_RESOURCE_ACCESS_LOCATION = YES;
+				INFOPLIST_FILE = Resilix/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.resilix.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		990F61241E72447598EB1703 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.resilix.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9D30DC08B1D245C4B3FFC674 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.resilix.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		07A39E4DA208438B9BD6F47A /* Build configuration list for PBXNativeTarget "ResilixTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				990F61241E72447598EB1703 /* Debug */,
+				9D30DC08B1D245C4B3FFC674 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6C54AC6649DA4A30BAC6E765 /* Build configuration list for PBXProject "Resilix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1779B82DDE954CF9BE68CFC8 /* Debug */,
+				3A4ED110C1D34FA1A0EB4131 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		99164327C29C4CA3BEA8FE62 /* Build configuration list for PBXNativeTarget "Resilix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F318A859E4C4CEEA60D1B6C /* Debug */,
+				6EF009C5D1124E52A3613A7D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6B71AFD0D4604E479789F94B /* Project object */;
+}

@@ -1,0 +1,636 @@
+import SwiftUI
+import MapKit
+
+// MARK: - Mesh color tokens
+// Bright, visibly distinct colors for each role / stat.
+private enum MeshColors {
+    static let you      = Color(hex: "22D3EE")   // vivid cyan
+    static let direct   = Color(hex: "22E36A")   // vivid green
+    static let relay    = Color(hex: "FB923C")   // vivid orange
+    static let multiHop = Color(hex: "A78BFA")   // vivid violet
+    /// Distinct color for the "Routes" stat (network paths info)
+    static let routes   = Color(hex: "F472B6")   // vivid pink
+
+    static func pin(for hop: MeshPeer.HopType) -> Color {
+        switch hop {
+        case .direct:    return direct
+        case .relay:     return relay
+        case .multiHop:  return multiHop
+        }
+    }
+}
+
+// MARK: - Mesh UI model — same data as the network diagram
+struct MeshPeer: Identifiable {
+    let id: String
+    let name: String
+    let hopType: HopType
+    let signalPercent: Int
+    let isRelay: Bool
+    let distance: String
+    let connectionLabel: String
+    let accentColor: Color
+    let coordinate: CLLocationCoordinate2D
+
+    enum HopType: String {
+        case direct = "Direct"
+        case relay = "Relay"
+        case multiHop = "2+ Hop"
+    }
+}
+
+// MARK: - Mesh Network View
+struct MeshView: View {
+    @EnvironmentObject var app: ResilixAppModel
+    @State private var peers: [MeshPeer] = []
+    @State private var selectedPeer: MeshPeer?
+    @State private var autoRoute: Bool = true
+    @State private var relayEnabled: Bool = false
+    @State private var pulse: Bool = false
+    @State private var hasAppeared: Bool = false
+
+    private let userCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                ResilixTheme.backgroundPrimary
+                    .ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: ResilixTheme.space20) {
+                        headerSection
+                            .padding(.top, ResilixTheme.space8)
+
+                        networkMapCard
+
+                        statsRow
+
+                        actionCards
+
+                        Spacer(minLength: ResilixTheme.space24)
+                    }
+                    .padding(.bottom, 100)
+                }
+            }
+            .navigationBarHidden(true)
+            .task { await loadPeers() }
+            .onAppear {
+                if !hasAppeared {
+                    hasAppeared = true
+                    withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
+                        pulse = true
+                    }
+                }
+            }
+            .sheet(item: $selectedPeer) { peer in
+                MeshDeviceDetailSheet(peer: peer)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground(ResilixTheme.backgroundPrimary)
+            }
+        }
+    }
+
+    // MARK: - Header
+    private var headerSection: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Mesh Network")
+                    .font(ResilixTheme.font(32, .bold))
+                    .foregroundStyle(ResilixTheme.textPrimary)
+                HStack(spacing: 8) {
+                    HStack(spacing: 5) {
+                        Circle()
+                            .fill(ResilixTheme.successGreen)
+                            .frame(width: 7, height: 7)
+                            .scaleEffect(pulse ? 1.25 : 0.85)
+                        Text("Healthy")
+                            .font(ResilixTheme.font(13, .semibold))
+                            .foregroundStyle(ResilixTheme.successGreen)
+                    }
+                    Text("· \(peers.count) devices · 3 connections")
+                        .font(ResilixTheme.font(13, .regular))
+                        .foregroundStyle(ResilixTheme.textTertiary)
+                }
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 8) {
+                MeshToggleChip(label: "Auto Route", isOn: $autoRoute)
+                MeshToggleChip(label: "Relay", isOn: $relayEnabled)
+            }
+        }
+        .padding(.horizontal, ResilixTheme.space20)
+    }
+
+    // MARK: - Network Map Card (Apple Maps)
+    private var networkMapCard: some View {
+        MeshAppleMapView(peers: peers, userCoordinate: userCoordinate, pulse: pulse) { peer in
+            selectedPeer = peer
+        }
+        .padding(.horizontal, ResilixTheme.space20)
+    }
+
+    // MARK: - Stats Row
+    // Each stat number uses a distinct color tied to its meaning so they're
+    // visually different at a glance.
+    private var statsRow: some View {
+        HStack(spacing: 10) {
+            MeshStatBox(value: "\(peers.count)", label: "Members", color: MeshColors.direct)
+            MeshStatBox(value: "94%", label: "Health", color: MeshColors.you)
+            MeshStatBox(value: "14", label: "Routes", color: MeshColors.routes)
+            MeshStatBox(value: "\(app.relayManager.forwardedCount)", label: "Relayed", color: MeshColors.relay)
+        }
+        .padding(.horizontal, ResilixTheme.space20)
+    }
+
+    // MARK: - Action Cards
+    private var actionCards: some View {
+        VStack(spacing: 10) {
+            MeshActionRow(icon: "viewfinder", title: "Scan for Devices", subtitle: "Discover new mesh peers") {}
+            MeshActionRow(icon: "waveform.path.ecg", title: "Network Diagnostics", subtitle: "Check routes & latency") {}
+            MeshActionRow(icon: "paperplane.fill", title: "Send Test Message", subtitle: "Watch packet travel the mesh") {}
+        }
+        .padding(.horizontal, ResilixTheme.space20)
+    }
+
+    // MARK: - Data
+    private func loadPeers() async {
+        // Demo data — the same names as the image, scattered around the user location.
+        let base = userCoordinate
+        peers = [
+            MeshPeer(
+                id: "sarah",
+                name: "Sarah K.",
+                hopType: .direct,
+                signalPercent: 95,
+                isRelay: false,
+                distance: "120m",
+                connectionLabel: "Direct",
+                accentColor: MeshColors.direct,
+                coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0018, longitude: base.longitude - 0.0002)
+            ),
+            MeshPeer(
+                id: "marcus",
+                name: "Marcus D.",
+                hopType: .direct,
+                signalPercent: 80,
+                isRelay: false,
+                distance: "340m",
+                connectionLabel: "1 hop",
+                accentColor: MeshColors.direct,
+                coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0011, longitude: base.longitude + 0.0024)
+            ),
+            MeshPeer(
+                id: "resbot",
+                name: "ResBot-α",
+                hopType: .relay,
+                signalPercent: 72,
+                isRelay: true,
+                distance: "510m",
+                connectionLabel: "Relay",
+                accentColor: MeshColors.relay,
+                coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0028, longitude: base.longitude + 0.0012)
+            ),
+            MeshPeer(
+                id: "james",
+                name: "James R.",
+                hopType: .relay,
+                signalPercent: 64,
+                isRelay: false,
+                distance: "780m",
+                connectionLabel: "2+ Hop",
+                accentColor: MeshColors.relay,
+                coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0010, longitude: base.longitude - 0.0026)
+            ),
+            MeshPeer(
+                id: "emma",
+                name: "Emma T.",
+                hopType: .multiHop,
+                signalPercent: 52,
+                isRelay: false,
+                distance: "1.1km",
+                connectionLabel: "2+ Hop",
+                accentColor: MeshColors.multiHop,
+                coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0034, longitude: base.longitude - 0.0008)
+            ),
+            MeshPeer(
+                id: "dev47",
+                name: "Dev-47",
+                hopType: .multiHop,
+                signalPercent: 41,
+                isRelay: false,
+                distance: "1.3km",
+                connectionLabel: "2+ Hop",
+                accentColor: MeshColors.multiHop,
+                coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0026, longitude: base.longitude + 0.0010)
+            ),
+        ]
+    }
+}
+
+// MARK: - Toggle Chip (used for Auto Route & Relay)
+private struct MeshToggleChip: View {
+    let label: String
+    @Binding var isOn: Bool
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(label)
+                .font(ResilixTheme.font(11, .semibold))
+                .foregroundStyle(ResilixTheme.textSecondary)
+                .fixedSize()
+            Toggle("", isOn: $isOn.animation(.easeInOut(duration: 0.18)))
+                .labelsHidden()
+                .tint(ResilixTheme.brandCyan)
+                .scaleEffect(0.8)
+        }
+    }
+}
+
+// MARK: - Stat Box
+private struct MeshStatBox: View {
+    let value: String
+    let label: String
+    let color: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(value)
+                .font(ResilixTheme.font(24, .heavy))
+                .foregroundStyle(color)
+            Text(label)
+                .font(ResilixTheme.font(11, .medium))
+                .foregroundStyle(ResilixTheme.textTertiary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.white.opacity(0.018))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(Color.white.opacity(0.06), lineWidth: 0.6)
+                )
+        )
+        .liquidGlassRounded(cornerRadius: 14, interactive: false)
+    }
+}
+
+// MARK: - Action Row
+private struct MeshActionRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 14) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(ResilixTheme.brandCyan.opacity(0.16))
+                        .frame(width: 44, height: 44)
+                    Image(systemName: icon)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(ResilixTheme.brandCyan)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(ResilixTheme.font(16, .semibold))
+                        .foregroundStyle(ResilixTheme.textPrimary)
+                    Text(subtitle)
+                        .font(ResilixTheme.font(12, .regular))
+                        .foregroundStyle(ResilixTheme.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(ResilixTheme.textTertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.white.opacity(0.018))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(Color.white.opacity(0.04), lineWidth: 0.6)
+                    )
+            )
+            .liquidGlassRounded(cornerRadius: 18, interactive: true)
+        }
+        .buttonStyle(PressScaleStyle())
+    }
+}
+
+// MARK: - Apple Maps Network View
+struct MeshAppleMapView: View {
+    let peers: [MeshPeer]
+    let userCoordinate: CLLocationCoordinate2D
+    let pulse: Bool
+    let onSelect: (MeshPeer) -> Void
+
+    @State private var cameraPosition: MapCameraPosition = .region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090),
+            span: MKCoordinateSpan(latitudeDelta: 0.012, longitudeDelta: 0.012)
+        )
+    )
+
+    private func lineColor(for hop: MeshPeer.HopType) -> Color {
+        MeshColors.pin(for: hop)
+    }
+
+    var body: some View {
+        VStack(spacing: 14) {
+            // The map
+            ZStack(alignment: .topTrailing) {
+                Map(position: $cameraPosition, interactionModes: [.pan, .zoom]) {
+                    // "You" center node
+                    Annotation("You", coordinate: userCoordinate) {
+                        YouMapPin()
+                    }
+
+                    // Dotted mesh connection lines (You → peer)
+                    ForEach(peers) { peer in
+                        MapPolyline(coordinates: [userCoordinate, peer.coordinate])
+                            .stroke(
+                                lineColor(for: peer.hopType).opacity(0.65),
+                                style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [5, 4])
+                            )
+                    }
+
+                    // Peer annotations
+                    ForEach(peers) { peer in
+                        Annotation(peer.name, coordinate: peer.coordinate) {
+                            PeerMapPin(peer: peer, pulse: pulse)
+                                .onTapGesture {
+                                    onSelect(peer)
+                                }
+                        }
+                    }
+                }
+                .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+                .colorScheme(.dark)
+                .allowsHitTesting(true)
+                .accessibilityLabel("Mesh network map with \(peers.count) devices")
+            }
+            .frame(height: 360)
+            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(Color.white.opacity(0.05), lineWidth: 0.6)
+            )
+            .liquidGlassRounded(cornerRadius: 22, interactive: false)
+
+            // Legend
+            HStack(spacing: 18) {
+                MeshLegendItem(color: MeshColors.you, label: "You")
+                MeshLegendItem(color: MeshColors.direct, label: "Direct")
+                MeshLegendItem(color: MeshColors.relay, label: "Relay")
+                MeshLegendItem(color: MeshColors.multiHop, label: "2+ Hop")
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+}
+
+// MARK: - "You" center pin (Apple Maps iPhone glyph)
+private struct YouMapPin: View {
+    @State private var pulse = false
+
+    var body: some View {
+        ZStack {
+            // Pulsing halo behind the iPhone glyph (Find My style)
+            Circle()
+                .fill(MeshColors.you.opacity(0.20))
+                .frame(width: 56, height: 56)
+                .scaleEffect(pulse ? 1.15 : 0.9)
+                .opacity(pulse ? 0.4 : 0.85)
+            // iPhone glyph — white face, your-color body, matches Find My
+            Image(systemName: "iphone.circle.fill")
+                .font(.system(size: 38))
+                .foregroundStyle(.white, MeshColors.you)
+                .shadow(color: ResilixTheme.cyanGlowStrong, radius: 6)
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
+                pulse = true
+            }
+        }
+        .accessibilityLabel("Your device")
+    }
+}
+
+// MARK: - Peer pin (Apple Maps iPhone glyph)
+private struct PeerMapPin: View {
+    let peer: MeshPeer
+    let pulse: Bool
+
+    private var pinColor: Color {
+        MeshColors.pin(for: peer.hopType)
+    }
+
+    // Find My style: iPhone glyph for normal peers, laptop for relays.
+    private var pinIcon: String {
+        if peer.isRelay { return "laptopcomputer.circle.fill" }
+        switch peer.hopType {
+        case .direct:    return "iphone.circle.fill"
+        case .relay:     return "laptopcomputer.circle.fill"
+        case .multiHop:  return "iphone.gen2.circle.fill"
+        }
+    }
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Image(systemName: pinIcon)
+                .font(.system(size: 30))
+                .foregroundStyle(.white, pinColor)
+                .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
+                .scaleEffect(pulse ? 1.06 : 1.0)
+            Text(peer.name)
+                .font(ResilixTheme.font(10, .semibold))
+                .foregroundStyle(ResilixTheme.textPrimary)
+                .padding(.horizontal, 5)
+                .padding(.vertical, 1.5)
+                .background(
+                    Capsule()
+                        .fill(Color.black.opacity(0.55))
+                )
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(peer.name), \(peer.connectionLabel), \(peer.signalPercent) percent signal")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+// MARK: - Legend
+private struct MeshLegendItem: View {
+    let color: Color
+    let label: String
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text(label)
+                .font(ResilixTheme.font(11, .medium))
+                .foregroundStyle(ResilixTheme.textSecondary)
+        }
+    }
+}
+
+// MARK: - Device Detail Sheet (Marcus D. style)
+struct MeshDeviceDetailSheet: View {
+    let peer: MeshPeer
+    @Environment(\.dismiss) private var dismiss
+
+    private var initials: String {
+        let parts = peer.name.split(separator: " ").filter { $0 != "&" }
+        let first = parts.first?.first.map(String.init) ?? "?"
+        let second = parts.count > 1 ? parts[1].first.map(String.init) ?? "" : ""
+        return (first + second).uppercased()
+    }
+
+    private var hopCount: String {
+        switch peer.hopType {
+        case .direct: return "1 hop"
+        case .relay: return "1 hop"
+        case .multiHop: return "2 hops"
+        }
+    }
+
+    private var relayLabel: String {
+        peer.isRelay ? "Active" : "Limited"
+    }
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 20) {
+                Spacer(minLength: 4)
+                HStack(alignment: .center, spacing: 14) {
+                    ZStack {
+                        Circle()
+                            .fill(AvatarView.gradient(for: peer.name))
+                            .frame(width: 56, height: 56)
+                            .shadow(color: AvatarView.color(for: peer.name).opacity(0.45), radius: 8, y: 2)
+                        Text(initials)
+                            .font(ResilixTheme.font(20, .bold))
+                            .foregroundStyle(.white)
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(peer.name)
+                            .font(ResilixTheme.font(24, .bold))
+                            .foregroundStyle(ResilixTheme.textPrimary)
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(ResilixTheme.successGreen)
+                                .frame(width: 7, height: 7)
+                            Text("Connected")
+                                .font(ResilixTheme.font(13, .semibold))
+                                .foregroundStyle(ResilixTheme.successGreen)
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, ResilixTheme.space20)
+
+                // Stats
+                HStack(spacing: 10) {
+                    MeshDetailStat(value: hopCount, label: "Hop Count")
+                    MeshDetailStat(value: "\(peer.signalPercent)%", label: "Signal")
+                    MeshDetailStat(value: relayLabel, label: "Relay")
+                }
+                .padding(.horizontal, ResilixTheme.space20)
+
+                // Buttons
+                HStack(spacing: 12) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Message")
+                            .font(ResilixTheme.font(15, .heavy))
+                            .tracking(0.6)
+                            .foregroundStyle(ResilixTheme.textOnAccent)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(
+                                LinearGradient(
+                                    colors: [ResilixTheme.brandCyan, ResilixTheme.brandTeal],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .liquidGlassRounded(cornerRadius: 16, interactive: true)
+                            .shadow(color: ResilixTheme.cyanGlowStrong, radius: 10, y: 4)
+                    }
+                    .buttonStyle(PressScaleStyle())
+
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("View Route")
+                            .font(ResilixTheme.font(15, .heavy))
+                            .tracking(0.6)
+                            .foregroundStyle(ResilixTheme.textPrimary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 52)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(Color.white.opacity(0.025))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                            .stroke(Color.white.opacity(0.05), lineWidth: 0.7)
+                                    )
+                            )
+                            .liquidGlassRounded(cornerRadius: 16, interactive: true)
+                    }
+                    .buttonStyle(PressScaleStyle())
+                }
+                .padding(.horizontal, ResilixTheme.space20)
+                .padding(.top, 4)
+            }
+            .padding(.vertical, ResilixTheme.space20)
+        }
+        .background(ResilixTheme.backgroundPrimary)
+    }
+}
+
+// MARK: - Detail Stat (used inside the sheet)
+private struct MeshDetailStat: View {
+    let value: String
+    let label: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(ResilixTheme.font(18, .bold))
+                .foregroundStyle(ResilixTheme.textPrimary)
+            Text(label)
+                .font(ResilixTheme.font(11, .medium))
+                .foregroundStyle(ResilixTheme.textTertiary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.white.opacity(0.018))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(Color.white.opacity(0.04), lineWidth: 0.6)
+                )
+        )
+        .liquidGlassRounded(cornerRadius: 14, interactive: false)
+    }
+}
+
+// MARK: - Previews
+struct MeshView_Previews: PreviewProvider {
+    static var previews: some View {
+        MeshView().environmentObject(ResilixAppModel())
+    }
+}

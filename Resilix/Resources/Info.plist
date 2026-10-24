@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>Resilix</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.resilix.app</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Resilix uses Bluetooth to discover nearby devices for offline mesh messaging without internet.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Resilix uses Bluetooth to connect to nearby devices for mesh relay.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_resilix._tcp</string>
+		<string>_resilix-mesh._tcp</string>
+	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Resilix uses local network discovery for peer-to-peer Wi-Fi mesh connections.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Resilix uses location to share approximate position in SOS and map reports only with your consent.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Resilix uses location to share approximate position in SOS and map reports only with your consent.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>bluetooth-peripheral</string>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>AccentColor</string>
+		<key>UIImageName</key>
+		<string>ResilixLogoPlaceholder</string>
+		<key>UIImageRespectsSafeAreaInsets</key>
+		<true/>
+	</dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>
