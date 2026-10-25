@@ -194,7 +194,7 @@ class ResilixAppModel: ObservableObject {
 
         #if DEBUG
         if settings.isDemoMode {
-            await demoController.startDemo()
+            demoController.startDemo()
         }
         #endif
     }

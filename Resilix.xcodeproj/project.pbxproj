@@ -90,6 +90,7 @@
 		EBF5822A275F40EEAA5EDFF4 /* Core/Theme/ResilixTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4935F40836A340A7AD5E91B8 /* Core/Theme/ResilixTheme.swift */; };
 		ED320A4899FE4801838EA30A /* Features/CommandCenter/CommandCenterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17A7839FED548238AB0BB82 /* Features/CommandCenter/CommandCenterView.swift */; };
 		F1A2B3C4D5E6F7A8B9C0D1E2 /* Features/Auth/AuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E8C9A2B3D4E5F6A7B8C9D0 /* Features/Auth/AuthViews.swift */; };
+		A7B8C9D0E1F2031425364758 /* Features/Auth/PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C9D0E1F20314253647589A /* Features/Auth/PaywallView.swift */; };
 		F5F06A9881A4449FA990F67C /* Core/Services/OfflineFirstAidService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC24173AA5924AB592803D9A /* Core/Services/OfflineFirstAidService.swift */; };
 		FA15AE2EDCDC4222BD5C20DD /* Core/Models/MeshConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B063AC94BAE0440A96779E09 /* Core/Models/MeshConnectionState.swift */; };
 		FB9140406D494CC78ACF2789 /* Core/Services/ConnectivityCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70838A7248E4D4D8D9D97E0 /* Core/Services/ConnectivityCoordinator.swift */; };
@@ -133,6 +134,7 @@
 		093585264B4C46D1B5976C93 /* Features/Messages/MessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Messages/MessageComposerView.swift; sourceTree = "<group>"; };
 		0C3A9C93E0F64F07A2AF4959 /* Core/Models/DiagnosticsSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/DiagnosticsSnapshot.swift; sourceTree = "<group>"; };
 		10E8C9A2B3D4E5F6A7B8C9D0 /* Features/Auth/AuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Auth/AuthViews.swift; sourceTree = "<group>"; };
+		B8C9D0E1F20314253647589A /* Features/Auth/PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Auth/PaywallView.swift; sourceTree = "<group>"; };
 		12F43287621B4A29AFCFBB0A /* Core/Routing/DeduplicationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/DeduplicationStore.swift; sourceTree = "<group>"; };
 		14FCD3611AAC42D7AA9E237E /* Core/Utilities/Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Utilities/Constants.swift; sourceTree = "<group>"; };
 		19A30AB5AE5A4E7E9721B473 /* Features/Profile/DiagnosticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/DiagnosticsView.swift; sourceTree = "<group>"; };
@@ -377,6 +379,7 @@
 				9428A723006447A883F02251 /* Features/Messages/MessagesView.swift */,
 				093585264B4C46D1B5976C93 /* Features/Messages/MessageComposerView.swift */,
 				10E8C9A2B3D4E5F6A7B8C9D0 /* Features/Auth/AuthViews.swift */,
+				B8C9D0E1F20314253647589A /* Features/Auth/PaywallView.swift */,
 				5D462C01DC4141A1BE8B8E45 /* Features/Messages/MessageThreadView.swift */,
 				E17A7839FED548238AB0BB82 /* Features/CommandCenter/CommandCenterView.swift */,
 				35541D0734A349EAB6E7F9CC /* Features/CommandCenter/IncidentListView.swift */,
@@ -647,6 +650,7 @@
 				3454846191C145EA843F3AAC /* Features/Messages/MessagesView.swift in Sources */,
 				D48D850D5074436885C5F7E8 /* Features/Messages/MessageComposerView.swift in Sources */,
 				F1A2B3C4D5E6F7A8B9C0D1E2 /* Features/Auth/AuthViews.swift in Sources */,
+				A7B8C9D0E1F2031425364758 /* Features/Auth/PaywallView.swift in Sources */,
 				E021412C2E5C4379933B7E9A /* Features/Messages/MessageThreadView.swift in Sources */,
 				ED320A4899FE4801838EA30A /* Features/CommandCenter/CommandCenterView.swift in Sources */,
 				4772283D8C394D2BBEA2A750 /* Features/CommandCenter/IncidentListView.swift in Sources */,
