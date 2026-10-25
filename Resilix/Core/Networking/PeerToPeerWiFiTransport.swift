@@ -131,7 +131,10 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
 
     private func startBrowser() {
         guard browser == nil else { return }
-        let descriptor = NWBrowser.Descriptor.bonjour(type: ResilixConstants.bonjourServiceType, domain: nil)
+        // `.bonjourWithTXTRecord` is required: a plain `.bonjour` browser reports
+        // empty metadata, so the node id would fall back to an endpoint
+        // description that never matches the peer again.
+        let descriptor = NWBrowser.Descriptor.bonjourWithTXTRecord(type: ResilixConstants.bonjourServiceType, domain: nil)
         let browser = NWBrowser(for: descriptor, using: makeParameters())
         self.browser = browser
         browser.stateUpdateHandler = { [weak self] state in
@@ -154,9 +157,14 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
 
     private func handle(results: Set<NWBrowser.Result>) {
         for result in results {
-            let metadata = result.metadata as? NWTXTRecord
-            let peerID = metadata?["node"] ?? result.endpoint.debugDescription
-            let alias = metadata?["alias"] ?? "Resilix Node"
+            var txt: [String: String] = [:]
+            if case let .bonjour(record) = result.metadata {
+                txt = record.dictionary
+            }
+            let peerID = txt["node"]
+                ?? Self.nodeID(from: result.endpoint)
+                ?? result.endpoint.debugDescription
+            let alias = txt["alias"] ?? "Resilix Node"
             nodes[peerID] = MeshNode(id: peerID,
                                      alias: alias,
                                      displayName: alias,
@@ -174,7 +182,9 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
             let listener = try NWListener(using: makeParameters())
             self.listener = listener
             let txt = NWTXTRecord(["node": nodeID, "alias": alias, "v": String(ResilixConstants.protocolVersion)])
-            listener.service = NWListener.Service(name: "Resilix", type: ResilixConstants.bonjourServiceType, txtRecord: txt)
+            listener.service = NWListener.Service(name: BluetoothTransport.advertisedName(nodeID: nodeID),
+                                                  type: ResilixConstants.bonjourServiceType,
+                                                  txtRecord: txt)
             listener.stateUpdateHandler = { [weak self] state in
                 if case .failed(let error) = state {
                     self?.eventCont?.yield(.error(String(format: L("Listener failed: %@"), error.localizedDescription)))
@@ -187,6 +197,12 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
         } catch {
             eventCont?.yield(.error(String(format: L("Could not start local network listener: %@"), error.localizedDescription)))
         }
+    }
+
+    /// Recovers the node id from an advertised Bonjour service name.
+    private static func nodeID(from endpoint: NWEndpoint) -> String? {
+        guard case let .service(name, _, _, _) = endpoint else { return nil }
+        return BluetoothTransport.nodeID(fromAdvertisedName: name)
     }
 
     private func accept(_ connection: NWConnection) {

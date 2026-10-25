@@ -26,7 +26,7 @@ enum PacketCrypto {
             String(packet.payloadEnvelope.count)
         ].joined(separator: "|")
         var data = Data(header.utf8)
-        data.append(SHA256.hash(data: packet.payloadEnvelope))
+        data.append(contentsOf: SHA256.hash(data: packet.payloadEnvelope))
         return data
     }
 

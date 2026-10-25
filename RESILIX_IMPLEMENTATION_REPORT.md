@@ -60,7 +60,55 @@ The remaining literal-scan hits are non-defects: SF Symbol names, interpolation-
 | The map's "You" pin was the constant `CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)` and its six peers ("Sarah K.", "Marcus D.", "ResBot-α", "James R.", "Shelter 1/2") were generated at fixed offsets from it | The map showed an invented location and fabricated people — exactly the simulated state the brief forbids. | The pin uses `LocationService.coordinate`; markers come from real mesh peers that shared a position and from persisted `MapResource` entries. A node without coordinates is simply not drawn. The camera recentres once, on the first real fix. |
 | `ResilixAppModel` did not forward its child services' `objectWillChange` | Only `MeshView` subscribed directly, so peer/message/location changes did not refresh the other screens until an unrelated change touched the app model. | `bridgeChildChanges()` republishes the 14 child services through the app model. |
 
+### 0.4 Compile errors reported by Xcode, and the defects behind them
+
+The user's build reported twelve errors. They were not twelve independent
+mistakes — they were **two root causes**, both in code written against APIs
+that had never been checked symbol by symbol.
+
+| Reported error | Root cause | Resolution |
+|---|---|---|
+| `PacketCrypto.swift:29 Missing argument label 'contentsOf:'` | `Data.append(_:)` does not exist for a `SHA256.Digest`; the digest is a `Sequence`, so the labelled overload is required. | `data.append(contentsOf: SHA256.hash(data: payloadEnvelope))`. |
+| `Could not find type 'CBPeripheralManagerCentral'` (×3) | **The type does not exist.** CoreBluetooth's central object is `CBCentral`. | `subscribedCentrals` and the notification buffer now use `CBCentral`. |
+| `Could not find type 'CBPeripheralManagerCentralWriteRequest'` | **The type does not exist.** A write arrives as `[CBATTRequest]`. | `peripheralManager(_:didReceiveWrite:)` takes and answers `CBATTRequest`s. |
+| `Cannot convert 'CBUUID' to 'CBMutableCharacteristic'` (×2) | `updateValue(_:for:onSubscribedCentrals:)` needs the **characteristic object**, not its UUID. | The published `CBMutableCharacteristic` is retained as `outboundCharacteristic`. |
+| `'nearly matches optional requirement'` (×3) | A consequence of the invented types above; once the signatures use real types, the protocol requirements match exactly. | Resolved by the same edit. |
+| `Extensions must not contain stored properties` (`:471`) | `nodeIDByCentralUUID` was declared inside the delegate `extension`. | Moved into the class body. |
+
+Two of these were only the visible half. Checking the radio code against the
+documentation surfaced defects that compile cleanly and fail silently in the
+field:
+
+| Latent defect | Impact | Fix |
+|---|---|---|
+| The BLE **peripheral never published a GATT service**. It called `startAdvertising` only, and the "characteristic" was a bare `CBUUID`. | A phone could discover the advertisement, connect, and then find no characteristic to write to or subscribe to. The link was permanently dead — no frame could ever cross it, no matter how correct the rest of the mesh was. | `publishServiceIfNeeded()` builds a `CBMutableCharacteristic` (`.write`, `.notify`) inside a `CBMutableService` and publishes it; advertising starts only from `peripheralManager(_:didAdd:error:)`. Notifications go through `enqueueNotifications` (64-frame buffer) and are drained by `peripheralManagerIsReady(toUpdateSubscribers:)`. |
+| The peer-to-peer Wi-Fi browser used `.bonjour` instead of `.bonjourWithTXTRecord`. | `NWBrowser` returns **no metadata** for a plain Bonjour browse — silently, never as an error. Every peer ID therefore degraded to `endpoint.debugDescription`, so two phones could not agree on each other's identities. | The descriptor is `.bonjourWithTXTRecord`; results are read with `if case .bonjour(record) = result.metadata`, falling back to the advertised service name (which encodes the node ID). |
+| `VoiceService.stopRecording()` read `recorder.currentTime` **after** `recorder.stop()`. | `AVAudioRecorder` resets `currentTime` to zero on stop, so the duration was always 0 s and the `> 0.3` guard discarded **every** voice message. Recording appeared to work and always sent nothing. | The duration is captured before `stop()`. |
+| `audioPlayer(_:decodedByteCount:totalByteCount:)` is not an `AVAudioPlayerDelegate` method. | The method was never called; the real decode-error callback never fired, so a corrupt received voice note failed silently. | Replaced with `audioPlayerDecodeErrorDidOccur(_:error:)`, which reports the failure through `lastErrorMessage`. |
+| `ResilixTheme.space6` was referenced twice in `OfflineMapSheet.swift`, but the theme defines only `space4/8/10/12/16/20/24/32/40/48`. | A hard compile error in the offline-map sheet. | Both sites use `space8`, the neighbouring token in that card's vertical rhythm. |
+
+A near miss worth recording: while auditing call sites, `NearbyDevice(name:…)`
+looked like an argument-label error and a new initialiser was written for it.
+The type **already declared that initialiser** a few lines below; the "fix"
+would have produced an `invalid redeclaration` error. It was caught by
+re-reading the declaration and reverted before committing. This is why §13
+does not claim that every remaining type error has been found.
+
 **No claim of a successful build is made anywhere in this report.** The parser is a *syntax* gate, not a type-checker: it cannot catch a type mismatch, a wrong argument label, or a missing symbol. Those risks are enumerated in §13.
+
+Two checkers were added to narrow that gap without a compiler:
+
+- `Tools/initcheck.py` — for every struct that declares its own initialiser
+  (which suppresses the memberwise one), every call site's argument labels
+  must match a declared initialiser. It also rejects duplicate initialiser
+  signatures. Validated against a synthetic file: 3 faulty call sites flagged,
+  2 correct ones accepted.
+- `Tools/enumcheck.py` — every explicitly qualified enum reference
+  (`Type.member`, 1143 of them) must resolve to a declared case or member.
+  This is what caught `ResilixTheme.space6`.
+
+Neither tool replaces `xcodebuild`; both close specific, previously-shipped
+failure modes.
 
 ---
 
@@ -298,5 +346,5 @@ All 64 pass the offline syntax gate. **None has been run** — that requires Xco
 ## 14. Repository state
 
 - Branch `arena/2eab602c-resilix`, pushed to `origin`. `reslix_post_audit` commit contains the entire implementation, the tooling under `Tools/`, and the final localisation sweep (chunk19 + chunk20, raw-value label patch, String-ternary fixes).
-- Verification at time of writing: `swiftcheck.py` 115/115 OK · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Verification at time of writing: `swiftcheck.py` 114/114 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1143 qualified references, 0 unknown · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
 - Download in Xcode: clone the branch and open `Resilix.xcodeproj`; the project carries **no SwiftPM dependencies**, so it resolves and builds with the stock iOS SDK. Signing is `CODE_SIGN_STYLE = Automatic` with no `DEVELOPMENT_TEAM`, so pick your own team in *Signing & Capabilities* before running on a device.

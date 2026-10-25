@@ -77,7 +77,7 @@ struct OfflineMapSheet: View {
     // MARK: - Status
 
     private var statusCard: some View {
-        VStack(alignment: .leading, spacing: ResilixTheme.space6) {
+        VStack(alignment: .leading, spacing: ResilixTheme.space8) {
             HStack {
                 Text(service.activePack == nil ? L("No offline map installed") : L("Offline map active"))
                     .font(ResilixTheme.font(16, .semibold))
@@ -176,7 +176,7 @@ struct OfflineMapSheet: View {
     // MARK: - Pack card
 
     private func packCard(_ pack: MapPackDescriptor) -> some View {
-        VStack(alignment: .leading, spacing: ResilixTheme.space6) {
+        VStack(alignment: .leading, spacing: ResilixTheme.space8) {
             HStack {
                 Text(pack.name)
                     .font(ResilixTheme.font(15, .semibold))

@@ -31,7 +31,16 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
     private var nodes: [String: MeshNode] = [:]
     private var peripherals: [String: CBPeripheral] = [:]
     private var characteristics: [String: CBCharacteristic] = [:]
-    private var subscribedCentrals: [String: CBPeripheralManagerCentral] = [:]
+    private var subscribedCentrals: [String: CBCentral] = [:]
+    /// GATT objects published by the peripheral role.
+    /// `updateValue(_:for:onSubscribedCentrals:)` needs the concrete
+    /// characteristic, not its UUID.
+    private var outboundCharacteristic: CBMutableCharacteristic?
+    private var publishedService: CBMutableService?
+    /// Centrals seen by the peripheral role, keyed by their Bluetooth UUID.
+    private var nodeIDByCentralUUID: [UUID: String] = [:]
+    /// Frames the transmit queue could not accept yet.
+    private var pendingNotifications: [(data: Data, central: CBCentral)] = []
     private var hellos: [String: PeerHello] = [:]
     private var transportIDByNodeID: [String: String] = [:]
     private var nodeIDByTransportID: [String: String] = [:]
@@ -175,8 +184,10 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
                     return
                 }
                 if let central = self.subscribedCentrals[transportID] {
-                    for frame in frames {
-                        self.peripheralManager?.updateValue(frame, for: self.characteristicUUID, onSubscribedCentrals: [central])
+                    guard self.enqueueNotifications(frames, to: central) else {
+                        continuation.resume(throwing: ResilixError.transportUnavailable(
+                            String(format: L("Bluetooth send queue is full for %@"), peerID)))
+                        return
                     }
                     continuation.resume()
                     return
@@ -193,10 +204,59 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
 
     private func startAdvertisingIfPossible() {
         guard let peripheralManager, peripheralManager.state == .poweredOn, !nodeID.isEmpty else { return }
+        // The GATT service has to exist before advertising. Otherwise a central
+        // finds the service UUID in the advertisement, connects and discovers
+        // no characteristic at all - the link would never carry a frame.
+        // `peripheralManager(_:didAdd:error:)` re-enters this method once the
+        // stack confirmed the service.
+        guard publishedService != nil else {
+            publishServiceIfNeeded(peripheralManager)
+            return
+        }
+        guard !peripheralManager.isAdvertising else { return }
         peripheralManager.startAdvertising([
             CBAdvertisementDataServiceUUIDsKey: [serviceUUID],
             CBAdvertisementDataLocalNameKey: BluetoothTransport.advertisedName(nodeID: nodeID)
         ])
+    }
+
+    /// Creates and publishes the writable/notifying characteristic exactly once.
+    private func publishServiceIfNeeded(_ peripheralManager: CBPeripheralManager) {
+        guard publishedService == nil else { return }
+        let characteristic = CBMutableCharacteristic(type: characteristicUUID,
+                                                     properties: [.write, .notify],
+                                                     value: nil,
+                                                     permissions: [.writeable])
+        let service = CBMutableService(type: serviceUUID, primary: true)
+        service.characteristics = [characteristic]
+        outboundCharacteristic = characteristic
+        publishedService = service
+        peripheralManager.add(service)
+    }
+
+    /// Hands frames to the Bluetooth stack, buffering whatever it cannot take
+    /// right now (the stack returns `false` when its transmit queue is full).
+    @discardableResult
+    private func enqueueNotifications(_ frames: [Data], to central: CBCentral) -> Bool {
+        guard let characteristic = outboundCharacteristic else { return false }
+        for frame in frames {
+            if let manager = peripheralManager,
+               manager.updateValue(frame, for: characteristic, onSubscribedCentrals: [central]) {
+                continue
+            }
+            guard pendingNotifications.count < 64 else { return false }
+            pendingNotifications.append((frame, central))
+        }
+        return true
+    }
+
+    /// Called by the stack when the transmit queue has room again.
+    private func flushPendingNotifications() {
+        guard let characteristic = outboundCharacteristic, let manager = peripheralManager else { return }
+        while let next = pendingNotifications.first {
+            guard manager.updateValue(next.data, for: characteristic, onSubscribedCentrals: [next.central]) else { return }
+            pendingNotifications.removeFirst()
+        }
     }
 
     static func advertisedName(nodeID: String) -> String { "Resilix:\(nodeID)" }
@@ -283,7 +343,7 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
         if let peripheral = peripherals[transportID], let characteristic = characteristics[transportID] {
             peripheral.writeValue(frame, for: characteristic, type: .withResponse)
         } else if let central = subscribedCentrals[transportID] {
-            peripheralManager?.updateValue(frame, for: characteristicUUID, onSubscribedCentrals: [central])
+            enqueueNotifications([frame], to: central)
         }
     }
 }
@@ -423,7 +483,11 @@ extension BluetoothTransport: CBPeripheralManagerDelegate {
             eventCont?.yield(.error(L("Bluetooth permission denied")))
         case .unsupported:
             eventCont?.yield(.error(L("Bluetooth LE is not supported on this device")))
-        default:
+        case .resetting:
+            eventCont?.yield(.error(L("Bluetooth is resetting")))
+        case .unknown:
+            break
+        @unknown default:
             break
         }
     }
@@ -434,29 +498,55 @@ extension BluetoothTransport: CBPeripheralManagerDelegate {
         }
     }
 
-    func peripheralManager(_ peripheralManager: CBPeripheralManager, didReceiveWrite requests: [CBPeripheralManagerCentralWriteRequest]) {
+    /// The service is published asynchronously. Advertising only starts once
+    /// the stack confirmed it, so a scanning central never sees a service UUID
+    /// that has no characteristic behind it.
+    func peripheralManager(_ peripheralManager: CBPeripheralManager, didAdd service: CBService, error: Error?) {
+        if let error {
+            publishedService = nil
+            outboundCharacteristic = nil
+            eventCont?.yield(.error(String(format: L("Could not publish the Bluetooth service: %@"),
+                                           error.localizedDescription)))
+            return
+        }
+        startAdvertisingIfPossible()
+    }
+
+    func peripheralManager(_ peripheralManager: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
         for request in requests {
-            guard request.characteristic.uuid == characteristicUUID else { continue }
-            guard let data = request.value else { continue }
-            let transportID = centralTransportID(for: request.central.identifier)
-            handleFrameData(data, transportID: transportID)
+            guard request.characteristic.uuid == characteristicUUID else {
+                peripheralManager.respond(to: request, withResult: .attributeNotFound)
+                continue
+            }
+            if let data = request.value {
+                let transportID = centralTransportID(for: request.central.identifier)
+                handleFrameData(data, transportID: transportID)
+            }
+            peripheralManager.respond(to: request, withResult: .success)
         }
     }
 
-    func peripheralManager(_ peripheralManager: CBPeripheralManager, central: CBPeripheralManagerCentral,
+    func peripheralManager(_ peripheralManager: CBPeripheralManager,
+                           central: CBCentral,
                            didSubscribeTo characteristic: CBCharacteristic) {
         guard characteristic.uuid == characteristicUUID else { return }
         let transportID = centralTransportID(for: central.identifier)
         subscribedCentrals[transportID] = central
         if let hello = localHello, let frame = FrameCodec.handshakeFrame(hello) {
-            peripheralManager.updateValue(frame, for: characteristicUUID, onSubscribedCentrals: [central])
+            enqueueNotifications([frame], to: central)
         }
     }
 
-    func peripheralManager(_ peripheralManager: CBPeripheralManager, central: CBPeripheralManagerCentral,
+    func peripheralManager(_ peripheralManager: CBPeripheralManager,
+                           central: CBCentral,
                            didUnsubscribeFrom characteristic: CBCharacteristic) {
         let transportID = centralTransportID(for: central.identifier)
         subscribedCentrals.removeValue(forKey: transportID)
+    }
+
+    /// The transmit queue has room again: flush what was buffered.
+    func peripheralManagerIsReady(toUpdateSubscribers peripheralManager: CBPeripheralManager) {
+        flushPendingNotifications()
     }
 
     /// Central UUIDs are not known before the handshake, therefore they are
@@ -467,6 +557,4 @@ extension BluetoothTransport: CBPeripheralManagerDelegate {
         nodeIDByCentralUUID[uuid] = fallback
         return fallback
     }
-
-    private var nodeIDByCentralUUID: [UUID: String] = [:]
 }

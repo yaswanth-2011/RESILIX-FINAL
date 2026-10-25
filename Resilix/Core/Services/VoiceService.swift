@@ -53,7 +53,7 @@ final class VoiceService: NSObject, ObservableObject, AVAudioRecorderDelegate, A
     /// Starts a new recording and returns the file URL when it is finished.
     func startRecording() async throws -> URL {
         guard await requestPermission() else {
-            lastErrorMessage = "Microphone access is required to record a voice message."
+            lastErrorMessage = L("Microphone access is required to record a voice message.")
             throw ResilixError.permissionDenied("microphone")
         }
         let session = AVAudioSession.sharedInstance()
@@ -87,11 +87,14 @@ final class VoiceService: NSObject, ObservableObject, AVAudioRecorderDelegate, A
     @discardableResult
     func stopRecording() -> URL? {
         guard let recorder else { return nil }
+        // `currentTime` has to be read before `stop()`: stopping resets it to
+        // zero, which previously made every recording look 0 s long and get
+        // discarded by the minimum-duration guard below.
+        let duration = recorder.currentTime
         recorder.stop()
         self.recorder = nil
         isRecording = false
         stopDurationTimer()
-        let duration = recorder.currentTime
         recordingDuration = duration
         guard duration > 0.3 else { return nil }
         return recordingURL
@@ -172,8 +175,10 @@ final class VoiceService: NSObject, ObservableObject, AVAudioRecorderDelegate, A
         playbackProgress = 0
     }
 
-    func audioPlayer(_ player: AVAudioPlayer, decodedByteCount decodedBytes: Int, totalByteCount totalBytes: Int) {
-        guard totalBytes > 0 else { return }
-        playbackProgress = Double(decodedBytes) / Double(totalBytes)
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        isPlaying = false
+        if let error {
+            lastErrorMessage = String(format: L("Playback failed: %@"), error.localizedDescription)
+        }
     }
 }

@@ -5273,6 +5273,77 @@
         }
       }
     },
+    "Bluetooth send queue is full for %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "bn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ এর জন্য ব্লুটুথ পাঠানোর সারি পূর্ণ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth send queue is full for %@"
+          }
+        },
+        "gu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ માટે બ્લૂટૂથ મોકલવાની કતાર ભરાઈ ગઈ છે"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ के लिए ब्लूटूथ भेजने की कतार भरी है"
+          }
+        },
+        "kn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ಗಾಗಿ ಬ್ಲೂಟೂತ್ ಕಳುಹಿಸುವ ಸರದಿ ತುಂಬಿದೆ"
+          }
+        },
+        "ml": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ എന്നതിനുള്ള ബ്ലൂടൂത്ത് അയയ്ക്കൽ ക്യൂ നിറഞ്ഞു"
+          }
+        },
+        "mr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ साठी ब्लूटूथ पाठवण्याची रांग भरली आहे"
+          }
+        },
+        "pa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ਲਈ ਬਲੂਟੂਥ ਭੇਜਣ ਦੀ ਕਤਾਰ ਭਰ ਗਈ ਹੈ"
+          }
+        },
+        "ta": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ க்கான புளூடூத் அனுப்பும் வரிசை நிரம்பியுள்ளது"
+          }
+        },
+        "te": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ కోసం బ్లూటూత్ పంపే క్యూ నిండింది"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ کے لیے بلوٹوتھ بھیجنے کی قطار بھری ہوئی ہے"
+          }
+        }
+      }
+    },
     "Bluetooth transport stopped": {
       "extractionState": "manual",
       "localizations": {
@@ -9395,6 +9466,77 @@
           "stringUnit": {
             "state": "translated",
             "value": "پیغام ڈی کرپٹ نہیں ہو سکا۔"
+          }
+        }
+      }
+    },
+    "Could not publish the Bluetooth service: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "bn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ব্লুটুথ পরিষেবা প্রকাশ করা যায়নি: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not publish the Bluetooth service: %@"
+          }
+        },
+        "gu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "બ્લૂટૂથ સેવા પ્રકાશિત કરી શકાઈ નહીં: %@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्लूटूथ सेवा प्रकाशित नहीं हो सकी: %@"
+          }
+        },
+        "kn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ಬ್ಲೂಟೂತ್ ಸೇವೆಯನ್ನು ಪ್ರಕಟಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ: %@"
+          }
+        },
+        "ml": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ബ്ലൂടൂത്ത് സേവനം പ്രസിദ്ധീകരിക്കാനായില്ല: %@"
+          }
+        },
+        "mr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्लूटूथ सेवा प्रकाशित करता आली नाही: %@"
+          }
+        },
+        "pa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ਬਲੂਟੂਥ ਸੇਵਾ ਪ੍ਰਕਾਸ਼ਿਤ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ: %@"
+          }
+        },
+        "ta": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "புளூடூத் சேவையை வெளியிட முடியவில்லை: %@"
+          }
+        },
+        "te": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "బ్లూటూత్ సేవను ప్రచురించలేకపోయాము: %@"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "بلوٹوتھ سروس شائع نہیں کی جا سکی: %@"
           }
         }
       }
@@ -24929,6 +25071,77 @@
           "stringUnit": {
             "state": "translated",
             "value": "فوٹو لائبریری"
+          }
+        }
+      }
+    },
+    "Playback failed: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "bn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "প্লেব্যাক ব্যর্থ হয়েছে: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback failed: %@"
+          }
+        },
+        "gu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "પ્લેબેક નિષ્ફળ ગયું: %@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "प्लेबैक विफल रहा: %@"
+          }
+        },
+        "kn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ಪ್ಲೇಬ್ಯಾಕ್ ವಿಫಲವಾಗಿದೆ: %@"
+          }
+        },
+        "ml": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "പ്ലേബാക്ക് പരാജയപ്പെട്ടു: %@"
+          }
+        },
+        "mr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "प्लेबॅक अयशस्वी झाला: %@"
+          }
+        },
+        "pa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ਪਲੇਬੈਕ ਅਸਫਲ ਰਿਹਾ: %@"
+          }
+        },
+        "ta": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "இயக்குதல் தோல்வியடைந்தது: %@"
+          }
+        },
+        "te": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ప్లేబ్యాక్ విఫలమైంది: %@"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "پلے بیک ناکام ہوا: %@"
           }
         }
       }
