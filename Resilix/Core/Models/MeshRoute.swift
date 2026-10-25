@@ -2,7 +2,14 @@ import Foundation
 
 enum LinkQuality: String, Codable, Sendable {
     case unknown, stable, degraded, unavailable
-    var label: String { rawValue.capitalized }
+    var label: String {
+        switch self {
+        case .unknown: return L("link.quality.unknown")
+        case .stable: return L("link.quality.stable")
+        case .degraded: return L("link.quality.degraded")
+        case .unavailable: return L("link.quality.unavailable")
+        }
+    }
 }
 
 struct RouteHop: Codable, Sendable, Equatable, Hashable {

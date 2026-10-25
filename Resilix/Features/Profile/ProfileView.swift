@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import UIKit
 
 struct ProfileView: View {
     @EnvironmentObject var app: ResilixAppModel
@@ -27,7 +28,7 @@ struct ProfileView: View {
                                 .frame(width: 48, height: 48)
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(ResilixTheme.separator.opacity(0.6), lineWidth: 0.6))
-                                .accessibilityLabel("Profile photo")
+                                accessibilityLabel(Text(L("Profile photo")))
                         } else {
                             LogoView(variant: .stacked, height: 48, showTagline: false)
                         }
@@ -35,88 +36,88 @@ struct ProfileView: View {
                             Text(app.settings.displayName)
                                 .font(.headline)
                                 .foregroundStyle(ResilixTheme.textPrimary)
-                            Text("Local mesh ID: \(app.nodeID.prefix(8))")
+                            Text(L("profile.local.mesh.id") + ": \(app.nodeID.prefix(8))")
                                 .font(.caption2.monospaced())
                                 .foregroundStyle(ResilixTheme.textTertiary)
-                            Text("Phone number not required")
+                            Text(L("Phone number not required"))
                                 .font(.caption2)
                                 .foregroundStyle(ResilixTheme.textTertiary)
                         }
                     }
                     .padding(.vertical, 4)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Profile: \(app.settings.displayName), mesh ID \(app.nodeID.prefix(8))")
+                    .accessibilityLabel(L("profile.summary") + ": \(app.settings.displayName), " + L("profile.mesh.id") + " \(app.nodeID.prefix(8))")
 
                     HStack(spacing: ResilixTheme.space12) {
                         PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                            Label("Choose photo", systemImage: "photo")
+                            Label(L("Choose photo"), systemImage: "photo")
                                 .font(.subheadline)
                         }
-                        .accessibilityLabel("Choose a profile photo")
+                        accessibilityLabel(Text(L("Choose a profile photo")))
 
                         if profilePhoto != nil {
                             Button {
                                 Task {
                                     await app.profileService.clearPhoto()
                                     await app.updateSettings { $0.profilePhotoFileName = nil }
-                                    photoMessage = "The profile photo was removed."
+                                    photoMessage = L("The profile photo was removed.")
                                 }
                             } label: {
-                                Text("Remove photo")
+                                Text(L("Remove photo"))
                                     .font(.subheadline)
                             }
                         }
                     }
                 }
                 
-                Section(header: Text("Mesh")) {
-                    Toggle("Relay participation", isOn: Binding(
+                Section(header: Text(L("Mesh"))) {
+                    Toggle(L("Relay participation"), isOn: Binding(
                         get: { app.relayManager.isRelayActive },
                         set: { newValue in Task { await app.relayManager.setRelay(newValue) } }
                     ))
                     .tint(ResilixTheme.brandTeal)
-                    .accessibilityLabel("Enable relay participation")
+                    accessibilityLabel(Text(L("Enable relay participation")))
                     
-                    Toggle("Location sharing", isOn: Binding(
+                    Toggle(L("Location sharing"), isOn: Binding(
                         get: { app.settings.locationSharingEnabled },
                         set: { newValue in Task { await app.updateSettings { $0.locationSharingEnabled = newValue } } }
                     ))
                         .tint(ResilixTheme.brandTeal)
-                        .accessibilityLabel("Share location in SOS and map")
+                        accessibilityLabel(Text(L("Share location in SOS and map")))
 
-                    Toggle("Message expiry", isOn: Binding(
+                    Toggle(L("Message expiry"), isOn: Binding(
                         get: { app.settings.messageExpiryEnabled },
                         set: { newValue in Task { await app.updateSettings { $0.messageExpiryEnabled = newValue } } }
                     ))
                         .tint(ResilixTheme.brandTeal)
-                        .accessibilityLabel("Enable message expiry")
+                        accessibilityLabel(Text(L("Enable message expiry")))
                     
                     NavigationLink("Permissions", destination: PermissionStatusView())
                     NavigationLink("Diagnostics", destination: DiagnosticsView())
                     NavigationLink("Command Center", destination: CommandCenterView())
                 }
                 
-                Section(header: Text("About")) {
+                Section(header: Text(L("About"))) {
                     HStack {
-                        Text("Version")
+                        Text(L("Version"))
                             .foregroundStyle(ResilixTheme.textSecondary)
                         Spacer()
-                        Text("1.0.0 (Prototype)")
+                        Text(L("1.0.0 (Prototype)"))
                             .foregroundStyle(ResilixTheme.textTertiary)
                             .font(.caption)
                     }
-                    Button("Privacy overview") { showPrivacy = true }
-                    Button("Replay onboarding") { showOnboarding = true }
+                    Button(L("Privacy overview")) { showPrivacy = true }
+                    Button(L("Replay onboarding")) { showOnboarding = true }
                     #if DEBUG
                     NavigationLink("Demo Mode", destination: DemoSettingsView())
                     #endif
                 }
                 
                 Section {
-                    Button("Reset local data", role: .destructive) {
+                    Button(L("Reset local data"), role: .destructive) {
                         showResetConfirm = true
                     }
-                    .accessibilityLabel("Reset all local data")
+                    accessibilityLabel(Text(L("Reset all local data")))
                 }
             }
             .listStyle(.insetGrouped)
@@ -127,20 +128,20 @@ struct ProfileView: View {
             .onChange(of: selectedPhoto) { _, item in
                 Task { await savePhoto(item) }
             }
-            .alert("Profile", isPresented: .constant(photoMessage != nil), presenting: photoMessage) { _ in
-                Button("OK") { photoMessage = nil }
+            .alert(L("Profile"), isPresented: .constant(photoMessage != nil), presenting: photoMessage) { _ in
+                Button(L("OK")) { photoMessage = nil }
             } message: { message in
                 Text(message)
             }
             .sheet(isPresented: $showPrivacy) { PrivacyView() }
             .sheet(isPresented: $showOnboarding) { OnboardingView() }
-            .alert("Reset All Data?", isPresented: $showResetConfirm) {
-                Button("Cancel", role: .cancel) {}
-                Button("Reset", role: .destructive) {
+            .alert(L("Reset All Data?"), isPresented: $showResetConfirm) {
+                Button(L("Cancel"), role: .cancel) {}
+                Button(L("Reset"), role: .destructive) {
                     Task { await app.persistence.clearAll() }
                 }
             } message: {
-                Text("This will delete all messages, contacts, resources, and settings. This cannot be undone.")
+                Text(L("This will delete all messages, contacts, resources, and settings. This cannot be undone."))
             }
         }
     }
@@ -153,9 +154,9 @@ extension ProfileView {
               let image = UIImage(data: data) else { return }
         if await app.profileService.setPhoto(image) {
             await app.updateSettings { $0.profilePhotoFileName = app.profileService.photoFileName }
-            photoMessage = "The profile photo was saved."
+            photoMessage = L("The profile photo was saved.")
         } else {
-            photoMessage = "The photo could not be stored."
+            photoMessage = L("The photo could not be stored.")
         }
     }
 }
@@ -164,20 +165,20 @@ struct DemoSettingsView: View {
     @EnvironmentObject var app: ResilixAppModel
     var body: some View {
         List {
-            Toggle("Demo Mode", isOn: Binding(
+            Toggle(L("Demo Mode"), isOn: Binding(
                 get: { app.demoController.isDemoMode },
                 set: { app.demoController.setDemo($0) }
             ))
             .tint(ResilixTheme.brandTeal)
-            .accessibilityLabel("Enable demo mode")
+            accessibilityLabel(Text(L("Enable demo mode")))
             
-            Button("Reset demo") {
+            Button(L("Reset demo")) {
                 app.demoController.reset()
                 app.demoController.startDemo()
             }
-            .accessibilityLabel("Reset demo data")
+            accessibilityLabel(Text(L("Reset demo data")))
             
-            Section(header: Text("Demo log")) {
+            Section(header: Text(L("Demo log"))) {
                 ForEach(app.demoController.demoLog, id: \.self) { log in
                     Text(log)
                         .font(.caption2)

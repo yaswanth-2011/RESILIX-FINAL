@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 @MainActor
 class DiagnosticsService: ObservableObject {
@@ -6,7 +7,7 @@ class DiagnosticsService: ObservableObject {
         timestamp: Date(),
         bluetoothState: "Unknown",
         p2pWiFiState: "Unknown",
-        wifiAwareState: "Not supported on this device",
+        wifiAwareState: L("Not supported on this device"),
         connectedCount: 0,
         discoveredCount: 0,
         routeCount: 0,
@@ -36,7 +37,7 @@ class DiagnosticsService: ObservableObject {
     ) async {
         var bt = "Unavailable"
         var p2p = "Unavailable"
-        var aware = "Not supported on this device"
+        var aware = L("Not supported on this device")
         var discovered = 0
         
         for t in transports {
@@ -48,7 +49,7 @@ class DiagnosticsService: ObservableObject {
                 p2p = t.isAvailable ? "Available" : "Unavailable"
                 discovered += t.discoveredPeers.count
             case .wifiAware:
-                aware = t.isAvailable ? "Available" : "Not supported on this device"
+                aware = t.isAvailable ? "Available" : L("Not supported on this device")
                 discovered += t.discoveredPeers.count
             default:
                 break
@@ -75,7 +76,7 @@ class DiagnosticsService: ObservableObject {
             protocolVersion: ResilixConstants.protocolVersion,
             persistenceStatus: "OK",
             permissionStatus: "Authorized",
-            lastTransportEvent: lastEvent ?? "Mesh idle",
+            lastTransportEvent: lastEvent ?? L("Mesh idle"),
             isDemo: isDemo
         )
     }

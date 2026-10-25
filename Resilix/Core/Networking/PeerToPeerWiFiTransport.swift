@@ -139,9 +139,9 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
             case .ready:
                 break
             case .failed(let error):
-                self?.eventCont?.yield(.error("Local network unavailable: \(error.localizedDescription)"))
+                self?.eventCont?.yield(.error(String(format: L("Local network unavailable: %@"), error.localizedDescription)))
             case .waiting(let error):
-                self?.eventCont?.yield(.error("Waiting for local network: \(error.localizedDescription)"))
+                self?.eventCont?.yield(.error(String(format: L("Waiting for local network: %@"), error.localizedDescription)))
             default:
                 break
             }
@@ -177,7 +177,7 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
             listener.service = NWListener.Service(name: "Resilix", type: ResilixConstants.bonjourServiceType, txtRecord: txt)
             listener.stateUpdateHandler = { [weak self] state in
                 if case .failed(let error) = state {
-                    self?.eventCont?.yield(.error("Listener failed: \(error.localizedDescription)"))
+                    self?.eventCont?.yield(.error(String(format: L("Listener failed: %@"), error.localizedDescription)))
                 }
             }
             listener.newConnectionHandler = { [weak self] connection in
@@ -185,7 +185,7 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
             }
             listener.start(queue: queue)
         } catch {
-            eventCont?.yield(.error("Could not start local network listener: \(error.localizedDescription)"))
+            eventCont?.yield(.error(String(format: L("Could not start local network listener: %@"), error.localizedDescription)))
         }
     }
 
@@ -196,7 +196,7 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
                 self?.sendHandshake(on: connection)
                 self?.read(on: connection)
             case .failed(let error):
-                self?.eventCont?.yield(.error("Connection failed: \(error.localizedDescription)"))
+                self?.eventCont?.yield(.error(String(format: L("Connection failed: %@"), error.localizedDescription)))
             case .cancelled:
                 break
             default:
@@ -220,9 +220,9 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
                     c.resume(returning: existing)
                 } else {
                     let task = Task { [weak self] () throws -> NWConnection in
-                        guard let self else { throw ResilixError.transportUnavailable("Wi-Fi transport stopped") }
+                        guard let self else { throw ResilixError.transportUnavailable(L("Wi-Fi transport stopped")) }
                         guard let endpoint = await self.endpoint(for: peerID) else {
-                            throw ResilixError.transportUnavailable("No route to \(peerID)")
+                            throw ResilixError.transportUnavailable(String(format: L("No route to %@"), peerID))
                         }
                         let connection = NWConnection(to: endpoint, using: self.makeParameters())
                         try await self.startAndWait(connection)
@@ -260,7 +260,7 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
                 case .cancelled:
                     guard !resumed else { return }
                     resumed = true
-                    continuation.resume(throwing: ResilixError.transportUnavailable("Connection cancelled"))
+                    continuation.resume(throwing: ResilixError.transportUnavailable(L("Connection cancelled")))
                 default:
                     break
                 }
@@ -306,7 +306,7 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
                 self.queue.async { self.handle(data: data, connection: connection) }
             }
             if let error {
-                self.eventCont?.yield(.error("Receive failed: \(error.localizedDescription)"))
+                self.eventCont?.yield(.error(String(format: L("Receive failed: %@"), error.localizedDescription)))
                 return
             }
             if isComplete { return }

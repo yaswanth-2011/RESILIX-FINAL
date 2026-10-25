@@ -4,6 +4,7 @@ import CoreBluetooth
 import Network
 #if canImport(UIKit)
 import UIKit
+import Combine
 #endif
 
 @MainActor

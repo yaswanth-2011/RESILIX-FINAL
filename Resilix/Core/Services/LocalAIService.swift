@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Runs the on-device AI of the app.
 ///
@@ -53,7 +54,7 @@ final class LocalAIService: ObservableObject {
                                  localRelativePath: nil,
                                  isDownloaded: false,
                                  availability: .runtimeUnavailable,
-                                 notes: "Multimodal, 128K context, text and image input."),
+                                 notes: L("Multimodal, 128K context, text and image input.")),
             LocalModelDescriptor(id: "qwen3-0.6b",
                                  family: .qwen,
                                  displayName: "Qwen3 0.6B",
@@ -66,20 +67,20 @@ final class LocalAIService: ObservableObject {
                                  localRelativePath: nil,
                                  isDownloaded: false,
                                  availability: .runtimeUnavailable,
-                                 notes: "Smallest Qwen3 release. Qwen3.5 starts at 0.8B, there is no Qwen3.5 0.6B."),
+                                 notes: L("Smallest Qwen3 release. Qwen3.5 starts at 0.8B, there is no Qwen3.5 0.6B.")),
             LocalModelDescriptor(id: "apple-foundation-models",
                                  family: .apple,
-                                 displayName: "Apple Foundation Models (AFM 3)",
+                                 displayName: L("Apple Foundation Models (AFM 3)"),
                                  modelID: "apple/system-language-model",
                                  artifactID: nil,
                                  fileName: "",
                                  approximateBytes: 0,
-                                 license: "Apple system model",
-                                 runtimeRequirement: "iOS 26+ with Apple Intelligence enabled",
+                                 license: L("Apple system model"),
+                                 runtimeRequirement: L("iOS 26+ with Apple Intelligence enabled"),
                                  localRelativePath: nil,
                                  isDownloaded: true,
                                  availability: .runtimeUnavailable,
-                                 notes: "Provided by the system, nothing has to be downloaded.")
+                                 notes: L("Provided by the system, nothing has to be downloaded."))
         ]
     }
 
@@ -87,17 +88,17 @@ final class LocalAIService: ObservableObject {
     static var knowledgeBaseDescriptor: LocalModelDescriptor {
         LocalModelDescriptor(id: knowledgeBaseModeID,
                              family: .apple,
-                             displayName: "First-aid knowledge base (on device)",
+                             displayName: L("First-aid knowledge base (on device)"),
                              modelID: "resilix/offline-first-aid",
                              artifactID: nil,
                              fileName: "",
                              approximateBytes: 0,
-                             license: "Bundled with the app",
-                             runtimeRequirement: "Always available, no model needed",
+                             license: L("Bundled with the app"),
+                             runtimeRequirement: L("Always available, no model needed"),
                              localRelativePath: nil,
                              isDownloaded: true,
                              availability: .ready,
-                             notes: "Curated offline content, not a language model.")
+                             notes: L("Curated offline content, not a language model."))
     }
 
     var knowledgeBase: LocalModelDescriptor { Self.knowledgeBaseDescriptor }
@@ -168,13 +169,13 @@ final class LocalAIService: ObservableObject {
         activeModelID = modelID
 
         if model.id == Self.knowledgeBaseModeID {
-            statusMessage = "Offline knowledge base selected."
+            statusMessage = L("Offline knowledge base selected.")
             return
         }
 
         let runtime = runtime(for: model)
         guard runtime.isAvailable else {
-            statusMessage = runtime.unavailableReason ?? "The runtime is not available."
+            statusMessage = runtime.unavailableReason ?? L("The runtime is not available.")
             lastErrorMessage = statusMessage
             return
         }
@@ -245,12 +246,12 @@ final class LocalAIService: ObservableObject {
         guard let runtime = activeRuntime, runtime.isLoaded else {
             return AsyncThrowingStream { continuation in
                 continuation.finish(throwing: LocalModelError.runtimeUnavailable(
-                    unavailableReason(for: model) ?? "No model is loaded."))
+                    unavailableReason(for: model) ?? L("No model is loaded.")))
             }
         }
 
         let request = LocalModelRequest(prompt: prompt,
-                                        systemInstructions: "You are the on-device assistant of the Resilix offline mesh app.",
+                                        systemInstructions: L("You are the on-device assistant of the Resilix offline mesh app."),
                                         maxTokens: 512)
         return runtime.generate(request: request)
     }
@@ -312,15 +313,17 @@ final class LocalAIService: ObservableObject {
         }
         let best = scored.max { $0.1 < $1.1 }
         guard let best, best.1 > 0 else {
-            return "No offline entry matches “\(question)”. "
-                + "The bundled first-aid topics cover: "
+            return String(format: L("No offline entry matches “%@”."), question)
+                + " "
+                + L("The bundled first-aid topics cover:")
+                + " "
                 + topics.map { $0.title }.joined(separator: ", ")
                 + "."
         }
         let topic = best.0
         var answer = "\(topic.title)\n\n"
         answer += topic.steps.enumerated().map { "\($0.offset + 1). \($0.element)" }.joined(separator: "\n")
-        if let caution = topic.caution { answer += "\n\nCaution: \(caution)" }
+        if let caution = topic.caution { answer += "\n\n" + L("Caution:") + " \(caution)" }
         answer += "\n\n\(topic.whenToSeekHelp)"
         return answer
     }

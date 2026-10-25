@@ -97,19 +97,29 @@ struct MeshMessage: Codable, Sendable, Equatable, Identifiable {
         replyToID = try container.decodeIfPresent(String.self, forKey: .replyToID)
     }
 
+    // MARK: - Convenience accessors
+
+    /// True when the local device created this message.
+    ///
+    /// Used by the chat bubble layout to align the bubble to the right.
+    var fromMe: Bool { isOutgoing }
+
+    /// True once the destination confirmed the reception of the message.
+    var delivered: Bool { deliveryState == .delivered }
+
     /// Short preview used by conversation lists.
     var previewText: String {
         switch kind {
         case .text:
             return text
         case .voice:
-            return "🎤 Voice message"
+            return "\u{1F3A4} " + L("message.kind.voice")
         case .image:
-            return "🖼 \(attachment?.fileName ?? "Photo")"
+            return "\u{1F5BC} " + (attachment?.fileName ?? L("message.kind.photo"))
         case .video:
-            return "🎬 \(attachment?.fileName ?? "Video")"
+            return "\u{1F3AC} " + (attachment?.fileName ?? L("message.kind.video"))
         case .file:
-            return "📎 \(attachment?.fileName ?? "File")"
+            return "\u{1F4CE} " + (attachment?.fileName ?? L("message.kind.file"))
         }
     }
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 import UIKit
 import Combine
+import Foundation
 
 // MARK: - Local AI Abstraction
 protocol ResilixLocalAI {
@@ -14,38 +15,38 @@ struct OfflineAIEngine: ResilixLocalAI {
     func respond(to query: String, knowledge: [FirstAidTopic]) async -> (text: String, source: String) {
         try? await Task.sleep(nanoseconds: 600_000_000)
         let q = query.lowercased()
-        if q.contains("burn") { return (format(topic: knowledge.first(where: { $0.id == "burn" })!), "Local AI · Knowledge base") }
-        if q.contains("bleed") { return (format(topic: knowledge.first(where: { $0.id == "bleeding" })!), "Local AI · Knowledge base") }
-        if q.contains("cpr") || q.contains("heart") || q.contains("unresponsive") { return (format(topic: knowledge.first(where: { $0.id == "cpr" })!), "Local AI · Knowledge base") }
-        if q.contains("chok") { return (format(topic: knowledge.first(where: { $0.id == "choking" })!), "Local AI · Knowledge base") }
-        if q.contains("fracture") || q.contains("break") || q.contains("bone") { return (format(topic: knowledge.first(where: { $0.id == "fracture" })!), "Local AI · Knowledge base") }
-        if q.contains("hypotherm") || q.contains("cold") || q.contains("freez") { return (format(topic: knowledge.first(where: { $0.id == "hypothermia" })!), "Local AI · Knowledge base") }
+        if q.contains("burn") { return (format(topic: knowledge.first(where: { $0.id == "burn" })!), L("Local AI · Knowledge base")) }
+        if q.contains("bleed") { return (format(topic: knowledge.first(where: { $0.id == "bleeding" })!), L("Local AI · Knowledge base")) }
+        if q.contains("cpr") || q.contains("heart") || q.contains("unresponsive") { return (format(topic: knowledge.first(where: { $0.id == "cpr" })!), L("Local AI · Knowledge base")) }
+        if q.contains("chok") { return (format(topic: knowledge.first(where: { $0.id == "choking" })!), L("Local AI · Knowledge base")) }
+        if q.contains("fracture") || q.contains("break") || q.contains("bone") { return (format(topic: knowledge.first(where: { $0.id == "fracture" })!), L("Local AI · Knowledge base")) }
+        if q.contains("hypotherm") || q.contains("cold") || q.contains("freez") { return (format(topic: knowledge.first(where: { $0.id == "hypothermia" })!), L("Local AI · Knowledge base")) }
         let scored = knowledge.map { topic -> (FirstAidTopic, Int) in
-            let text = (topic.title + " " + topic.category + " " + topic.steps.joined(separator: " ")).lowercased()
+            let text = (topic.id + " " + topic.title + " " + topic.category + " " + topic.steps.joined(separator: " ")).lowercased()
             let score = q.split(separator: " ").filter { text.contains($0) }.count
             return (topic, score)
         }.sorted { $0.1 > $1.1 }
         if let best = scored.first, best.1 > 0 {
-            return (format(topic: best.0), "Knowledge base")
+            return (format(topic: best.0), L("Knowledge base"))
         }
         return (
             """
-            **General emergency guidance (offline):**
-            1. Ensure the area is safe for you and the injured person.
-            2. Check responsiveness and breathing. Call for local help if anyone is nearby — Resilix mesh will relay if internet is down.
-            3. Keep the person calm, warm, and still. Do not give food/drink if surgery may be needed.
-            4. Describe what you see and I'll match it to the offline guides below.
+            **\(L("General emergency guidance (offline):"))**
+            1. \(L("Ensure the area is safe for you and the injured person."))
+            2. \(L("Check responsiveness and breathing. Call for local help if anyone is nearby — Resilix mesh will relay if internet is down."))
+            3. \(L("Keep the person calm, warm, and still. Do not give food/drink if surgery may be needed."))
+            4. \(L("Describe what you see and I'll match it to the offline guides below."))
 
-            *Resilix Assist provides general information, not medical diagnosis. Seek professional help when available.*
+            *\(L("Resilix Assist provides general information, not medical diagnosis. Seek professional help when available."))*
             """,
-            "Local AI · Generic"
+            L("Local AI · Generic")
         )
     }
     private func format(topic: FirstAidTopic) -> String {
         var s = "**\(topic.title)** — \(topic.category)\n\n"
         for (i, step) in topic.steps.enumerated() { s += "\(i+1). \(step)\n" }
-        if let c = topic.caution { s += "\n⚠️ Caution: \(c)\n" }
-        s += "\n*When to seek help:* \(topic.whenToSeekHelp)\n\n*This guidance is from the offline knowledge base.*"
+        if let c = topic.caution { s += "\n⚠️ \(L("Caution:")) \(c)\n" }
+        s += "\n*\(L("When to seek help:"))* \(topic.whenToSeekHelp)\n\n*\(L("This guidance is from the offline knowledge base."))*"
         return s
     }
 }
@@ -59,27 +60,60 @@ struct ChatMessage: Identifiable, Equatable {
     enum Role { case user, assistant }
 }
 
-// MARK: - AI Settings (in-memory; user can tweak per session)
-struct AISettings: Equatable {
-    enum ResponseLength: String, CaseIterable, Identifiable {
+// MARK: - AI Settings
+///
+/// The assistant preferences are persisted as `ai_settings.json` inside the
+/// application support directory, so the user does not have to repeat the
+/// configuration after a restart.
+struct AISettings: Equatable, Codable {
+    enum ResponseLength: String, CaseIterable, Identifiable, Codable {
         case concise  = "Concise"
         case balanced = "Balanced"
         case detailed = "Detailed"
         var id: String { rawValue }
+
+        /// Localized name shown in the response length picker.
+        var label: String {
+            switch self {
+            case .concise:  return L("ai.responseLength.concise")
+            case .balanced: return L("ai.responseLength.balanced")
+            case .detailed: return L("ai.responseLength.detailed")
+            }
+        }
     }
-    enum Tone: String, CaseIterable, Identifiable {
+    enum Tone: String, CaseIterable, Identifiable, Codable {
         case friendly    = "Friendly"
         case professional = "Professional"
         case empathetic  = "Empathetic"
         var id: String { rawValue }
+
+        /// Localized name shown in the tone picker.
+        var label: String {
+            switch self {
+            case .friendly:     return L("ai.tone.friendly")
+            case .professional: return L("ai.tone.professional")
+            case .empathetic:   return L("ai.tone.empathetic")
+            }
+        }
     }
-    enum Language: String, CaseIterable, Identifiable {
+    enum Language: String, CaseIterable, Identifiable, Codable {
         case english = "English"
         case spanish = "Spanish"
         case french  = "French"
         case german  = "German"
         case auto    = "Auto-detect"
         var id: String { rawValue }
+
+        /// Localized name of the language the assistant answers in.
+        var label: String {
+            switch self {
+            case .english: return L("ai.language.english")
+            case .spanish: return L("ai.language.spanish")
+            case .french:  return L("ai.language.french")
+            case .german:  return L("ai.language.german")
+            case .auto:    return L("ai.language.auto")
+            }
+        }
     }
 
     var creativity: Double = 0.0           // 0 = precise, 100 = creative
@@ -105,10 +139,24 @@ final class AssistViewModel: ObservableObject {
     @Published var settings = AISettings()
     /// The local model service of the app (set by the view).
     var aiService: LocalAIService?
-    private let knowledge = OfflineFirstAidStore.allTopics
+    private var knowledge: [FirstAidTopic] { OfflineFirstAidStore.allTopics }
     private let engine: ResilixLocalAI = OfflineAIEngine()
 
     init() {}
+
+    // MARK: - Persisted preferences
+
+    /// Restores the assistant preferences from disk.
+    /// A missing or corrupt file simply keeps the defaults.
+    func loadSettings(from persistence: PersistenceController) async {
+        guard let stored: AISettings = await persistence.loadIfExists(AISettings.self, from: "ai_settings.json") else { return }
+        settings = stored
+    }
+
+    /// Writes the assistant preferences to disk.
+    func saveSettings(to persistence: PersistenceController) async {
+        try? await persistence.save(settings, to: "ai_settings.json")
+    }
 
     func send(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -149,7 +197,7 @@ final class AssistViewModel: ObservableObject {
                 }
             }
         } catch {
-            let text = "The local model could not answer: \(error.localizedDescription)"
+            let text = String(format: L("The local model could not answer: %@"), error.localizedDescription)
             if let index {
                 messages[index].text = text
             } else {
@@ -191,35 +239,35 @@ struct QuickAction: Identifiable, Equatable {
     static let all: [QuickAction] = [
         QuickAction(
             id: "firstaid",
-            title: "First Aid",
-            subtitle: "Treat injuries",
+            title: L("First Aid"),
+            subtitle: L("Treat injuries"),
             icon: "cross.case.fill",
             color: Color(hex: "EF4444"),
-            prompt: "How do I treat a severe bleeding injury?"
+            prompt: L("How do I treat a severe bleeding injury?")
         ),
         QuickAction(
             id: "emergency",
-            title: "Emergency Steps",
-            subtitle: "What to do now",
+            title: L("Emergency Steps"),
+            subtitle: L("What to do now"),
             icon: "list.bullet.clipboard.fill",
             color: Color(hex: "F97316"),
-            prompt: "Give me emergency steps for a burn."
+            prompt: L("Give me emergency steps for a burn.")
         ),
         QuickAction(
             id: "shelter",
-            title: "Nearby Shelters",
-            subtitle: "Find help close by",
+            title: L("Nearby Shelters"),
+            subtitle: L("Find help close by"),
             icon: "mappin.and.ellipse",
             color: Color(hex: "22D3EE"),
-            prompt: "Where is the nearest shelter and hospital?"
+            prompt: L("Where is the nearest shelter and hospital?")
         ),
         QuickAction(
             id: "safety",
-            title: "Safety Tips",
-            subtitle: "Stay safe & calm",
+            title: L("Safety Tips"),
+            subtitle: L("Stay safe & calm"),
             icon: "shield.lefthalf.filled",
             color: Color(hex: "22E36A"),
-            prompt: "Safety guide for staying in place during an emergency."
+            prompt: L("Safety guide for staying in place during an emergency.")
         )
     ]
 }
@@ -316,10 +364,14 @@ struct AssistView: View {
             .task {
                 vm.aiService = app.aiService
                 await app.aiService.refreshAvailability()
+                await vm.loadSettings(from: app.persistence)
             }
-            .alert("Clear conversation?", isPresented: $showClearConfirm) {
-                Button("Cancel", role: .cancel) {}
-                Button("Clear", role: .destructive) { vm.clear() }
+            .onChange(of: vm.settings) { _, newValue in
+                Task { await vm.saveSettings(to: app.persistence) }
+            }
+            .alert(L("Clear conversation?"), isPresented: $showClearConfirm) {
+                Button(L("Cancel"), role: .cancel) {}
+                Button(L("Clear"), role: .destructive) { vm.clear() }
             }
         }
     }
@@ -337,10 +389,10 @@ struct AssistView: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     // Bigger and less bold
-                    Text("Offline AI")
+                    Text(L("Offline AI"))
                         .font(ResilixTheme.font(24, .bold))
                         .foregroundStyle(ResilixTheme.textPrimary)
-                    Text("LOCAL")
+                    Text(L("LOCAL"))
                         .font(ResilixTheme.font(10, .heavy))
                         .tracking(0.6)
                         .foregroundStyle(ResilixTheme.successGreen)
@@ -367,31 +419,31 @@ struct AssistView: View {
             }
             Spacer()
             AIGlassCircleButton(systemImage: "cpu") { showModelManager = true }
-                .accessibilityLabel("AI models")
+                accessibilityLabel(Text(L("AI models")))
             AIGlassCircleButton(systemImage: "gearshape") { showSettings = true }
-                .accessibilityLabel("AI settings")
+                accessibilityLabel(Text(L("AI settings")))
             AIGlassCircleButton(systemImage: "square.and.pencil") { vm.newChat() }
-                .accessibilityLabel("New chat")
+                accessibilityLabel(Text(L("New chat")))
         }
     }
 
     /// Truthful description of the engine that answers the questions.
     private var modelStatusLine: String {
         guard let model = app.aiService.activeModel else {
-            return "Offline knowledge base · No internet"
+            return L("Offline knowledge base · No internet")
         }
         if model.id == LocalAIService.knowledgeBaseModeID {
-            return "Offline knowledge base · No internet"
+            return L("Offline knowledge base · No internet")
         }
         switch model.availability {
         case .ready:
-            return "\(model.displayName) · On-device"
+            return String(format: L("%@ · On-device"), model.displayName)
         case .notInstalled:
-            return "\(model.displayName) · Not installed"
+            return String(format: L("%@ · Not installed"), model.displayName)
         case .runtimeUnavailable:
-            return "\(model.displayName) · Runtime missing"
+            return String(format: L("%@ · Runtime missing"), model.displayName)
         case .unusable:
-            return "\(model.displayName) · Unusable"
+            return String(format: L("%@ · Unusable"), model.displayName)
         }
     }
 
@@ -400,11 +452,11 @@ struct AssistView: View {
         VStack(spacing: ResilixTheme.space20) {
             Spacer(minLength: 0)
             VStack(spacing: ResilixTheme.space10) {
-                Text("How can I help?")
+                Text(L("How can I help?"))
                     .font(ResilixTheme.font(30, .bold))
                     .foregroundStyle(Color.white)
                     .multilineTextAlignment(.center)
-                Text("Your private AI assistant, running entirely on your device.")
+                Text(L("Your private AI assistant, running entirely on your device."))
                     .font(ResilixTheme.font(14, .regular))
                     .foregroundStyle(ResilixTheme.textSecondary)
                     .multilineTextAlignment(.center)
@@ -429,7 +481,7 @@ struct AssistView: View {
                 .frame(width: 8, height: 8)
                 .shadow(color: ResilixTheme.successGreen.opacity(0.9), radius: 6)
                 .shadow(color: ResilixTheme.successGreen.opacity(0.5), radius: 10)
-            Text("Running Locally")
+            Text(L("Running Locally"))
                 .font(ResilixTheme.font(13, .semibold))
                 .tracking(0.4)
                 .foregroundStyle(ResilixTheme.successGreen)
@@ -467,7 +519,7 @@ struct AssistView: View {
         HStack(alignment: .bottom, spacing: 10) {
             ZStack(alignment: .leading) {
                 if vm.input.isEmpty {
-                    Text("Ask Resilix anything…")
+                    Text(L("Ask Resilix anything…"))
                         .font(ResilixTheme.font(15, .regular))
                         .foregroundStyle(Color.white.opacity(0.30))
                         .allowsHitTesting(false)
@@ -510,7 +562,7 @@ struct AssistView: View {
                     )
                     .liquidGlassCircle(interactive: true)
             }
-            .accessibilityLabel("Voice input")
+            accessibilityLabel(Text(L("Voice input")))
 
             Button {
                 vm.send(vm.input)
@@ -534,7 +586,7 @@ struct AssistView: View {
                     .liquidGlassCircle(interactive: true)
             }
             .disabled(vm.input.trimmingCharacters(in: .whitespaces).isEmpty)
-            .accessibilityLabel("Send message")
+            accessibilityLabel(Text(L("Send message")))
         }
     }
 }
@@ -649,7 +701,7 @@ struct AIMessageRow: View {
                         .font(ResilixTheme.font(10, .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                     if let src = message.source, !isUser {
-                        Text("· \(src)")
+                        Text(String(format: L("· %@"), src))
                             .font(ResilixTheme.font(10, .medium))
                             .foregroundStyle(ResilixTheme.textTertiary)
                             .lineLimit(1)
@@ -676,7 +728,7 @@ struct AIThinkingRow: View {
                         .opacity(phase == CGFloat(i) ? 1 : 0.3)
                 }
             }
-            Text("Resilix is thinking locally…")
+            Text(L("Resilix is thinking locally…"))
                 .font(ResilixTheme.font(12, .medium))
                 .foregroundStyle(ResilixTheme.textSecondary)
             Spacer()
@@ -702,7 +754,7 @@ struct AISettingsSheet: View {
                 VStack(alignment: .leading, spacing: 18) {
 
                     // ===== AI BEHAVIOR =====
-                    sectionHeader("AI BEHAVIOR")
+                    sectionHeader(L("AI BEHAVIOR"))
                     settingsCard {
                         VStack(alignment: .leading, spacing: 14) {
                             SettingSliderRow(
@@ -713,12 +765,12 @@ struct AISettingsSheet: View {
                                 valueColor: ResilixTheme.brandCyan
                             ) {
                                 HStack(spacing: 8) {
-                                    Text("Precise")
+                                    Text(L("Precise"))
                                         .font(ResilixTheme.font(10, .medium))
                                         .foregroundStyle(ResilixTheme.textTertiary)
                                     Slider(value: $settings.creativity, in: 0...100, step: 1)
                                         .tint(ResilixTheme.brandCyan)
-                                    Text("Creative")
+                                    Text(L("Creative"))
                                         .font(ResilixTheme.font(10, .medium))
                                         .foregroundStyle(ResilixTheme.textTertiary)
                                 }
@@ -729,7 +781,7 @@ struct AISettingsSheet: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 12) {
                                     SettingIconBadge(icon: "ruler", color: ResilixTheme.brandCyan)
-                                    Text("Response Length")
+                                    Text(L("Response Length"))
                                         .font(ResilixTheme.font(15, .semibold))
                                         .foregroundStyle(ResilixTheme.textPrimary)
                                     Spacer()
@@ -739,7 +791,7 @@ struct AISettingsSheet: View {
                                         Button {
                                             settings.responseLength = len
                                         } label: {
-                                            Text(len.rawValue)
+                                            Text(len.label)
                                                 .font(ResilixTheme.font(13, .semibold))
                                                 .foregroundStyle(settings.responseLength == len ? .white : ResilixTheme.textPrimary)
                                                 .frame(maxWidth: .infinity)
@@ -765,7 +817,7 @@ struct AISettingsSheet: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 HStack(spacing: 12) {
                                     SettingIconBadge(icon: "person.wave.2", color: ResilixTheme.brandCyan)
-                                    Text("Tone")
+                                    Text(L("Tone"))
                                         .font(ResilixTheme.font(15, .semibold))
                                         .foregroundStyle(ResilixTheme.textPrimary)
                                     Spacer()
@@ -775,7 +827,7 @@ struct AISettingsSheet: View {
                                         Button {
                                             settings.tone = t
                                         } label: {
-                                            Text(t.rawValue)
+                                            Text(t.label)
                                                 .font(ResilixTheme.font(12, .semibold))
                                                 .foregroundStyle(settings.tone == t ? .white : ResilixTheme.textPrimary)
                                                 .frame(maxWidth: .infinity)
@@ -801,21 +853,21 @@ struct AISettingsSheet: View {
                             SettingPickerRow(
                                 icon: "globe",
                                 iconColor: ResilixTheme.brandCyan,
-                                title: "Language",
+                                title: L("Language"),
                                 selection: $settings.language
                             )
                         }
                     }
 
                     // ===== AI FEATURES =====
-                    sectionHeader("AI FEATURES")
+                    sectionHeader(L("AI FEATURES"))
                     settingsCard {
                         VStack(alignment: .leading, spacing: 0) {
                             SettingToggleRow(
                                 icon: "brain",
                                 iconColor: ResilixTheme.brandCyan,
                                 title: "Memory",
-                                subtitle: "Remember context across sessions",
+                                subtitle: L("Remember context across sessions"),
                                 isOn: $settings.memoryEnabled,
                                 tint: ResilixTheme.successGreen
                             )
@@ -823,8 +875,8 @@ struct AISettingsSheet: View {
                             SettingToggleRow(
                                 icon: "waveform",
                                 iconColor: ResilixTheme.brandCyan,
-                                title: "Stream Responses",
-                                subtitle: "Show answers word-by-word",
+                                title: L("Stream Responses"),
+                                subtitle: L("Show answers word-by-word"),
                                 isOn: $settings.streamResponses,
                                 tint: ResilixTheme.successGreen
                             )
@@ -832,8 +884,8 @@ struct AISettingsSheet: View {
                             SettingToggleRow(
                                 icon: "mic",
                                 iconColor: ResilixTheme.brandCyan,
-                                title: "Voice Input",
-                                subtitle: "Allow microphone prompts",
+                                title: L("Voice Input"),
+                                subtitle: L("Allow microphone prompts"),
                                 isOn: $settings.voiceInputEnabled,
                                 tint: ResilixTheme.successGreen
                             )
@@ -842,7 +894,7 @@ struct AISettingsSheet: View {
                                 icon: "iphone.haptic",
                                 iconColor: ResilixTheme.brandCyan,
                                 title: "Haptics",
-                                subtitle: "Subtle vibration on responses",
+                                subtitle: L("Subtle vibration on responses"),
                                 isOn: $settings.hapticsEnabled,
                                 tint: ResilixTheme.successGreen
                             )
@@ -850,28 +902,28 @@ struct AISettingsSheet: View {
                     }
 
                     // ===== PRIVACY =====
-                    sectionHeader("PRIVACY")
+                    sectionHeader(L("PRIVACY"))
                     settingsCard {
                         VStack(alignment: .leading, spacing: 0) {
                             SettingStaticRow(
                                 icon: "lock.shield",
                                 iconColor: ResilixTheme.successGreen,
-                                title: "Local Processing",
-                                subtitle: "All AI runs on this device"
+                                title: L("Local Processing"),
+                                subtitle: L("All AI runs on this device")
                             )
                             divider
                             SettingStaticRow(
                                 icon: "internaldrive",
                                 iconColor: ResilixTheme.brandCyan,
-                                title: "Conversation Storage",
-                                subtitle: "Saved locally, never uploaded"
+                                title: L("Conversation Storage"),
+                                subtitle: L("Saved locally, never uploaded")
                             )
                             divider
                             SettingToggleRow(
                                 icon: "chart.bar",
                                 iconColor: ResilixTheme.brandCyan,
-                                title: "Anonymous Analytics",
-                                subtitle: "Help improve offline AI quality",
+                                title: L("Anonymous Analytics"),
+                                subtitle: L("Help improve offline AI quality"),
                                 isOn: $settings.analyticsEnabled,
                                 tint: ResilixTheme.successGreen
                             )
@@ -881,7 +933,7 @@ struct AISettingsSheet: View {
                             } label: {
                                 HStack(spacing: 12) {
                                     SettingIconBadge(icon: "trash", color: ResilixTheme.emergencyRed)
-                                    Text("Clear All Conversations")
+                                    Text(L("Clear All Conversations"))
                                         .font(ResilixTheme.font(15, .bold))
                                         .foregroundStyle(ResilixTheme.emergencyRed)
                                     Spacer()
@@ -893,21 +945,21 @@ struct AISettingsSheet: View {
                     }
 
                     // ===== ABOUT =====
-                    sectionHeader("ABOUT")
+                    sectionHeader(L("ABOUT"))
                     settingsCard {
                         VStack(alignment: .leading, spacing: 0) {
                             SettingStaticRow(
                                 icon: "info.circle",
                                 iconColor: ResilixTheme.brandCyan,
                                 title: "Engine",
-                                subtitle: "Offline keyword + knowledge base"
+                                subtitle: L("Offline keyword + knowledge base")
                             )
                             divider
                             SettingStaticRow(
                                 icon: "tag",
                                 iconColor: ResilixTheme.brandCyan,
-                                title: "Version",
-                                subtitle: "Resilix Assist 1.0"
+                                title: L("Version"),
+                                subtitle: L("Resilix Assist 1.0")
                             )
                         }
                     }
@@ -920,13 +972,13 @@ struct AISettingsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                         .foregroundStyle(ResilixTheme.brandCyan)
                 }
             }
-            .alert("Clear all conversations?", isPresented: $showClearConfirm) {
-                Button("Cancel", role: .cancel) {}
-                Button("Clear", role: .destructive) {
+            .alert(L("Clear all conversations?"), isPresented: $showClearConfirm) {
+                Button(L("Cancel"), role: .cancel) {}
+                Button(L("Clear"), role: .destructive) {
                     onClear()
                     dismiss()
                 }
@@ -1078,11 +1130,11 @@ private struct SettingPickerRow: View {
             Spacer()
             Menu {
                 ForEach(AISettings.Language.allCases) { lang in
-                    Button(lang.rawValue) { selection = lang }
+                    Button(lang.label) { selection = lang }
                 }
             } label: {
                 HStack(spacing: 4) {
-                    Text(selection.rawValue)
+                    Text(selection.label)
                         .font(ResilixTheme.font(13, .semibold))
                         .foregroundStyle(ResilixTheme.brandCyan)
                     Image(systemName: "chevron.up.chevron.down")

@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Chunked media transfer over the mesh.
 ///
@@ -64,7 +65,7 @@ final class TransferService: ObservableObject {
     func send(fileURL: URL, to peerID: String, messageID: String, mimeType: String) async throws {
         let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
         let byteCount = (attributes[.size] as? NSNumber)?.intValue ?? 0
-        guard byteCount > 0 else { throw ResilixError.persistenceFailed("The file is empty") }
+        guard byteCount > 0 else { throw ResilixError.persistenceFailed(L("The file is empty")) }
         guard byteCount <= ResilixConstants.maxMediaBytes else {
             throw ResilixError.packetTooLarge
         }
@@ -190,7 +191,7 @@ final class TransferService: ObservableObject {
         case .reject:
             if var state = transfers[control.transferID] {
                 state.status = .rejected
-                state.errorMessage = "The peer refused the transfer."
+                state.errorMessage = L("The peer refused the transfer.")
                 transfers[control.transferID] = state
             }
         case .cancel:
@@ -286,7 +287,7 @@ final class TransferService: ObservableObject {
             guard let chunk = chunks[index] else {
                 var failed = state
                 failed.status = .failed
-                failed.errorMessage = "A chunk of the transfer is missing."
+                failed.errorMessage = L("A chunk of the transfer is missing.")
                 transfers[transferID] = failed
                 incomingChunks.removeValue(forKey: transferID)
                 return
@@ -299,7 +300,7 @@ final class TransferService: ObservableObject {
             guard digest == expected else {
                 var failed = state
                 failed.status = .failed
-                failed.errorMessage = "The received file is corrupted (checksum mismatch)."
+                failed.errorMessage = L("The received file is corrupted (checksum mismatch).")
                 transfers[transferID] = failed
                 incomingChunks.removeValue(forKey: transferID)
                 return
@@ -320,7 +321,7 @@ final class TransferService: ObservableObject {
         } catch {
             var failed = state
             failed.status = .failed
-            failed.errorMessage = "The file could not be stored."
+            failed.errorMessage = L("The file could not be stored.")
             transfers[transferID] = failed
             incomingChunks.removeValue(forKey: transferID)
         }

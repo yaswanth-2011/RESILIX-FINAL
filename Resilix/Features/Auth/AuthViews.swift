@@ -15,6 +15,14 @@ public struct WelcomeView: View {
     public enum AuthMode: String, CaseIterable, Hashable {
         case signIn = "Sign In"
         case createAccount = "Create Account"
+
+        /// Localized label rendered by the sign-in / create-account switch.
+        var title: String {
+            switch self {
+            case .signIn: return L("Sign In")
+            case .createAccount: return L("Create Account")
+            }
+        }
     }
 
     public var body: some View {
@@ -107,11 +115,11 @@ private struct LogoPlaceholderDarkView: View {
                     Image(systemName: "shield.lefthalf.filled")
                         .font(.system(size: 54, weight: .medium))
                         .foregroundStyle(.white)
-                    Text("RESILIX")
+                    Text(L("RESILIX"))
                         .font(.system(size: 28, weight: .heavy, design: .default))
                         .tracking(3)
                         .foregroundStyle(.white)
-                    Text("CONNECT WITHOUT THE INTERNET")
+                    Text(L("CONNECT WITHOUT THE INTERNET"))
                         .font(.system(size: 11, weight: .semibold, design: .default))
                         .tracking(1.4)
                         .foregroundStyle(ResilixTheme.brandCyan)
@@ -124,7 +132,7 @@ private struct LogoPlaceholderDarkView: View {
             #endif
         }
         .frame(maxWidth: .infinity)
-        .accessibilityLabel("Resilix logo")
+        accessibilityLabel(Text(L("Resilix logo")))
     }
 }
 
@@ -138,7 +146,7 @@ private struct AuthModeSlider: View {
             let w = geo.size.width
             HStack(spacing: 0) {
                 ForEach(WelcomeView.AuthMode.allCases, id: \.self) { mode in
-                    Text(mode.rawValue)
+                    Text(mode.title)
                         .font(ResilixTheme.font(14, .semibold))
                         .tracking(0.2)
                         .foregroundStyle(selectedMode == mode ? Color.black : Color.white.opacity(0.55))
@@ -198,7 +206,7 @@ private struct SignInTab: View {
     var body: some View {
         VStack(spacing: 12) {
             AuthInputField(
-                placeholder: "Email or username",
+                placeholder: L("Email or username"),
                 text: $email,
                 icon: "person",
                 keyboardType: .emailAddress,
@@ -206,7 +214,7 @@ private struct SignInTab: View {
             )
 
             AuthSecureField(
-                placeholder: "Password",
+                placeholder: L("Password"),
                 text: $password,
                 showPassword: $showPassword
             )
@@ -222,7 +230,7 @@ private struct SignInTab: View {
             Button {
                 guard !email.trimmingCharacters(in: .whitespaces).isEmpty,
                       !password.isEmpty else {
-                    error = "Enter email and password."
+                    error = L("Enter email and password.")
                     return
                 }
                 error = nil
@@ -238,7 +246,7 @@ private struct SignInTab: View {
             } label: {
                 HStack(spacing: 8) {
                     if loading { ProgressView().tint(Color.black) }
-                    Text("SIGN IN")
+                    Text(L("SIGN IN"))
                         .font(ResilixTheme.font(15, .heavy))
                         .tracking(0.8)
                 }
@@ -265,12 +273,12 @@ private struct SignInTab: View {
             Button {
                 isGuest = true
             } label: {
-                Text("Continue as Guest")
+                Text(L("Continue as Guest"))
                     .font(ResilixTheme.font(14, .semibold))
                     .foregroundStyle(Color.white.opacity(0.55))
             }
             .padding(.top, 4)
-            .accessibilityLabel("Continue as guest")
+            accessibilityLabel(Text(L("Continue as guest")))
         }
         .padding(.horizontal, 24)
         .padding(.top, 0)
@@ -290,14 +298,14 @@ private struct CreateAccountTab: View {
     var body: some View {
         VStack(spacing: 12) {
             AuthInputField(
-                placeholder: "Choose a username",
+                placeholder: L("Choose a username"),
                 text: $username,
                 icon: "person",
                 keyboardType: .default
             )
 
             AuthSecureField(
-                placeholder: "Password",
+                placeholder: L("Password"),
                 text: $password,
                 showPassword: $showPassword
             )
@@ -313,7 +321,7 @@ private struct CreateAccountTab: View {
             Button {
                 guard !username.trimmingCharacters(in: .whitespaces).isEmpty,
                       !password.isEmpty else {
-                    error = "Fill in all fields."
+                    error = L("Fill in all fields.")
                     return
                 }
                 error = nil
@@ -329,7 +337,7 @@ private struct CreateAccountTab: View {
             } label: {
                 HStack(spacing: 8) {
                     if loading { ProgressView().tint(Color.black) }
-                    Text("CREATE ACCOUNT")
+                    Text(L("CREATE ACCOUNT"))
                         .font(ResilixTheme.font(15, .heavy))
                         .tracking(0.8)
                 }
@@ -357,7 +365,7 @@ private struct CreateAccountTab: View {
             Button {
                 NotificationCenter.default.post(name: .authSuccess, object: nil)
             } label: {
-                Text("Continue as Guest")
+                Text(L("Continue as Guest"))
                     .font(ResilixTheme.font(14, .semibold))
                     .foregroundStyle(Color.white.opacity(0.55))
             }
@@ -490,31 +498,31 @@ public struct LoginView: View {
                     VStack(spacing: 16) {
                         LogoPlaceholderDarkView().padding(.top, 40)
                         VStack(spacing: 12) {
-                            AuthInputField(placeholder: "Email or username", text: $email, icon: "person")
-                            AuthSecureField(placeholder: "Password", text: $password, showPassword: $showPassword)
+                            AuthInputField(placeholder: L("Email or username"), text: $email, icon: "person")
+                            AuthSecureField(placeholder: L("Password"), text: $password, showPassword: $showPassword)
                             if let e = error {
                                 Text(e).font(ResilixTheme.font(12, .regular)).foregroundStyle(ResilixTheme.emergencyRed).frame(maxWidth: .infinity, alignment: .leading)
                             }
                             Button {
-                                guard !email.isEmpty, !password.isEmpty else { error = "Enter email and password."; return }
+                                guard !email.isEmpty, !password.isEmpty else { error = L("Enter email and password."); return }
                                 loading = true
                                 Task { try? await Task.sleep(nanoseconds: 500_000_000); await MainActor.run { loading = false; onSuccess() } }
                             } label: {
-                                HStack { if loading { ProgressView().tint(Color.black) }; Text("SIGN IN").font(ResilixTheme.font(15, .heavy)).tracking(0.8) }
+                                HStack { if loading { ProgressView().tint(Color.black) }; Text(L("SIGN IN")).font(ResilixTheme.font(15, .heavy)).tracking(0.8) }
                                     .foregroundStyle(Color.black).frame(maxWidth: .infinity).frame(height: 56)
                                     .background(ResilixTheme.brandCyan)
                                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                                     .liquidGlassRounded(cornerRadius: 18, interactive: true)
                             }
                             .buttonStyle(.plain)
-                            Button("Continue as Guest") { onSuccess() }.font(ResilixTheme.font(14, .semibold)).foregroundStyle(Color.white.opacity(0.55))
+                            Button(L("Continue as Guest")) { onSuccess() }.font(ResilixTheme.font(14, .semibold)).foregroundStyle(Color.white.opacity(0.55))
                         }
                         .padding(.horizontal, 24)
                     }
                     .padding(.bottom, 24)
                 }
             }
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() }.foregroundStyle(Color.white.opacity(0.7)) } }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Close")) { dismiss() }.foregroundStyle(Color.white.opacity(0.7)) } }
         }
     }
     public init(onSuccess: @escaping () -> Void) { self.onSuccess = onSuccess }
@@ -536,13 +544,13 @@ public struct CreateAccountView: View {
                     VStack(spacing: 16) {
                         LogoPlaceholderDarkView().padding(.top, 40)
                         VStack(spacing: 12) {
-                            AuthInputField(placeholder: "Choose a username", text: $name, icon: "person")
-                            AuthSecureField(placeholder: "Password", text: $password, showPassword: $showPassword)
+                            AuthInputField(placeholder: L("Choose a username"), text: $name, icon: "person")
+                            AuthSecureField(placeholder: L("Password"), text: $password, showPassword: $showPassword)
                             Button {
                                 loading = true
                                 Task { try? await Task.sleep(nanoseconds: 500_000_000); await MainActor.run { loading = false; onSuccess() } }
                             } label: {
-                                Text("CREATE ACCOUNT").font(ResilixTheme.font(15, .heavy)).tracking(0.8).foregroundStyle(Color.black).frame(maxWidth: .infinity).frame(height: 56)
+                                Text(L("CREATE ACCOUNT")).font(ResilixTheme.font(15, .heavy)).tracking(0.8).foregroundStyle(Color.black).frame(maxWidth: .infinity).frame(height: 56)
                                     .background(ResilixTheme.brandCyan)
                                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous)).liquidGlassRounded(cornerRadius: 18, interactive: true)
                             }
@@ -551,7 +559,7 @@ public struct CreateAccountView: View {
                     }.padding(.bottom, 24)
                 }
             }
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() }.foregroundStyle(Color.white.opacity(0.7)) } }
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button(L("Close")) { dismiss() }.foregroundStyle(Color.white.opacity(0.7)) } }
         }
     }
     public init(onSuccess: @escaping () -> Void) { self.onSuccess = onSuccess }

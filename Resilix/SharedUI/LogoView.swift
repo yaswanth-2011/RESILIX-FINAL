@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Replaceable logo view.
 /// Drop your assets into:
@@ -29,9 +30,9 @@ struct LogoView: View {
                     // Fallback vertical full logo
                     VStack(spacing: 4) {
                         Image(systemName: "shield.lefthalf.filled").font(.title2).foregroundStyle(ResilixTheme.brandTeal)
-                        Text("Resilix").font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
+                        Text(L("Resilix")).font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
                         if showTagline {
-                            Text("Survival & Resilience").font(.caption2.weight(.medium)).foregroundStyle(ResilixTheme.textTertiary)
+                            Text(L("Survival & Resilience")).font(.caption2.weight(.medium)).foregroundStyle(ResilixTheme.textTertiary)
                         }
                     }
                 }
@@ -43,9 +44,9 @@ struct LogoView: View {
                 } else {
                     VStack(spacing: 6) {
                         markImage(size: height)
-                        Text("Resilix").font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
+                        Text(L("Resilix")).font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
                         if showTagline {
-                            Text("Survival & Resilience Solutions").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
+                            Text(L("Survival & Resilience Solutions")).font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
                         }
                     }
                 }
@@ -57,23 +58,23 @@ struct LogoView: View {
                     HStack(spacing: 8) {
                         markImage(size: height * 0.85)
                         VStack(alignment: .leading, spacing: 1) {
-                            Text("Resilix").font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
+                            Text(L("Resilix")).font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
                             if showTagline {
-                                Text("Survival & Resilience").font(.caption2.weight(.medium)).foregroundStyle(ResilixTheme.textTertiary)
+                                Text(L("Survival & Resilience")).font(.caption2.weight(.medium)).foregroundStyle(ResilixTheme.textTertiary)
                             }
                         }
                     }
                 } else {
                     HStack(spacing: 8) {
                         markImage(size: height * 0.85)
-                        Text("Resilix").font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
+                        Text(L("Resilix")).font(.headline.weight(.bold)).foregroundStyle(ResilixTheme.textPrimary)
                     }
                 }
             case .mark:
                 markImage(size: height)
             }
         }
-        .accessibilityLabel("Resilix logo")
+        accessibilityLabel(Text(L("Resilix logo")))
         .accessibilityAddTraits(.isImage)
     }
 
@@ -108,18 +109,18 @@ struct LogoVariantPreview: View {
     var body: some View {
         VStack(spacing: 32) {
             VStack(spacing: 8) {
-                Text("1) Icon top • Text bottom (stacked)").font(.caption2.weight(.semibold)).foregroundStyle(ResilixTheme.textSecondary)
+                Text(L("1) Icon top • Text bottom (stacked)")).font(.caption2.weight(.semibold)).foregroundStyle(ResilixTheme.textSecondary)
                 LogoView(variant: .stacked, height: 56, showTagline: true)
                     .padding().background(ResilixTheme.surfacePrimary).clipShape(RoundedRectangle(cornerRadius: 12)).shadow(color: .black.opacity(0.06), radius: 8, y: 4)
-                Text("ResilixLogoPlaceholder → vertical").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
+                Text(L("ResilixLogoPlaceholder → vertical")).font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
             }
             VStack(spacing: 8) {
-                Text("2) Icon left • Text right (inline)").font(.caption2.weight(.semibold)).foregroundStyle(ResilixTheme.textSecondary)
+                Text(L("2) Icon left • Text right (inline)")).font(.caption2.weight(.semibold)).foregroundStyle(ResilixTheme.textSecondary)
                 LogoView(variant: .inline, height: 32, showTagline: false)
                     .padding(.horizontal, 16).padding(.vertical, 10).background(ResilixTheme.surfacePrimary).clipShape(RoundedRectangle(cornerRadius: 12)).shadow(color: .black.opacity(0.06), radius: 8, y: 4)
-                Text("ResilixMarkPlaceholder + Text → horizontal").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
+                Text(L("ResilixMarkPlaceholder + Text → horizontal")).font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
             }
-            Text("Drop new assets into Assets.xcassets to replace — no code change needed.")
+            Text(L("Drop new assets into Assets.xcassets to replace — no code change needed."))
                 .font(.caption2).foregroundStyle(ResilixTheme.textTertiary).multilineTextAlignment(.center).padding(.horizontal)
         }.padding().background(ResilixTheme.bgSecondary)
     }

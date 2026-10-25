@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import CoreLocation
 
 // Nearby liquid glass low opacity — less whiter, only for this section
 
@@ -129,10 +130,10 @@ struct NearbyView: View {
     // MARK: - Header (Resilix font, theme colors)
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Nearby")
+            Text(L("Nearby"))
                 .font(ResilixTheme.font(32, .bold))
                 .foregroundStyle(.white)
-            Text("Devices within mesh range")
+            Text(L("Devices within mesh range"))
                 .font(ResilixTheme.font(15, .regular))
                 .foregroundStyle(Color.white.opacity(0.55))
         }
@@ -149,7 +150,7 @@ struct NearbyView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "viewfinder")
                             .font(.system(size: 16, weight: .semibold))
-                        Text("Scan for Devices")
+                        Text(L("Scan for Devices"))
                             .font(ResilixTheme.font(16, .semibold))
                     }
                     .foregroundStyle(ResilixTheme.textOnAccent)
@@ -173,7 +174,7 @@ struct NearbyView: View {
                 HStack(spacing: 10) {
                     ProgressView()
                         .tint(ResilixTheme.brandCyan)
-                    Text("Scanning for Resilix devices...")
+                    Text(L("Scanning for Resilix devices..."))
                         .font(ResilixTheme.font(15, .semibold))
                 }
                 .foregroundStyle(ResilixTheme.brandCyan)
@@ -194,7 +195,7 @@ struct NearbyView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "viewfinder")
                             .font(.system(size: 16, weight: .semibold))
-                        Text("\(devices.count) devices found – Scan again")
+                        Text("\(devices.count) " + L("ui.devices.found") + " – " + L("ui.scan.again"))
                             .font(ResilixTheme.font(16, .semibold))
                     }
                     .foregroundStyle(ResilixTheme.textOnAccent)
@@ -280,7 +281,7 @@ struct NearbyView: View {
     }
 
     private var scanningHint: some View {
-        Text("Scanning for nearby Resilix devices...")
+        Text(L("Scanning for nearby Resilix devices..."))
             .font(ResilixTheme.font(13, .medium))
             .foregroundStyle(Color.white.opacity(0.45))
             .frame(maxWidth: .infinity)
@@ -311,10 +312,10 @@ struct NearbyView: View {
                     .font(.system(size: 28, weight: .medium))
                     .foregroundStyle(ResilixTheme.textTertiary)
             }
-            Text("No nearby devices")
+            Text(L("No nearby devices"))
                 .font(ResilixTheme.font(15, .semibold))
                 .foregroundStyle(.white)
-            Text("Tap Scan to discover Resilix devices around you.")
+            Text(L("Tap Scan to discover Resilix devices around you."))
                 .font(ResilixTheme.font(12, .regular))
                 .foregroundStyle(Color.white.opacity(0.5))
                 .multilineTextAlignment(.center)

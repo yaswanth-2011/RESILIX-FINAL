@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct SOSView: View {
     @EnvironmentObject var app: ResilixAppModel
@@ -14,12 +15,12 @@ struct SOSView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: ResilixTheme.space16) {
-                Text("Send SOS")
+                Text(L("Send SOS"))
                     .font(.title3.weight(.bold))
                     .foregroundStyle(ResilixTheme.brandNavy)
                     .accessibilityAddTraits(.isHeader)
                 
-                Text("This will alert nearby devices via mesh. Hold or tap to confirm.")
+                Text(L("This will alert nearby devices via mesh. Hold or tap to confirm."))
                     .font(.subheadline)
                     .foregroundStyle(ResilixTheme.textSecondary)
                 
@@ -27,13 +28,13 @@ struct SOSView: View {
                     ForEach(SOSCategory.allCases, id: \.self) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.menu)
-                .accessibilityLabel("SOS category")
+                accessibilityLabel(Text(L("SOS category")))
                 
                 Picker(L("sos.severity"), selection: $severity) {
                     ForEach(SOSSeverity.allCases, id: \.self) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.segmented)
-                .accessibilityLabel("SOS severity")
+                accessibilityLabel(Text(L("SOS severity")))
                 
                 let scoring = SeverityScoringEngine.score(category: category, severity: severity, note: note)
                 HStack {
@@ -44,17 +45,17 @@ struct SOSView: View {
                     SeverityBadge(severity: severity)
                 }
                 .accessibilityElement(children: .combine)
-                .accessibilityLabel("Priority: \(scoring.reason)")
+                .accessibilityLabel(L("sos.priority") + ": \(scoring.reason)")
                 
                 TextField(L("sos.note"), text: $note)
                     .textFieldStyle(.roundedBorder)
-                    .accessibilityLabel("Optional note")
+                    accessibilityLabel(Text(L("Optional note")))
                 
                 Toggle(L("sos.shareLocation"), isOn: $shareLocation)
                     .tint(ResilixTheme.brandTeal)
-                    .accessibilityLabel("Share approximate location")
+                    accessibilityLabel(Text(L("Share approximate location")))
                 
-                Text("Location only shared with consent, minimum precision.")
+                Text(L("Location only shared with consent, minimum precision."))
                     .font(.caption2)
                     .foregroundStyle(ResilixTheme.textTertiary)
                 
@@ -68,7 +69,7 @@ struct SOSView: View {
                             .fill(ResilixTheme.emergencyRed)
                             .frame(width: progress * (geo.size.width - 32), height: 56)
                             .animation(.linear, value: progress)
-                    Text(isHolding ? "Hold to send…" : L("sos.holdToSend"))
+                    Text(isHolding ? L("Hold to send…") : L("sos.holdToSend"))
                         .font(.headline)
                         .foregroundStyle(isHolding ? .white : ResilixTheme.emergencyRed)
                     }
@@ -86,8 +87,8 @@ struct SOSView: View {
                             progress = 0
                         }
                 )
-                .accessibilityLabel("Hold to send SOS")
-                .accessibilityHint("Long press for 1.5 seconds to confirm SOS")
+                accessibilityLabel(Text(L("Hold to send SOS")))
+                accessibilityHint(Text(L("Long press for 1.5 seconds to confirm SOS")))
                 .accessibilityAddTraits(.isButton)
                 
                 // Alternative tap-to-send for accessibility
@@ -96,29 +97,29 @@ struct SOSView: View {
                 }
                 .font(.caption.weight(.medium))
                 .foregroundStyle(ResilixTheme.brandTeal)
-                .accessibilityLabel("Send SOS (alternative)")
-                .accessibilityHint("Tap to send SOS without holding")
+                accessibilityLabel(Text(L("Send SOS (alternative)")))
+                accessibilityHint(Text(L("Tap to send SOS without holding")))
                 
                 if let active = app.sosService.activeSOS {
                     ResilixCard {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Active SOS")
+                            Text(L("Active SOS"))
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(ResilixTheme.textPrimary)
-                            Text(active.category.rawValue)
+                            Text(active.category.label)
                                 .font(.caption)
                                 .foregroundStyle(ResilixTheme.textSecondary)
-                            Text("Relaying")
+                            Text(L("Relaying"))
                                 .font(.caption2)
                                 .foregroundStyle(ResilixTheme.brandTeal)
                         }
                     }
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Active SOS: \(active.category.rawValue), relaying")
+                    .accessibilityLabel(L("sos.active") + ": \(active.category.label), " + L("sos.relaying"))
                 }
                 
                 if let inc = app.sosService.incidents.first {
-                    Text("Delivery: \(inc.acknowledged ? "Delivered" : L("delivery.queued"))")
+                    Text(L("sos.delivery") + ": \(inc.acknowledged ? L("delivery.delivered") : L("delivery.queued"))")
                         .font(.caption)
                         .foregroundStyle(ResilixTheme.textSecondary)
                 }
@@ -130,7 +131,7 @@ struct SOSView: View {
         .navigationBarTitleDisplayMode(.inline)
         .alert(L("sos.confirm"), isPresented: $showConfirm) {
             Button(L("sos.cancel"), role: .cancel) {}
-            Button("Send", role: .destructive) {
+            Button(L("Send"), role: .destructive) {
                 Task {
                     try? await app.sosService.dispatch(
                         category: category,
@@ -143,11 +144,11 @@ struct SOSView: View {
                 }
             }
         } message: {
-            Text("Send \(severity.label.lowercased()) \(category.label.lowercased()) alert via mesh?")
+            Text(L("sos.send.prompt") + " \(severity.label.lowercased()) \(category.label.lowercased()) " + L("sos.send.prompt.tail"))
         }
         .alert(L("sos.confirm"), isPresented: $showAlternativeConfirm) {
             Button(L("sos.cancel"), role: .cancel) {}
-            Button("Send", role: .destructive) {
+            Button(L("Send"), role: .destructive) {
                 Task {
                     try? await app.sosService.dispatch(
                         category: category,
@@ -160,7 +161,7 @@ struct SOSView: View {
                 }
             }
         } message: {
-            Text("Send \(severity.label.lowercased()) \(category.label.lowercased()) alert via mesh?")
+            Text(String(format: L("Send %@ %@ alert via mesh?"), severity.label.lowercased(), category.label.lowercased()))
         }
     }
 }

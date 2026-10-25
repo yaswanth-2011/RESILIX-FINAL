@@ -16,7 +16,24 @@
 | Physical device run (2–3 iPhones, BLE + P2P Wi-Fi, real relay) | **NOT PERFORMED** — no devices. |
 | Offline syntax validation | **PASS** — `Tools/swiftcheck.py` (tree-sitter-swift 0.7.4): **115/115 files parse with 0 errors**. |
 | Xcode project integrity | **PASS** — `Tools/sync_xcodeproj.py` + custom validator: brace balance 0, **0 dangling object references**, 105 app + 9 test files all present on disk and in their Sources phases, **no file on disk left out of a target**. |
-| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, 265 keys, 11 languages, 1600 non-English translations. |
+| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **784 keys × 11 languages = 8,404 translated units**, every key fully translated in all 11 languages, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches** (`Tools/l10n/audit_keys.py`). |
+| Localised-screen literal sweep | **PASS** — `Tools/l10n/audit_uiliterals.py`: every SwiftUI `Text/Label/Button/navigationTitle/NavigationLink/…` literal resolves to a catalog key with 11 translations; **0 problems** (only empty/symbol-only literals remain, which carry no translatable text). |
+| Design-frozen check | **PASS** — the theme file diff contains **no numeric change**: all 32 colour tokens have identical RGB values before/after, all scalar spacing tokens and the `font()` helper are byte-identical. The only theme edit is the helper's internal shape (`dynamic` → `adaptive` with `RGB`/`RGBA` structs) and it is behaviour-identical. |
+| Empty actions / placeholders | **PASS** — 0 `TODO`/`FIXME`/`fatalError`; the only empty closures are SwiftUI `role: .cancel` buttons (auto-dismiss), protocol `init(){}` stubs, and the `MockMeshTransport`/demo-only no-ops. |
+
+### 0.1 Defects found and fixed by the post-implementation audit
+
+| Defect | Impact if unfixed | Fix |
+|---|---|---|
+| `NSMicrophoneUsageDescription` missing from `Info.plist` | **Immediate crash** (`TCC` termination) the first time the user taps *Record* — the voice-message feature could never have run. | Key added. |
+| `NSCameraUsageDescription` missing from `Info.plist` | **Immediate crash** when the user taps *Camera* in the message thread. | Key added. |
+| `UIImagePickerController.sourceType = .camera` set unconditionally | `NSInvalidArgumentException: Source type 1 not available` — a crash on the simulator, and on any device without a camera. | Source type is now chosen with `isSourceTypeAvailable(.camera)` and falls back to the photo library. |
+| `NSPhotoLibraryUsageDescription` missing | Needed by the fallback above (and by `UIImagePickerController` in library mode). | Key added. |
+| `UIUserInterfaceStyle` absent despite a dark-by-default product requirement | White launch screen and light system-served sheets on a light-mode device, i.e. a visible flash that contradicts the dark theme on first launch. | `UIUserInterfaceStyle = Dark` added; Settings → Appearance → *Light* still overrides it because `preferredColorScheme(.light)` takes precedence over the plist. |
+| `_resilix-aware._tcp` missing from `NSBonjourServices` | `NWBrowser` policy failure if Wi-Fi Aware browsing were ever attempted. | Service declared (the transport itself still reports *unavailable*, truthfully). |
+| Inert `.photosPicker(isPresented:)` bound to a constant-`false` binding in `MessageComposerView` | Dead modifier; the visible `PhotosPicker` button worked but the code implied a second, non-functional picker path. | Stub binding and modifier removed; the working inline `PhotosPicker` is untouched. |
+
+The remaining literal-scan hits are non-defects: SF Symbol names, interpolation-only fragments, and pure `LocalizedStringKey` literals that already resolve to catalog entries.
 
 **No claim of a successful build is made anywhere in this report.** The parser is a *syntax* gate, not a type-checker: it cannot catch a type mismatch, a wrong argument label, or a missing symbol. Those risks are enumerated in §13.
 
@@ -134,10 +151,17 @@ MBTiles (SQLite) packs and tile directories imported by the user into the app co
 | Language | Code | Status |
 |---|---|---|
 | English | en | source language (fallback) |
-| Hindi, Telugu, Tamil, Kannada, Malayalam | hi, te, ta, kn, ml | 160/160 translated keys |
-| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | 160/160 translated keys |
+| Hindi, Telugu, Tamil, Kannada, Malayalam | hi, te, ta, kn, ml | **784 / 784 keys** |
+| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | **784 / 784 keys** |
 
-Persisted in `UserDefaults("language")` + `AppleLanguages`; applied via `LocalizationManager` and injected as `\.locale` into the environment.
+**Catalog totals:** 784 keys × 11 languages = **8,404 translated string units** in `Resilix/Resources/Localizable.xcstrings`.
+**Automated audits (both green):**
+- `Tools/l10n/audit_keys.py` → 712 referenced keys, 0 missing from catalog, 0 untranslated, 0 placeholder-count mismatches, 73 orphan keys kept deliberately (reachable via SwiftUI `LocalizedStringKey` or reserved for reuse).
+- `Tools/l10n/audit_uiliterals.py` → **0 problems**: no hard-coded English remains in any `Text`/`Label`/`Button`/`navigationTitle`/`NavigationLink`/`Section`/`TextField`/`Toggle`/`alert` title on a localised screen.
+
+**Deliberately left in English (technical identifiers, not UI copy):** SQL fragments, font PostScript names, the Bonjour service type `_resilix._tcp`, the Bonjour peer name `Resilix Node`, model IDs/licence names (`google/gemma-4-E2B`, `Qwen3-0.6B`, `Apache-2.0`), and diagnostic dumps.
+
+**Persisted** in `UserDefaults("language")` + `AppleLanguages`; applied via `LocalizationManager` (NSLock-protected `LanguageState`, safe to read from background/statically-initialised contexts) and injected as `\.locale` into the SwiftUI environment. Switching language re-renders every screen immediately, including computed `label`/`title` properties added to enums that previously rendered raw persisted values (`MapStyleOption`, `SurvivalMapView.ThreeDMode`, `MapFilter`, `SettingsView.Appearance/Language`, `AISettings.ResponseLength/Tone/Language`). Enum **raw values** were kept byte-identical because they are the persisted identities; only their display gained localisation.
 
 ---
 
@@ -223,11 +247,16 @@ All 64 pass the offline syntax gate. **None has been run** — that requires Xco
 - **Type-level mismatches**: parser-checked only. Most likely spots: `LocalizationManager`'s de-actor-isolation interacting with `@Published` mutations from background contexts; `TransferService`'s `FileHandle` usage under Swift 6 concurrency checking; `MeshController`'s `nonisolated` accessors.
 - **Framework availability**: `SQLite3` (`import SQLite3`) resolves from the iOS SDK without an extra link step, but it is untested here.
 - **SwiftUI `Map`** (iOS 17) usage in `SurvivalMapView` was left as found.
+- **Localisation is verified statically, not visually.** The audits prove a key with 11 translations exists for every visible string, but they cannot prove a translation is idiomatic, nor that a long translation (e.g. Malayalam or Urdu) does not wrap awkwardly inside a fixed-width card. Layout was not changed to accommodate translations, per the frozen-design constraint — long languages may wrap to more lines. This needs a human look in the simulator (§12).
+- **`OfflineTileOverlay` / `MBTilesReader`** use `SQLite3` directly and a custom `MKTileOverlay` subclass; both are parser-clean but unexecuted. A malformed `.mbtiles` file is handled defensively, but real map rendering has not been observed.
+- **LiteRT-LM is not linked.** `LiteRTModelRuntime` is a `#if canImport(LiteRTLM)` adapter with the official `EngineConfig` / `Engine` / `Conversation` API. Because the product is not in the project, the app compiles without it and reports a truthful *runtime not linked* state. To actually run Gemma 4 E2B or Qwen3-0.6B you must add the `LiteRTLM` SwiftPM product and supply a model file (§1.7 / §12). This is the single largest "does AI work end-to-end" caveat.
+- **AFM 3** depends on `FoundationModels` being present in the SDK *and* the device being eligible; `AppleFoundationModelRuntime` checks `SystemLanguageModel.default.availability` and reports the real reason instead of falling back to cloud.
 - `Tools/swiftcheck.py` suppresses one class of false positive (a sibling-scope callee named like a keyword); this can mask a genuine error of the same shape.
 
 ---
 
 ## 14. Repository state
 
-- Branch `arena/2eab602c-resilix`, pushed to `origin`; commit `9ab2ad2` contains the entire implementation and the tooling.
-- Working tree is clean.
+- Branch `arena/2eab602c-resilix`, pushed to `origin`. `reslix_post_audit` commit contains the entire implementation, the tooling under `Tools/`, and the final localisation sweep (chunk19 + chunk20, raw-value label patch, String-ternary fixes).
+- Verification at time of writing: `swiftcheck.py` 115/115 OK · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Download in Xcode: clone the branch and open `Resilix.xcodeproj`; the project carries **no SwiftPM dependencies**, so it resolves and builds with the stock iOS SDK. Signing is `CODE_SIGN_STYLE = Automatic` with no `DEVELOPMENT_TEAM`, so pick your own team in *Signing & Capabilities* before running on a device.

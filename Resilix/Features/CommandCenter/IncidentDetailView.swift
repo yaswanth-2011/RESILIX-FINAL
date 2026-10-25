@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import CoreLocation
 
 struct IncidentDetailView: View {
     var incident: Incident
@@ -15,14 +16,14 @@ struct IncidentDetailView: View {
                         .font(.headline)
                         .foregroundStyle(ResilixTheme.textPrimary)
                     Spacer()
-                    Text(incident.status.rawValue.capitalized)
+                    Text(incident.status.label)
                         .font(.caption2.weight(.semibold))
                         .padding(6)
                         .background(ResilixTheme.bgSecondary)
                         .clipShape(Capsule())
                 }
                 .accessibilityElement(children: .combine)
-                .accessibilityLabel("\(incident.category.label) incident, \(incident.severity.label) severity, \(incident.status.rawValue)")
+                .accessibilityLabel("\(incident.category.label) " + L("ui.incident") + ", \(incident.severity.label) " + L("ui.severity") + ", \(incident.status.label)")
                 
                 if let n = incident.note {
                     Text(n)
@@ -31,10 +32,10 @@ struct IncidentDetailView: View {
                 }
                 
                 RoutePathView(hops: incident.routeSummary?.components(separatedBy: " → ") ?? ["A", "B", "C"])
-                    .accessibilityLabel("Route: \(incident.routeSummary ?? "A to B to C")")
+                    .accessibilityLabel(L("ui.route") + ": \(incident.routeSummary ?? L("ui.route.default"))")
                 
                 HStack {
-                    Label("\(incident.hops ?? 2) hops", systemImage: "point.3.connected.trianglepath.dotted")
+                    Label("\(incident.hops ?? 2) " + L("ui.hops"), systemImage: "point.3.connected.trianglepath.dotted")
                         .font(.caption)
                         .foregroundStyle(ResilixTheme.textSecondary)
                     Spacer()
@@ -55,7 +56,7 @@ struct IncidentDetailView: View {
                     }
                     .frame(height: 180)
                     .clipShape(RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusMedium))
-                    .accessibilityLabel("Map showing incident location")
+                    accessibilityLabel(Text(L("Map showing incident location")))
                 }
                 
                 if !incident.acknowledged {
@@ -66,15 +67,15 @@ struct IncidentDetailView: View {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                         } else {
-                            Text("Acknowledge")
+                            Text(L("Acknowledge"))
                                 .frame(maxWidth: .infinity)
                         }
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(ResilixTheme.brandTeal)
                     .disabled(isAcknowledging)
-                    .accessibilityLabel("Acknowledge incident")
-                    Text("Acknowledgement propagates through mesh.")
+                    accessibilityLabel(Text(L("Acknowledge incident")))
+                    Text(L("Acknowledgement propagates through mesh."))
                         .font(.caption2)
                         .foregroundStyle(ResilixTheme.textTertiary)
                 } else {

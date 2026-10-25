@@ -1,5 +1,6 @@
 import SwiftUI
 import MapKit
+import CoreLocation
 
 // MARK: - Map color tokens
 // Distinct color per role, so You / Direct / Relay / Shelter / Route are all
@@ -25,6 +26,18 @@ enum MapStyleOption: String, CaseIterable, Identifiable {
     case threeD    = "3D"
     var id: String { rawValue }
 
+    /// Localized name shown in the layer sheet and the style badge.
+    var label: String {
+        switch self {
+        case .standard:  return L("map.style.standard")
+        case .hybrid:    return L("map.style.hybrid")
+        case .satellite: return L("map.style.satellite")
+        case .muted:     return L("map.style.muted")
+        case .transit:   return L("map.style.transit")
+        case .threeD:    return L("map.style.threeD")
+        }
+    }
+
     var icon: String {
         switch self {
         case .standard:  return "map.fill"
@@ -38,12 +51,12 @@ enum MapStyleOption: String, CaseIterable, Identifiable {
 
     var subtitle: String {
         switch self {
-        case .standard:  return "Apple Maps standard view"
-        case .hybrid:    return "Satellite imagery with roads & labels"
-        case .satellite: return "Pure satellite imagery"
-        case .muted:     return "Soft, low-saturation map for overview"
-        case .transit:   return "Map highlighting public transport"
-        case .threeD:    return "Realistic 3D buildings & terrain"
+        case .standard:  return L("Apple Maps standard view")
+        case .hybrid:    return L("Satellite imagery with roads & labels")
+        case .satellite: return L("Pure satellite imagery")
+        case .muted:     return L("Soft, low-saturation map for overview")
+        case .transit:   return L("Map highlighting public transport")
+        case .threeD:    return L("Realistic 3D buildings & terrain")
         }
     }
 }
@@ -78,11 +91,20 @@ struct SurvivalMapView: View {
         case cinematic = "Cinematic"
         var id: String { rawValue }
 
+        /// Localized name shown in the 3D mode picker.
+        var label: String {
+            switch self {
+            case .off:       return L("map.mode.off")
+            case .tilted:    return L("map.mode.tilted")
+            case .cinematic: return L("map.mode.cinematic")
+            }
+        }
+
         var subtitle: String {
             switch self {
-            case .off:       return "Flat top-down map"
-            case .tilted:    return "Subtle tilt for context"
-            case .cinematic: return "Deep 3D with rotation"
+            case .off:       return L("Flat top-down map")
+            case .tilted:    return L("Subtle tilt for context")
+            case .cinematic: return L("Deep 3D with rotation")
             }
         }
 
@@ -115,6 +137,16 @@ struct SurvivalMapView: View {
         case shelters = "Shelters"
         case routes = "Routes"
         var id: String { rawValue }
+
+        /// Localized name shown in the segmented map filter.
+        var label: String {
+            switch self {
+            case .all:      return L("map.all")
+            case .devices:  return L("map.filter.devices")
+            case .shelters: return L("map.filter.shelters")
+            case .routes:   return L("map.filter.routes")
+            }
+        }
     }
 
     private var is3D: Bool { styleOption == .threeD }
@@ -274,17 +306,17 @@ struct SurvivalMapView: View {
     private var headerOverlay: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Map")
+                Text(L("Map"))
                     .font(ResilixTheme.font(28, .bold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                 HStack(spacing: 6) {
                     Circle()
                         .fill(MapColors.gpsGreen)
                         .frame(width: 7, height: 7)
-                    Text("GPS Active")
+                    Text(L("GPS Active"))
                         .font(ResilixTheme.font(13, .semibold))
                         .foregroundStyle(MapColors.gpsGreen)
-                    Text("· Offline map")
+                    Text(L("· Offline map"))
                         .font(ResilixTheme.font(13, .regular))
                         .foregroundStyle(Color.white.opacity(0.45))
                 }
@@ -295,7 +327,7 @@ struct SurvivalMapView: View {
                 headerIconButton(icon: "square.3.layers.3d", label: "Layers") {
                     showLayers.toggle()
                 }
-                headerIconButton(icon: "square.and.arrow.down", label: "Offline maps") {
+                headerIconButton(icon: "square.and.arrow.down", label: L("Offline maps")) {
                     showOfflineMaps = true
                 }
                 threeDHeaderButton
@@ -305,7 +337,7 @@ struct SurvivalMapView: View {
                 headerIconButton(icon: "scope", label: "Recenter") {
                     recenter()
                 }
-                headerIconButton(icon: "location.north.line.fill", label: "Recenter map") {
+                headerIconButton(icon: "location.north.line.fill", label: L("Recenter map")) {
                     recenter()
                 }
             }
@@ -336,7 +368,7 @@ struct SurvivalMapView: View {
             LongPressGesture(minimumDuration: 0.4)
                 .onEnded { _ in show3DPopup = true }
         )
-        .accessibilityLabel("3D view options")
+        accessibilityLabel(Text(L("3D view options")))
     }
 
     // MARK: - Search bar (dark liquid glass — same style as card/legend/slider)
@@ -349,7 +381,7 @@ struct SurvivalMapView: View {
             // color (the default TextField placeholder is hard to tint).
             ZStack(alignment: .leading) {
                 if searchText.isEmpty {
-                    Text("Search places, devices, shelters")
+                    Text(L("Search places, devices, shelters"))
                         .font(ResilixTheme.font(14, .regular))
                         .foregroundStyle(Color.white.opacity(0.35))
                         .allowsHitTesting(false)
@@ -372,7 +404,7 @@ struct SurvivalMapView: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                .accessibilityLabel("Clear search")
+                accessibilityLabel(Text(L("Clear search")))
             }
         }
         .padding(.horizontal, 14)
@@ -391,10 +423,10 @@ struct SurvivalMapView: View {
     // MARK: - Legend (dark liquid glass — same style as card/legend/slider)
     private var legendGlass: some View {
         HStack(spacing: 14) {
-            LegendRow(color: MapColors.you,     label: "You")
-            LegendRow(color: MapColors.direct,  label: "Direct")
-            LegendRow(color: MapColors.relay,   label: "Relay")
-            LegendRow(color: MapColors.shelter, label: "Shelter")
+            LegendRow(color: MapColors.you,     label: L("You"))
+            LegendRow(color: MapColors.direct,  label: L("Direct"))
+            LegendRow(color: MapColors.relay,   label: L("Relay"))
+            LegendRow(color: MapColors.shelter, label: L("Shelter"))
         }
         .padding(.horizontal, 14)
         .frame(height: 44)
@@ -463,9 +495,9 @@ struct SurvivalMapView: View {
     // modifier. No extra fill, stroke, or padding so the border stays thin
     // and uniform with the rest of the glass elements.
     private var nativeSegmentedFilter: some View {
-        Picker("Filter", selection: $filter) {
+        Picker(L("Filter"), selection: $filter) {
             ForEach(MapFilter.allCases) { f in
-                Text(f.rawValue).tag(f)
+                Text(f.label).tag(f)
             }
         }
         .pickerStyle(.segmented)
@@ -508,8 +540,8 @@ struct SurvivalMapView: View {
             MapPeer(id: "m2", name: "Marcus D.", kind: .direct,  coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0009, longitude: base.longitude + 0.0021)),
             MapPeer(id: "m3", name: "ResBot-α",  kind: .relay,   coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0024, longitude: base.longitude + 0.0010)),
             MapPeer(id: "m4", name: "James R.",  kind: .relay,   coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0015, longitude: base.longitude + 0.0022)),
-            MapPeer(id: "m5", name: "Shelter 1", kind: .shelter, coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0022, longitude: base.longitude - 0.0010)),
-            MapPeer(id: "m6", name: "Shelter 2", kind: .shelter, coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0010, longitude: base.longitude - 0.0023)),
+            MapPeer(id: "m5", name: L("Shelter 1"), kind: .shelter, coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0022, longitude: base.longitude - 0.0010)),
+            MapPeer(id: "m6", name: L("Shelter 2"), kind: .shelter, coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0010, longitude: base.longitude - 0.0023)),
         ]
     }
 
@@ -618,7 +650,7 @@ private struct YouMapAnnotation: View {
                 .font(.system(size: 52))
                 .foregroundStyle(.white, MapColors.you)
                 .shadow(color: .black.opacity(0.45), radius: 6, y: 4)
-            Text("You")
+            Text(L("You"))
                 .font(ResilixTheme.font(13, .heavy))
                 .foregroundStyle(MapColors.you)
                 .offset(y: -48)
@@ -629,7 +661,7 @@ private struct YouMapAnnotation: View {
                 pulse = true
             }
         }
-        .accessibilityLabel("Your device")
+        accessibilityLabel(Text(L("Your device")))
     }
 }
 
@@ -701,9 +733,9 @@ struct MapPeerDetailSheet: View {
 
     private var kindLabel: String {
         switch peer.kind {
-        case .direct:  return "Direct"
-        case .relay:   return "Relay"
-        case .shelter: return "Shelter"
+        case .direct:  return L("Direct")
+        case .relay:   return L("Relay")
+        case .shelter: return L("Shelter")
         }
     }
 
@@ -749,7 +781,7 @@ struct MapPeerDetailSheet: View {
                     Button {
                         dismiss()
                     } label: {
-                        Text("Navigate")
+                        Text(L("Navigate"))
                             .font(ResilixTheme.font(15, .heavy))
                             .tracking(0.4)
                             .foregroundStyle(ResilixTheme.textOnAccent)
@@ -771,7 +803,7 @@ struct MapPeerDetailSheet: View {
                     Button {
                         dismiss()
                     } label: {
-                        Text("Details")
+                        Text(L("Details"))
                             .font(ResilixTheme.font(15, .heavy))
                             .tracking(0.4)
                             .foregroundStyle(ResilixTheme.textPrimary)
@@ -808,7 +840,7 @@ struct MapLayersSheet: View {
                 .fill(ResilixTheme.separator)
                 .frame(width: 36, height: 5)
                 .padding(.top, 8)
-            Text("Map Layers")
+            Text(L("Map Layers"))
                 .font(ResilixTheme.font(18, .bold))
                 .foregroundStyle(ResilixTheme.textPrimary)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -818,7 +850,7 @@ struct MapLayersSheet: View {
                 ForEach(MapStyleOption.allCases) { option in
                     LayerRow(
                         icon: option.icon,
-                        title: option.rawValue,
+                        title: option.label,
                         subtitle: option.subtitle,
                         selected: styleOption == option
                     ) {
@@ -907,11 +939,11 @@ struct ThreeDPopupSheet: View {
                 Image(systemName: "view.3d")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundStyle(ResilixTheme.brandCyan)
-                Text("3D View")
+                Text(L("3D View"))
                     .font(ResilixTheme.font(18, .bold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                 Spacer()
-                Text(currentStyle.rawValue)
+                Text(currentStyle.label)
                     .font(ResilixTheme.font(11, .heavy))
                     .tracking(0.6)
                     .foregroundStyle(ResilixTheme.brandCyan)
@@ -925,14 +957,14 @@ struct ThreeDPopupSheet: View {
 
             // Mode picker
             VStack(alignment: .leading, spacing: 8) {
-                Text("MODE")
+                Text(L("MODE"))
                     .font(ResilixTheme.font(11, .heavy))
                     .tracking(1.0)
                     .foregroundStyle(ResilixTheme.textTertiary)
                     .padding(.horizontal, ResilixTheme.space20)
-                Picker("Mode", selection: $mode) {
+                Picker(L("Mode"), selection: $mode) {
                     ForEach(SurvivalMapView.ThreeDMode.allCases) { m in
-                        Text(m.rawValue).tag(m)
+                        Text(m.label).tag(m)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -953,7 +985,7 @@ struct ThreeDPopupSheet: View {
             // Tilt slider
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("TILT")
+                    Text(L("TILT"))
                         .font(ResilixTheme.font(11, .heavy))
                         .tracking(1.0)
                         .foregroundStyle(ResilixTheme.textTertiary)
@@ -973,8 +1005,8 @@ struct ThreeDPopupSheet: View {
                 .tint(ResilixTheme.brandCyan)
                 .disabled(mode == .off)
                 .padding(.horizontal, ResilixTheme.space20)
-                Text(mode == .off ? "Set mode to Tilted or Cinematic to adjust the 3D tilt."
-                                  : "Drag to tilt the map from top-down (0°) to cinematic (75°).")
+                Text(mode == .off ? L("Set mode to Tilted or Cinematic to adjust the 3D tilt.")
+                                  : L("Drag to tilt the map from top-down (0°) to cinematic (75°)."))
                     .font(ResilixTheme.font(11, .regular))
                     .foregroundStyle(ResilixTheme.textSecondary)
                     .padding(.horizontal, ResilixTheme.space20)

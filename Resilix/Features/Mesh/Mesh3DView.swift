@@ -1,5 +1,6 @@
 import SwiftUI
 import SceneKit
+import UIKit
 
 struct Mesh3DView: UIViewRepresentable {
     var peers: [MeshNode]

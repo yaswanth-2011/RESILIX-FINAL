@@ -18,16 +18,16 @@ struct MessageComposerView: View {
         NavigationStack {
             Form {
                 Section(header: Text(L("messages.destination"))) {
-                    Picker("To", selection: $destination) {
-                        Text("Broadcast").tag("")
+                    Picker(L("To"), selection: $destination) {
+                        Text(L("Broadcast")).tag("")
                         ForEach(app.meshController.peers) { peer in
                             Text(peer.displayName ?? peer.alias).tag(peer.id)
                         }
                     }
-                    .accessibilityLabel("Message destination")
+                    accessibilityLabel(Text(L("Message destination")))
                     
                     HStack {
-                        Text("Reachability")
+                        Text(L("Reachability"))
                             .font(.caption)
                             .foregroundStyle(ResilixTheme.textSecondary)
                         Spacer()
@@ -36,37 +36,37 @@ struct MessageComposerView: View {
                             .foregroundStyle(ResilixTheme.brandTeal)
                     }
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Reachability: \(reachabilityText)")
+                    .accessibilityLabel(L("messages.reachability") + ": \(reachabilityText)")
                 }
                 
                 Section(header: Text(L("messages.new"))) {
-                    TextField("Message", text: $text, axis: .vertical)
+                    TextField(L("Message"), text: $text, axis: .vertical)
                         .lineLimit(3...6)
-                        .accessibilityLabel("Message text")
+                        accessibilityLabel(Text(L("Message text")))
 
                     HStack(spacing: ResilixTheme.space12) {
                         Button { showVoiceRecorder = true } label: {
-                            Label("Voice", systemImage: "mic.fill")
+                            Label(L("Voice"), systemImage: "mic.fill")
                         }
-                        .accessibilityLabel("Record a voice message")
+                        accessibilityLabel(Text(L("Record a voice message")))
 
                         PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                            Label("Photo", systemImage: "photo")
+                            Label(L("Photo"), systemImage: "photo")
                         }
-                        .accessibilityLabel("Attach a photo")
+                        accessibilityLabel(Text(L("Attach a photo")))
 
                         Button { showFileImporter = true } label: {
-                            Label("File", systemImage: "paperclip")
+                            Label(L("File"), systemImage: "paperclip")
                         }
-                        .accessibilityLabel("Attach a file")
+                        accessibilityLabel(Text(L("Attach a file")))
                     }
                     
                     Picker(L("messages.expiry"), selection: $expiry) {
                         Text(L("messages.noExpiry")).tag(nil as TimeInterval?)
-                        Text("5 minutes").tag(300 as TimeInterval?)
-                        Text("1 hour").tag(3600 as TimeInterval?)
+                        Text(L("5 minutes")).tag(300 as TimeInterval?)
+                        Text(L("1 hour")).tag(3600 as TimeInterval?)
                     }
-                    .accessibilityLabel("Message expiry")
+                    accessibilityLabel(Text(L("Message expiry")))
                 }
             }
             .navigationTitle(L("messages.new"))
@@ -86,10 +86,9 @@ struct MessageComposerView: View {
                         }
                     }
                     .disabled(text.isEmpty || isSending)
-                    .accessibilityLabel("Send message")
+                    accessibilityLabel(Text(L("Send message")))
                 }
             }
-            .photosPicker(isPresented: $showPhotoPickerBinding, selection: $selectedPhoto, matching: .images)
             .onChange(of: selectedPhoto) { _, item in
                 Task { await sendPhoto(item) }
             }
@@ -100,7 +99,7 @@ struct MessageComposerView: View {
                 case .success(let urls):
                     if let url = urls.first { Task { await sendFile(url) } }
                 case .failure:
-                    sendError = "The file could not be opened."
+                    sendError = L("The file could not be opened.")
                 }
             }
             .sheet(isPresented: $showVoiceRecorder) {
@@ -108,8 +107,8 @@ struct MessageComposerView: View {
                     Task { await sendVoice(url) }
                 }
             }
-            .alert("Error", isPresented: .constant(sendError != nil), presenting: sendError) { _ in
-                Button("OK") { sendError = nil }
+            .alert(L("Error"), isPresented: .constant(sendError != nil), presenting: sendError) { _ in
+                Button(L("OK")) { sendError = nil }
             } message: { msg in
                 Text(msg)
             }
@@ -118,16 +117,12 @@ struct MessageComposerView: View {
     
     /// Real reachability information taken from the routing table.
     private var reachabilityText: String {
-        guard !destination.isEmpty else { return "Broadcast" }
-        if app.meshController.isConnected(to: destination) { return "Direct" }
+        guard !destination.isEmpty else { return L("Broadcast") }
+        if app.meshController.isConnected(to: destination) { return L("Direct") }
         if let route = app.meshController.routing.routes.first(where: { $0.destination == destination }) {
-            return "\(route.hopCount) hop" + (route.hopCount == 1 ? "" : "s")
+            return "\(route.hopCount) " + (route.hopCount == 1 ? L("ui.hop") : L("ui.hops"))
         }
-        return "No route yet — the message will be queued"
-    }
-
-    private var showPhotoPickerBinding: Binding<Bool> {
-        Binding(get: { false }, set: { _ in })
+        return L("No route yet — the message will be queued")
     }
 
     /// Sends a photo as a chunked attachment.

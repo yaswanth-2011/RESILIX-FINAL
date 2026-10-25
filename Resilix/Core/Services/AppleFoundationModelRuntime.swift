@@ -10,7 +10,7 @@ import FoundationModels
 /// systems the runtime reports itself as unavailable and the user is shown
 /// the truthful reason instead of a silent fallback to a cloud service.
 final class AppleFoundationModelRuntime: LocalModelRuntime {
-    let runtimeName = "Apple Foundation Models"
+    let runtimeName = L("Apple Foundation Models")
 
     private var task: Task<Void, Never>?
 
@@ -45,9 +45,9 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
                 return String(describing: reason)
             }
         }
-        return "Apple Foundation Models require iOS 26 or later."
+        return L("Apple Foundation Models require iOS 26 or later.")
         #else
-        return "The FoundationModels framework is not part of this build (iOS 26 SDK required)."
+        return L("The FoundationModels framework is not part of this build (iOS 26 SDK required).")
         #endif
     }
 
@@ -73,16 +73,16 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
         if #available(iOS 26.0, *) {
             switch SystemLanguageModel.default.availability {
             case .available:
-                session = LanguageModelSession(instructions: "You are the on-device assistant of the Resilix offline mesh app. Answer briefly and never invent emergency facts.")
+                session = LanguageModelSession(instructions: L("You are the on-device assistant of the Resilix offline mesh app. Answer briefly and never invent emergency facts."))
                 loadedIdentifier = model.id
                 return
             case .unavailable(let reason):
                 throw LocalModelError.runtimeUnavailable(String(describing: reason))
             }
         }
-        throw LocalModelError.runtimeUnavailable("Apple Foundation Models require iOS 26 or later.")
+        throw LocalModelError.runtimeUnavailable(L("Apple Foundation Models require iOS 26 or later."))
         #else
-        throw LocalModelError.runtimeUnavailable("The FoundationModels framework is not part of this build.")
+        throw LocalModelError.runtimeUnavailable(L("The FoundationModels framework is not part of this build."))
         #endif
     }
 
@@ -100,7 +100,7 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
             #if canImport(FoundationModels)
             if #available(iOS 26.0, *) {
                 guard let session else {
-                    continuation.finish(throwing: LocalModelError.runtimeUnavailable("No model is loaded."))
+                    continuation.finish(throwing: LocalModelError.runtimeUnavailable(L("No model is loaded.")))
                     return
                 }
                 let work = Task {
@@ -121,10 +121,10 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
                 task = work
                 continuation.onTermination = { _ in work.cancel() }
             } else {
-                continuation.finish(throwing: LocalModelError.runtimeUnavailable("Apple Foundation Models require iOS 26 or later."))
+                continuation.finish(throwing: LocalModelError.runtimeUnavailable(L("Apple Foundation Models require iOS 26 or later.")))
             }
             #else
-            continuation.finish(throwing: LocalModelError.runtimeUnavailable("The FoundationModels framework is not part of this build."))
+            continuation.finish(throwing: LocalModelError.runtimeUnavailable(L("The FoundationModels framework is not part of this build.")))
             #endif
         }
     }

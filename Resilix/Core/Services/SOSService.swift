@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Sends and receives SOS alerts over the mesh.
 ///
@@ -74,7 +75,7 @@ final class SOSService: ObservableObject {
     /// Stores an SOS alert that was received over the mesh.
     func handleIncoming(_ delivered: DeliveredPayload) async {
         guard let sos = try? JSONDecoder().decode(SOSPacket.self, from: delivered.plaintext) else {
-            lastErrorMessage = "A received SOS alert could not be read."
+            lastErrorMessage = L("A received SOS alert could not be read.")
             return
         }
         if !incidents.contains(where: { $0.id == sos.id }) {

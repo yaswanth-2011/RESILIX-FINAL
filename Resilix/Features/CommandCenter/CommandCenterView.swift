@@ -9,13 +9,13 @@ struct CommandCenterView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                Picker("View", selection: $showMap) {
-                    Text("List").tag(false)
-                    Text("Split").tag(true)
+                Picker(L("View"), selection: $showMap) {
+                    Text(L("List")).tag(false)
+                    Text(L("Split")).tag(true)
                 }
                 .pickerStyle(.segmented)
                 .padding(ResilixTheme.space16)
-                .accessibilityLabel("View mode")
+                accessibilityLabel(Text(L("View mode")))
                 
                 if showMap {
                     NavigationSplitView {
@@ -25,8 +25,8 @@ struct CommandCenterView: View {
                             IncidentDetailView(incident: first)
                         } else {
                             EmptyStateView(
-                                title: "No incidents",
-                                subtitle: "No active SOS incidents.",
+                                title: L("No incidents"),
+                                subtitle: L("No active SOS incidents."),
                                 icon: "shield.lefthalf.filled"
                             )
                         }
@@ -41,14 +41,14 @@ struct CommandCenterView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
-                        Button("All") { filter = nil }
+                        Button(L("All")) { filter = nil }
                         ForEach(SOSSeverity.allCases, id: \.self) { s in
                             Button(s.label) { filter = s }
                         }
                     } label: {
                         Image(systemName: "line.3.horizontal.decrease.circle")
                     }
-                    .accessibilityLabel("Filter by severity")
+                    accessibilityLabel(Text(L("Filter by severity")))
                 }
             }
             .refreshable {

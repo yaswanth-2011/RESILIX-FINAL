@@ -284,19 +284,19 @@ struct RootView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView(showSOS: $showSOS)
-                .tabItem { Label("Chats", systemImage: "bubble.left.and.bubble.right") }
+                .tabItem { Label(L("Chats"), systemImage: "bubble.left.and.bubble.right") }
                 .tag(0)
             NearbyView()
-                .tabItem { Label("Nearby", systemImage: "antenna.radiowaves.left.and.right") }
+                .tabItem { Label(L("Nearby"), systemImage: "antenna.radiowaves.left.and.right") }
                 .tag(1)
             MeshView()
-                .tabItem { Label("Mesh", systemImage: "point.3.connected.trianglepath.dotted") }
+                .tabItem { Label(L("Mesh"), systemImage: "point.3.connected.trianglepath.dotted") }
                 .tag(2)
             SurvivalMapView()
-                .tabItem { Label("Map", systemImage: "map") }
+                .tabItem { Label(L("Map"), systemImage: "map") }
                 .tag(3)
             AssistView()
-                .tabItem { Label("Assist", systemImage: "bolt") }
+                .tabItem { Label(L("Assist"), systemImage: "bolt") }
                 .tag(4)
         }
         .tint(ResilixTheme.brandCyan)
@@ -325,10 +325,10 @@ struct ActiveSOSBanner: View {
             Image(systemName: "exclamationmark.octagon.fill")
                 .foregroundStyle(.white)
             VStack(alignment: .leading, spacing: 2) {
-                Text("Active SOS: \(packet.category.label)")
+                Text(L("sos.active") + ": \(packet.category.label)")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.white)
-                Text("Relaying via mesh...")
+                Text(L("Relaying via mesh..."))
                     .font(.caption2)
                     .foregroundStyle(.white.opacity(0.9))
             }
@@ -342,6 +342,6 @@ struct ActiveSOSBanner: View {
         .clipShape(RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusMedium))
         .padding(.horizontal, ResilixTheme.space16)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Active SOS \(packet.category.label) \(packet.severity.label)")
+        .accessibilityLabel(L("sos.active") + " " + packet.category.label + " " + packet.severity.label)
     }
 }

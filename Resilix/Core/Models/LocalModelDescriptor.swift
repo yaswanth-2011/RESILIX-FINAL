@@ -61,15 +61,15 @@ enum LocalModelError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .noModelSelected:
-            return "No local model is selected."
+            return L("No local model is selected.")
         case .modelNotInstalled(let name):
-            return "\(name) is not installed on this device yet."
+            return String(format: L("%@ is not installed on this device yet."), name)
         case .runtimeUnavailable(let reason):
-            return "The local inference runtime is not available: \(reason)"
+            return String(format: L("The local inference runtime is not available: %@"), reason)
         case .generationFailed(let reason):
-            return "The model could not answer: \(reason)"
+            return String(format: L("The model could not answer: %@"), reason)
         case .cancelled:
-            return "The request was cancelled."
+            return L("The request was cancelled.")
         }
     }
 }

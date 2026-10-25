@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 // MARK: - Home / Chats
 // The main screen: messaging-first UI built around the mesh network.
@@ -26,7 +27,7 @@ struct HomeView: View {
                             .padding(.top, ResilixTheme.space8)
                             .padding(.bottom, ResilixTheme.space20)
 
-                        Text("Chats")
+                        Text(L("Chats"))
                             .font(ResilixTheme.font(28, .bold))
                             .foregroundStyle(ResilixTheme.textPrimary)
                             .padding(.horizontal, ResilixTheme.space20)
@@ -69,10 +70,10 @@ struct HomeView: View {
                 }
 
             GlassCircleButton(systemImage: "globe", size: 32) { showLanguage = true }
-                .accessibilityLabel("Language")
+                accessibilityLabel(Text(L("Language")))
 
             GlassCircleButton(systemImage: "gearshape", size: 32) { showSettings = true }
-                .accessibilityLabel("Settings")
+                accessibilityLabel(Text(L("Settings")))
         }
         .padding(.horizontal, ResilixTheme.space16)
     }
@@ -83,7 +84,7 @@ struct HomeView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(ResilixTheme.textTertiary)
-            TextField("Search", text: $searchText)
+            TextField(L("Search"), text: $searchText)
                 .font(ResilixTheme.font(15, .regular))
                 .foregroundStyle(ResilixTheme.textPrimary)
                 .autocorrectionDisabled()
@@ -93,7 +94,7 @@ struct HomeView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                .accessibilityLabel("Clear search")
+                accessibilityLabel(Text(L("Clear search")))
             }
         }
         .padding(.horizontal, ResilixTheme.space16)
@@ -106,8 +107,8 @@ struct HomeView: View {
     private var chatList: some View {
         Group {
             if filteredConversations.isEmpty {
-                EmptyStateView(title: searchText.isEmpty ? "No conversations" : "No results",
-                               subtitle: searchText.isEmpty ? "Find nearby Resilix users to start communicating." : "No chats match \"\(searchText)\".",
+                EmptyStateView(title: searchText.isEmpty ? L("No conversations") : L("No results"),
+                               subtitle: searchText.isEmpty ? L("Find nearby Resilix users to start communicating.") : String(format: L("No chats match \"%@\"."), searchText),
                                icon: "bubble.left.and.bubble.right")
             } else {
                 LazyVStack(spacing: 0) {
@@ -149,6 +150,17 @@ struct HomeView: View {
         case relayed = "Relayed"
         case waiting = "Waiting"
 
+        /// Localized label shown under the conversation preview.
+        var title: String {
+            switch self {
+            case .direct: return L("Direct")
+            case .oneHop: return L("1 Hop")
+            case .twoHops: return L("2 Hops")
+            case .relayed: return L("Relayed")
+            case .waiting: return L("Waiting")
+            }
+        }
+
         var color: Color {
             switch self {
             case .direct: return ResilixTheme.brandCyan
@@ -183,8 +195,8 @@ struct HomeView: View {
         guard let route else { return nil }
         switch route.lowercased() {
         case "direct": return .direct
-        case "1 hop": return .oneHop
-        case "2 hops": return .twoHops
+        case L("1 hop"): return .oneHop
+        case L("2 hops"): return .twoHops
         case "relayed": return .relayed
         case "waiting": return .waiting
         default: return nil
@@ -231,14 +243,14 @@ struct HomeView: View {
                          message: msg(id, name, text, age, route, state))
         }
         return [
-            conv("1", "Sarah K.", "Are you safe? We're at the community shelter o…", 120, 2, true, .direct, 3, Color(hex: "A855B7"), "Direct", .delivered),
-            conv("2", "Rescue Team Alpha", "Route via Oak St clear. Proceed to checkpoint…", 480, 1, true, .relayed, 2, Color(hex: "D26714"), "Relayed", .relaying),
-            conv("3", "Marcus D.", "I have medical supplies at grid 4-C", 900, 0, true, .oneHop, 3, Color(hex: "6D49C7"), "1 hop", .delivered),
-            conv("4", "Downtown Group", "Power restored at 5th Ave shelter, 47 people…", 3600, 0, true, .relayed, 1, Color(hex: "0E9F6E"), "Relayed", .relaying),
-            conv("5", "Emma & Tom", "Come to our location — water and food available", 7200, 0, false, .waiting, 0, Color(hex: "BE3B82"), "Waiting", .queued),
-            conv("6", "City Emergency", "All clear signal received from sector 7", 18000, 0, true, .twoHops, 2, Color(hex: "243B7A"), "2 hops", .delivered),
-            conv("7", "Nina P.", "Found a working generator, sharing fuel at block D", 21600, 3, true, .direct, 3, Color(hex: "0892B0"), "Direct", .delivered),
-            conv("8", "Field Medic Unit", "Triage station moved to Central Park gates", 43200, 0, true, .relayed, 1, Color(hex: "C73838"), "Relayed", .relaying),
+            conv("1", "Sarah K.", L("Are you safe? We're at the community shelter o…"), 120, 2, true, .direct, 3, Color(hex: "A855B7"), L("Direct"), .delivered),
+            conv("2", L("Rescue Team Alpha"), L("Route via Oak St clear. Proceed to checkpoint…"), 480, 1, true, .relayed, 2, Color(hex: "D26714"), L("Relayed"), .relaying),
+            conv("3", "Marcus D.", L("I have medical supplies at grid 4-C"), 900, 0, true, .oneHop, 3, Color(hex: "6D49C7"), L("1 hop"), .delivered),
+            conv("4", L("Downtown Group"), L("Power restored at 5th Ave shelter, 47 people…"), 3600, 0, true, .relayed, 1, Color(hex: "0E9F6E"), L("Relayed"), .relaying),
+            conv("5", "Emma & Tom", L("Come to our location — water and food available"), 7200, 0, false, .waiting, 0, Color(hex: "BE3B82"), L("Waiting"), .queued),
+            conv("6", L("City Emergency"), L("All clear signal received from sector 7"), 18000, 0, true, .twoHops, 2, Color(hex: "243B7A"), L("2 hops"), .delivered),
+            conv("7", "Nina P.", L("Found a working generator, sharing fuel at block D"), 21600, 3, true, .direct, 3, Color(hex: "0892B0"), L("Direct"), .delivered),
+            conv("8", L("Field Medic Unit"), L("Triage station moved to Central Park gates"), 43200, 0, true, .relayed, 1, Color(hex: "C73838"), L("Relayed"), .relaying),
         ]
     }
 }
@@ -252,7 +264,7 @@ struct MeshStatusPill: View {
             Circle()
                 .fill(connected ? ResilixTheme.successGreen : ResilixTheme.brandAmber)
                 .frame(width: 5, height: 5)
-            Text(connected ? "Mesh Connected" : "Mesh Disconnected")
+            Text(connected ? L("Mesh Connected") : L("Mesh Disconnected"))
                 .font(ResilixTheme.font(10, .semibold))
                 .foregroundStyle(connected ? ResilixTheme.successGreen : ResilixTheme.brandAmber)
                 .lineLimit(1)
@@ -408,10 +420,10 @@ struct ConversationRow: View {
 
     private var signalLabel: String {
         switch conversation.signal {
-        case 3: return "Strong"
-        case 2: return "Good"
-        case 1: return "Weak"
-        default: return "No link"
+        case 3: return L("signal.strong")
+        case 2: return L("signal.good")
+        case 1: return L("signal.weak")
+        default: return L("No link")
         }
     }
 
@@ -449,7 +461,7 @@ struct ConversationRow: View {
                         HStack(spacing: 4) {
                             Image(systemName: mesh == .relayed ? "point.3.connected.trianglepath.dotted" : "wave.3.right")
                                 .font(.system(size: 8, weight: .bold))
-                            Text(mesh.rawValue)
+                            Text(mesh.title)
                                 .font(ResilixTheme.font(10, .semibold))
                         }
                         .foregroundStyle(mesh.color)
@@ -463,7 +475,7 @@ struct ConversationRow: View {
                         Circle()
                             .fill(conversation.online ? ResilixTheme.successGreen : ResilixTheme.textTertiary)
                             .frame(width: 5, height: 5)
-                        Text(conversation.online ? "Online" : "Offline")
+                        Text(conversation.online ? L("Online") : L("Offline"))
                             .font(ResilixTheme.font(10, .medium))
                     }
                     .foregroundStyle(conversation.online ? ResilixTheme.successGreen : ResilixTheme.textTertiary)

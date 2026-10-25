@@ -18,14 +18,14 @@ struct MessagesView: View {
                             Button(role: .destructive) {
                                 Task { await app.messageService.delete(id: msg.id) }
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label(L("Delete"), systemImage: "trash")
                             }
                         }
                     }
                     if app.messageService.messages.isEmpty {
                         EmptyStateView(
-                            title: "No messages",
-                            subtitle: "Messages work without internet. Start a conversation.",
+                            title: L("No messages"),
+                            subtitle: L("Messages work without internet. Start a conversation."),
                             icon: "message"
                         )
                         .listRowSeparator(.hidden)
@@ -43,8 +43,8 @@ struct MessagesView: View {
                         LoadingStateView()
                     }
                 }
-                .alert("Error", isPresented: .constant(errorMessage != nil), presenting: errorMessage) { _ in
-                    Button("OK") { errorMessage = nil }
+                .alert(L("Error"), isPresented: .constant(errorMessage != nil), presenting: errorMessage) { _ in
+                    Button(L("OK")) { errorMessage = nil }
                 } message: { msg in
                     Text(msg)
                 }
@@ -55,7 +55,7 @@ struct MessagesView: View {
                     Button { showComposer = true } label: {
                         Image(systemName: "square.and.pencil")
                     }
-                    .accessibilityLabel("Compose new message")
+                    accessibilityLabel(Text(L("Compose new message")))
                 }
             }
             .sheet(isPresented: $showComposer) { MessageComposerView() }
@@ -92,12 +92,12 @@ struct MessagesView: View {
                         .font(.caption2)
                         .foregroundStyle(ResilixTheme.textTertiary)
                     if let r = message.lastRoute {
-                        Text("• \(r)")
+                        Text(String(format: L("• %@"), r))
                             .font(.caption2)
                             .foregroundStyle(ResilixTheme.textTertiary)
                     }
                     if message.deliveryState == .relaying {
-                        Text("• 2 hops")
+                        Text(L("• 2 hops"))
                             .font(.caption2)
                             .foregroundStyle(ResilixTheme.brandTeal)
                     }
@@ -105,7 +105,7 @@ struct MessagesView: View {
             }
             .padding(.vertical, 4)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Message to \(message.threadID), \(message.deliveryState.label)")
+            .accessibilityLabel(L("messages.to") + " \(message.threadID), \(message.deliveryState.label)")
         }
     }
 }

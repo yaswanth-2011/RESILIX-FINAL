@@ -11,36 +11,36 @@ struct DiagnosticsView: View {
                 DiagnosticRow(label: "P2P Wi-Fi", value: app.diagnosticsService.snapshot.p2pWiFiState)
                 DiagnosticRow(label: "Wi-Fi Aware", value: app.diagnosticsService.snapshot.wifiAwareState)
                 if app.diagnosticsService.snapshot.isDemo {
-                    ResilixStatusBadge(text: "Demo values", color: ResilixTheme.brandAmber)
-                        .accessibilityLabel("Demo mode active")
+                    ResilixStatusBadge(text: L("Demo values"), color: ResilixTheme.brandAmber)
+                        accessibilityLabel(Text(L("Demo mode active")))
                 }
             }
             
             Section(header: Text(L("diagnostics.mesh"))) {
-                DiagnosticRow(label: "Connected peers", value: "\(app.diagnosticsService.snapshot.connectedCount)")
+                DiagnosticRow(label: L("Connected peers"), value: "\(app.diagnosticsService.snapshot.connectedCount)")
                 DiagnosticRow(label: "Discovered", value: "\(app.diagnosticsService.snapshot.discoveredCount)")
-                DiagnosticRow(label: "Routes", value: "\(app.diagnosticsService.snapshot.routeCount)")
-                DiagnosticRow(label: "Queued packets", value: "\(app.diagnosticsService.snapshot.queueCount)")
+                DiagnosticRow(label: L("Routes"), value: "\(app.diagnosticsService.snapshot.routeCount)")
+                DiagnosticRow(label: L("Queued packets"), value: "\(app.diagnosticsService.snapshot.queueCount)")
                 DiagnosticRow(label: "Forwarded", value: "\(app.diagnosticsService.snapshot.forwardedCount)")
-                DiagnosticRow(label: "Dropped duplicates", value: "\(app.diagnosticsService.snapshot.droppedDuplicates)")
+                DiagnosticRow(label: L("Dropped duplicates"), value: "\(app.diagnosticsService.snapshot.droppedDuplicates)")
                 DiagnosticRow(label: "Expired", value: "\(app.diagnosticsService.snapshot.expiredCount)")
-                DiagnosticRow(label: "Relay", value: app.diagnosticsService.snapshot.relayActive ? "Active" : "Inactive")
+                DiagnosticRow(label: L("Relay"), value: app.diagnosticsService.snapshot.relayActive ? "Active" : "Inactive")
             }
             
             Section(header: Text(L("diagnostics.system"))) {
-                DiagnosticRow(label: "Protocol version", value: "\(app.diagnosticsService.snapshot.protocolVersion)")
+                DiagnosticRow(label: L("Protocol version"), value: "\(app.diagnosticsService.snapshot.protocolVersion)")
                 DiagnosticRow(label: "Persistence", value: app.diagnosticsService.snapshot.persistenceStatus)
-                DiagnosticRow(label: "Permissions", value: app.diagnosticsService.snapshot.permissionStatus)
-                DiagnosticRow(label: "Last event", value: app.diagnosticsService.snapshot.lastTransportEvent ?? "—")
+                DiagnosticRow(label: L("Permissions"), value: app.diagnosticsService.snapshot.permissionStatus)
+                DiagnosticRow(label: L("Last event"), value: app.diagnosticsService.snapshot.lastTransportEvent ?? "—")
                 DiagnosticRow(label: "Snapshot", value: app.diagnosticsService.snapshot.timestamp.formatted(date: .abbreviated, time: .shortened))
             }
             
             Section {
                 DisclosureGroup(L("diagnostics.developerDetails"), isExpanded: $showDetails) {
-                    Text("Packet queue inspected without plaintext. Logs contain packet IDs only.")
+                    Text(L("Packet queue inspected without plaintext. Logs contain packet IDs only."))
                         .font(.caption2)
                         .foregroundStyle(ResilixTheme.textTertiary)
-                    Text("Battery impact: discovery stops when idle; backoff on retries; bounded queues.")
+                    Text(L("Battery impact: discovery stops when idle; backoff on retries; bounded queues."))
                         .font(.caption2)
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
@@ -57,7 +57,7 @@ struct DiagnosticsView: View {
                         )
                     }
                 }
-                .accessibilityLabel("Refresh diagnostics")
+                accessibilityLabel(Text(L("Refresh diagnostics")))
                 
                 Button(L("diagnostics.connectivityTest")) {
                     Task {
@@ -71,7 +71,7 @@ struct DiagnosticsView: View {
                         )
                     }
                 }
-                .accessibilityLabel("Run connectivity test")
+                accessibilityLabel(Text(L("Run connectivity test")))
             }
         }
         .listStyle(.insetGrouped)

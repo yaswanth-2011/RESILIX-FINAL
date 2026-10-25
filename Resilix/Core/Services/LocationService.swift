@@ -1,5 +1,6 @@
 import Foundation
 import CoreLocation
+import Combine
 
 /// Owns the GPS position of the device.
 ///

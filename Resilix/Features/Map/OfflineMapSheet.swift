@@ -1,6 +1,8 @@
 import SwiftUI
 import MapKit
 import UniformTypeIdentifiers
+import CoreLocation
+import Foundation
 
 /// Offline map packs: import, activation, storage and rendering.
 ///
@@ -42,7 +44,7 @@ struct OfflineMapSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                         .font(ResilixTheme.font(15, .semibold))
                 }
                 ToolbarItem(placement: .primaryAction) {
@@ -51,7 +53,7 @@ struct OfflineMapSheet: View {
                     } label: {
                         Image(systemName: "square.and.arrow.down")
                     }
-                    .accessibilityLabel("Import a map pack")
+                    accessibilityLabel(Text(L("Import a map pack")))
                 }
             }
             .fileImporter(isPresented: $showImporter,
@@ -61,11 +63,11 @@ struct OfflineMapSheet: View {
                 case .success(let urls):
                     if let url = urls.first { Task { await importPack(url) } }
                 case .failure:
-                    message = "The map pack could not be opened."
+                    message = L("The map pack could not be opened.")
                 }
             }
-            .alert("Offline Maps", isPresented: .constant(message != nil), presenting: message) { _ in
-                Button("OK") { message = nil }
+            .alert(L("Offline Maps"), isPresented: .constant(message != nil), presenting: message) { _ in
+                Button(L("OK")) { message = nil }
             } message: { text in
                 Text(text)
             }
@@ -77,7 +79,7 @@ struct OfflineMapSheet: View {
     private var statusCard: some View {
         VStack(alignment: .leading, spacing: ResilixTheme.space6) {
             HStack {
-                Text(service.activePack == nil ? "No offline map installed" : "Offline map active")
+                Text(service.activePack == nil ? L("No offline map installed") : L("Offline map active"))
                     .font(ResilixTheme.font(16, .semibold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                 Spacer()
@@ -86,8 +88,8 @@ struct OfflineMapSheet: View {
                     .foregroundStyle(ResilixTheme.brandCyan)
             }
             Text(service.activePack == nil
-                 ? "The map above uses the online Apple tiles. Import an .mbtiles pack to use the map without internet."
-                 : "Tiles are rendered from “\(service.activePack?.name ?? "")” on this device.")
+                 ? L("The map above uses the online Apple tiles. Import an .mbtiles pack to use the map without internet.")
+                 : String(format: L("Tiles are rendered from “%@” on this device."), service.activePack?.name ?? ""))
                 .font(ResilixTheme.font(12, .regular))
                 .foregroundStyle(ResilixTheme.textSecondary)
         }
@@ -105,17 +107,17 @@ struct OfflineMapSheet: View {
             Image(systemName: "map")
                 .font(.system(size: 34))
                 .foregroundStyle(ResilixTheme.textTertiary)
-            Text("No map pack on this device")
+            Text(L("No map pack on this device"))
                 .font(ResilixTheme.font(15, .semibold))
                 .foregroundStyle(ResilixTheme.textPrimary)
-            Text("Import an .mbtiles file (for example from OpenStreetMap) to keep the map available offline.")
+            Text(L("Import an .mbtiles file (for example from OpenStreetMap) to keep the map available offline."))
                 .font(ResilixTheme.font(12, .regular))
                 .foregroundStyle(ResilixTheme.textSecondary)
                 .multilineTextAlignment(.center)
             Button {
                 showImporter = true
             } label: {
-                Text("Import map pack")
+                Text(L("Import map pack"))
                     .font(ResilixTheme.font(15, .semibold))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 18)
@@ -138,7 +140,7 @@ struct OfflineMapSheet: View {
     private var preview: some View {
         if let pack = previewPack {
             VStack(alignment: .leading, spacing: ResilixTheme.space8) {
-                Text("Preview · \(pack.name)")
+                Text(L("map.preview") + " · \(pack.name)")
                     .font(ResilixTheme.font(14, .semibold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                 OfflineMapPreview(pack: pack,
@@ -184,7 +186,7 @@ struct OfflineMapSheet: View {
                     ResilixStatusBadge(text: "Active", color: ResilixTheme.successGreen)
                 }
             }
-            Text("Zoom \\(pack.minZoom)–\\(pack.maxZoom) · \(pack.coordinateText)")
+            Text(L("map.zoom") + " \(pack.minZoom)–\(pack.maxZoom) · \(pack.coordinateText)")
                 .font(ResilixTheme.font(12, .regular))
                 .foregroundStyle(ResilixTheme.textSecondary)
             Text(ByteCountFormatter.string(fromByteCount: Int64(pack.byteCount), countStyle: .file)
@@ -192,7 +194,7 @@ struct OfflineMapSheet: View {
                 .font(ResilixTheme.font(11, .regular))
                 .foregroundStyle(ResilixTheme.textTertiary)
             if let sha = pack.sha256 {
-                Text("SHA-256 \\(sha.prefix(16))…")
+                Text(L("map.sha256") + " \(sha.prefix(16))…")
                     .font(ResilixTheme.font(11, .regular))
                     .foregroundStyle(ResilixTheme.textTertiary)
             }
@@ -202,7 +204,7 @@ struct OfflineMapSheet: View {
                     service.activate(packID: pack.id)
                     previewPackID = pack.id
                 } label: {
-                    Text(service.activePackID == pack.id ? "Active" : "Activate")
+                    Text(service.activePackID == pack.id ? L("Active") : L("Activate"))
                         .font(ResilixTheme.font(14, .semibold))
                         .foregroundStyle(service.activePackID == pack.id ? ResilixTheme.textSecondary : .white)
                         .padding(.horizontal, 14)
@@ -215,7 +217,7 @@ struct OfflineMapSheet: View {
                 Button {
                     previewPackID = pack.id
                 } label: {
-                    Text("Preview")
+                    Text(L("Preview"))
                         .font(ResilixTheme.font(14, .semibold))
                         .foregroundStyle(ResilixTheme.textPrimary)
                         .padding(.horizontal, 14)
@@ -228,7 +230,7 @@ struct OfflineMapSheet: View {
                 Button {
                     Task { await service.deletePack(pack.id) }
                 } label: {
-                    Text("Delete")
+                    Text(L("Delete"))
                         .font(ResilixTheme.font(14, .semibold))
                         .foregroundStyle(ResilixTheme.emergencyRed)
                 }
@@ -249,7 +251,7 @@ struct OfflineMapSheet: View {
         do {
             let pack = try await service.importPack(from: url)
             previewPackID = pack.id
-            message = "“\(pack.name)” was imported."
+            message = String(format: L("“%@” was imported."), pack.name)
         } catch {
             message = error.localizedDescription
         }

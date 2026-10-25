@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct RouteDetailView: View {
     var route: MeshRoute
@@ -12,10 +13,16 @@ struct RouteDetailView: View {
                 RoutePathView(hops: route.hops.map{ $0.nodeID }, isSimulated: app.demoController.isDemoMode)
                     .padding(.horizontal, ResilixTheme.space16)
                 VStack(alignment:.leading, spacing:8){
-                    Text("Hop count: \(route.hopCount)").font(.subheadline).foregroundStyle(ResilixTheme.textPrimary)
-                    Text("Freshness: \(route.freshness, style:.relative) ago").font(.caption).foregroundStyle(ResilixTheme.textSecondary)
-                    Text("Another phone can relay your message when direct connection is not available.").font(.caption).foregroundStyle(ResilixTheme.textSecondary)
-                    Text("No guaranteed delivery. Mesh finds best available path.").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
+                    Text(L("route.hop.count") + ": \(route.hopCount)").font(.subheadline).foregroundStyle(ResilixTheme.textPrimary)
+                    HStack(spacing: 0) {
+                Text(L("route.freshness") + ": ")
+                Text(route.freshness, style: .relative)
+                Text(L(" ") + L("ui.ago"))
+            }
+            .font(.caption)
+            .foregroundStyle(ResilixTheme.textSecondary)
+                    Text(L("Another phone can relay your message when direct connection is not available.")).font(.caption).foregroundStyle(ResilixTheme.textSecondary)
+                    Text(L("No guaranteed delivery. Mesh finds best available path.")).font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
                 }.padding(.horizontal, ResilixTheme.space16)
                 ForEach(route.hops, id:\.nodeID){ hop in
                     HStack{
@@ -26,33 +33,33 @@ struct RouteDetailView: View {
                         Text(hop.quality.label).font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
                     }.padding(.horizontal, ResilixTheme.space16)
                 }
-                Button("Test route"){
+                Button(L("Test route")){
                     Task{
                         if app.demoController.isDemoMode {
                             await app.demoController.sendDemoMessage()
-                            testResult = "Demo route test: B verified and forwarded to C. Delivered via \(route.hopCount) hops."
+                            testResult = String(format: L("Demo route test: B verified and forwarded to C. Delivered via %@ hops."), String(route.hopCount))
                         } else {
                             let hasPeers = !app.meshController.availableTransports.flatMap { $0.discoveredPeers }.isEmpty
                             if !hasPeers {
-                                testResult = "No route available. No peers nearby."
+                                testResult = L("No route available. No peers nearby.")
                             } else {
-                                testResult = "Route to \(route.destination) tested. Next hop \(route.nextHop) via \(route.transport.rawValue)."
+                                testResult = String(format: L("Route to %@ tested. Next hop %@ via %@"), route.destination, route.nextHop, route.transport.rawValue)
                             }
                         }
                         showTestResult = true
                     }
                 }.buttonStyle(.bordered).tint(ResilixTheme.brandTeal).padding(.horizontal, ResilixTheme.space16)
-                .accessibilityLabel("Test route")
+                accessibilityLabel(Text(L("Test route")))
                 DisclosureGroup("Details", isExpanded: $showDetails){
                     VStack(alignment:.leading, spacing:6){
-                        Text("Packet ID: demo-\(route.destination.prefix(4))").font(.caption2.monospaced()).foregroundStyle(ResilixTheme.textTertiary)
-                        Text("TTL: \(ResilixConstants.defaultTTL)").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
-                        Text("Transport selection: \(route.transport.rawValue)").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
+                        Text(L("route.packet.id") + ": demo-\(route.destination.prefix(4))").font(.caption2.monospaced()).foregroundStyle(ResilixTheme.textTertiary)
+                        Text(L("route.ttl") + ": \(ResilixConstants.defaultTTL)").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
+                        Text(L("route.transport") + ": \(route.transport.rawValue)").font(.caption2).foregroundStyle(ResilixTheme.textTertiary)
                     }.padding(.horizontal, ResilixTheme.space16)
                 }.padding(.horizontal, ResilixTheme.space16)
             }.padding(.vertical, ResilixTheme.space16)
         }.background(ResilixTheme.bgPrimary).navigationTitle("Route detail").navigationBarTitleDisplayMode(.inline)
-        .alert("Route test", isPresented: $showTestResult){ Button("OK", role:.cancel){} } message:{ Text(testResult) }
+        .alert(L("Route test"), isPresented: $showTestResult){ Button(L("OK"), role:.cancel){} } message:{ Text(testResult) }
     }
     func color(for q: LinkQuality)->Color { switch q { case .stable: return ResilixTheme.brandTeal; case .degraded: return ResilixTheme.brandAmber; case .unavailable: return ResilixTheme.emergencyRed; case .unknown: return ResilixTheme.textTertiary } }
 }

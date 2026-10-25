@@ -14,11 +14,11 @@ enum MessageKind: String, Codable, Sendable, CaseIterable {
 
     var label: String {
         switch self {
-        case .text: return "Text"
-        case .voice: return "Voice"
-        case .image: return "Photo"
-        case .video: return "Video"
-        case .file: return "File"
+        case .text: return L("message.kind.text")
+        case .voice: return L("message.kind.voice")
+        case .image: return L("message.kind.image")
+        case .video: return L("message.kind.video")
+        case .file: return L("message.kind.file")
         }
     }
 

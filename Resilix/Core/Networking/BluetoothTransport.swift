@@ -118,12 +118,12 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             queue.async { [weak self] in
                 guard let self else {
-                    continuation.resume(throwing: ResilixError.transportUnavailable("Bluetooth transport stopped"))
+                    continuation.resume(throwing: ResilixError.transportUnavailable(L("Bluetooth transport stopped")))
                     return
                 }
                 let transportID = self.transportIDByNodeID[peerID] ?? peerID
                 guard let peripheral = self.peripherals[transportID] else {
-                    continuation.resume(throwing: ResilixError.transportUnavailable("Unknown peer \(peerID)"))
+                    continuation.resume(throwing: ResilixError.transportUnavailable(String(format: L("Unknown peer %@"), peerID)))
                     return
                 }
                 if self.connected.contains(peerID) {
@@ -136,7 +136,7 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
                     guard let self else { return }
                     self.queue.async {
                         guard let pending = self.connectContinuations.removeValue(forKey: transportID) else { return }
-                        pending.resume(throwing: ResilixError.transportUnavailable("Could not connect to \(peerID)"))
+                        pending.resume(throwing: ResilixError.transportUnavailable(String(format: L("Could not connect to %@"), peerID)))
                     }
                 }
             }
@@ -152,7 +152,7 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
             }
             self.connected.remove(peerID)
             if let pending = self.connectContinuations.removeValue(forKey: transportID) {
-                pending.resume(throwing: ResilixError.transportUnavailable("Connection cancelled"))
+                pending.resume(throwing: ResilixError.transportUnavailable(L("Connection cancelled")))
             }
         }
     }
@@ -161,7 +161,7 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             queue.async { [weak self] in
                 guard let self else {
-                    continuation.resume(throwing: ResilixError.transportUnavailable("Bluetooth transport stopped"))
+                    continuation.resume(throwing: ResilixError.transportUnavailable(L("Bluetooth transport stopped")))
                     return
                 }
                 let transportID = self.transportIDByNodeID[peerID] ?? peerID
@@ -181,7 +181,7 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
                     continuation.resume()
                     return
                 }
-                continuation.resume(throwing: ResilixError.transportUnavailable("No Bluetooth link to \(peerID)"))
+                continuation.resume(throwing: ResilixError.transportUnavailable(String(format: L("No Bluetooth link to %@"), peerID)))
             }
         }
     }
@@ -216,7 +216,7 @@ final class BluetoothTransport: NSObject, MeshTransport, @unchecked Sendable {
 
     private func handleFrameData(_ data: Data, transportID: String) {
         guard let frame = FrameCodec.parse(data) else {
-            eventCont?.yield(.error("Dropped malformed frame"))
+            eventCont?.yield(.error(L("Dropped malformed frame")))
             return
         }
         switch frame.kind {
@@ -298,13 +298,13 @@ extension BluetoothTransport: CBCentralManagerDelegate {
                                        options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
             startAdvertisingIfPossible()
         case .poweredOff:
-            eventCont?.yield(.error("Bluetooth is switched off"))
+            eventCont?.yield(.error(L("Bluetooth is switched off")))
         case .unauthorized:
-            eventCont?.yield(.error("Bluetooth permission denied"))
+            eventCont?.yield(.error(L("Bluetooth permission denied")))
         case .unsupported:
-            eventCont?.yield(.error("Bluetooth LE is not supported on this device"))
+            eventCont?.yield(.error(L("Bluetooth LE is not supported on this device")))
         case .resetting:
-            eventCont?.yield(.error("Bluetooth is resetting"))
+            eventCont?.yield(.error(L("Bluetooth is resetting")))
         case .unknown:
             break
         @unknown default:
@@ -340,10 +340,10 @@ extension BluetoothTransport: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         let id = nodeIDByPeripheralCache[peripheral.identifier] ?? peripheral.identifier.uuidString
         if let pending = connectContinuations.removeValue(forKey: id) {
-            pending.resume(throwing: ResilixError.transportUnavailable("Connection failed"))
+            pending.resume(throwing: ResilixError.transportUnavailable(L("Connection failed")))
         }
         scheduleReconnect(for: id)
-        eventCont?.yield(.error("Connection failed"))
+        eventCont?.yield(.error(L("Connection failed")))
     }
 
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -405,7 +405,7 @@ extension BluetoothTransport: CBPeripheralDelegate {
 
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error {
-            eventCont?.yield(.error("Bluetooth write failed: \(error.localizedDescription)"))
+            eventCont?.yield(.error(String(format: L("Bluetooth write failed: %@"), error.localizedDescription)))
         }
     }
 }
@@ -418,11 +418,11 @@ extension BluetoothTransport: CBPeripheralManagerDelegate {
         case .poweredOn:
             startAdvertisingIfPossible()
         case .poweredOff:
-            eventCont?.yield(.error("Bluetooth is switched off"))
+            eventCont?.yield(.error(L("Bluetooth is switched off")))
         case .unauthorized:
-            eventCont?.yield(.error("Bluetooth permission denied"))
+            eventCont?.yield(.error(L("Bluetooth permission denied")))
         case .unsupported:
-            eventCont?.yield(.error("Bluetooth LE is not supported on this device"))
+            eventCont?.yield(.error(L("Bluetooth LE is not supported on this device")))
         default:
             break
         }
@@ -430,7 +430,7 @@ extension BluetoothTransport: CBPeripheralManagerDelegate {
 
     func peripheralManagerDidStartAdvertising(_ peripheralManager: CBPeripheralManager, error: Error?) {
         if let error {
-            eventCont?.yield(.error("Could not advertise: \(error.localizedDescription)"))
+            eventCont?.yield(.error(String(format: L("Could not advertise: %@"), error.localizedDescription)))
         }
     }
 

@@ -21,6 +21,15 @@ struct SettingsView: View {
         case light = "Light"
         case dark = "Dark"
         var id: String { rawValue }
+
+        /// Localized name shown in the appearance dialog.
+        var label: String {
+            switch self {
+            case .system: return L("settings.system")
+            case .light:  return L("settings.light")
+            case .dark:   return L("settings.dark")
+            }
+        }
     }
 
     enum Language: String, CaseIterable, Identifiable {
@@ -36,6 +45,23 @@ struct SettingsView: View {
         case punjabi = "Punjabi"
         case urdu = "Urdu"
         var id: String { rawValue }
+
+        /// Native name of the language, shown in the language picker.
+        var label: String {
+            switch self {
+            case .english:  return L("language.english")
+            case .hindi:    return L("language.hindi")
+            case .telugu:   return L("language.telugu")
+            case .tamil:    return L("language.tamil")
+            case .kannada:  return L("language.kannada")
+            case .malayalam: return L("language.malayalam")
+            case .marathi:  return L("language.marathi")
+            case .bengali:  return L("language.bengali")
+            case .gujarati: return L("language.gujarati")
+            case .punjabi:  return L("language.punjabi")
+            case .urdu:     return L("language.urdu")
+            }
+        }
     }
 
     private var relayBinding: Binding<Bool> {
@@ -58,15 +84,15 @@ struct SettingsView: View {
                         settingsHeader
 
                         SettingsSection(title: "ACCOUNT") {
-                            SettingsNavRow(icon: "person.circle", title: "Profile") {
+                            SettingsNavRow(icon: "person.circle", title: L("Profile")) {
                                 ProfileView()
                             }
                             Divider().padding(.leading, 54)
-                            SettingsNavRow(icon: "hand.raised.fill", title: "Privacy") {
+                            SettingsNavRow(icon: "hand.raised.fill", title: L("Privacy")) {
                                 PrivacyView()
                             }
                             Divider().padding(.leading, 54)
-                            SettingsNavRow(icon: "bell.fill", title: "Notifications") {
+                            SettingsNavRow(icon: "bell.fill", title: L("Notifications")) {
                                 NotificationsSettingsView()
                             }
                             Divider().padding(.leading, 54)
@@ -74,35 +100,35 @@ struct SettingsView: View {
                         }
 
                         SettingsSection(title: "NETWORK") {
-                            SettingsNavRow(icon: "point.3.connected.trianglepath.dotted", title: "Mesh Settings") {
+                            SettingsNavRow(icon: "point.3.connected.trianglepath.dotted", title: L("Mesh Settings")) {
                                 MeshSettingsView()
                             }
                             Divider().padding(.leading, 54)
-                            SettingsToggleRow(icon: "arrow.triangle.2.circlepath", title: "Relay Mode", isOn: relayBinding)
+                            SettingsToggleRow(icon: "arrow.triangle.2.circlepath", title: L("Relay Mode"), isOn: relayBinding)
                             Divider().padding(.leading, 54)
-                            SettingsNavRow(icon: "sparkles", title: "Offline AI") {
+                            SettingsNavRow(icon: "sparkles", title: L("Offline AI")) {
                                 OfflineAISettingsView()
                             }
                             Divider().padding(.leading, 54)
-                            SettingsNavRow(icon: "map.fill", title: "Maps") {
+                            SettingsNavRow(icon: "map.fill", title: L("Maps")) {
                                 MapSettingsView()
                             }
                         }
 
                         SettingsSection(title: "APP") {
-                            SettingsActionRow(icon: "globe", title: "Language", value: language.rawValue) {
+                            SettingsActionRow(icon: "globe", title: L("Language"), value: language.rawValue) {
                                 showLanguagePicker = true
                             }
                             Divider().padding(.leading, 54)
-                            SettingsActionRow(icon: "moon.circle.fill", title: "Appearance", value: appearance) {
+                            SettingsActionRow(icon: "moon.circle.fill", title: L("Appearance"), value: Appearance(rawValue: appearance)?.label ?? appearance) {
                                 showAppearance = true
                             }
                             Divider().padding(.leading, 54)
-                            SettingsToggleRow(icon: "play.rectangle", title: "Demo Mode", isOn: demoBinding)
+                            SettingsToggleRow(icon: "play.rectangle", title: L("Demo Mode"), isOn: demoBinding)
                         }
 
                         if app.demoController.isDemoMode {
-                            Text("Demo Mode is ON — all devices, messages and map nodes are simulated.")
+                            Text(L("Demo Mode is ON — all devices, messages and map nodes are simulated."))
                                 .font(ResilixTheme.captionFont)
                                 .foregroundStyle(ResilixTheme.brandAmber)
                                 .padding(.horizontal, ResilixTheme.space20)
@@ -124,18 +150,18 @@ struct SettingsView: View {
             LocalizationManager.shared.apply(newValue.rawValue)
             Task { await app.updateSettings { $0.language = newValue.rawValue } }
         }
-        .confirmationDialog("Appearance", isPresented: $showAppearance, titleVisibility: .visible) {
+        .confirmationDialog(L("Appearance"), isPresented: $showAppearance, titleVisibility: .visible) {
             ForEach(Appearance.allCases) { option in
-                Button(option.rawValue) { appearance = option.rawValue }
+                Button(option.label) { appearance = option.rawValue }
             }
-            Button("Cancel", role: .cancel) {}
+            Button(L("Cancel"), role: .cancel) {}
         }
     }
 
     // MARK: Header — "Settings" title + close button
     private var settingsHeader: some View {
         HStack {
-            Text("Settings")
+            Text(L("Settings"))
                 .font(ResilixTheme.largeTitleFont)
                 .foregroundStyle(ResilixTheme.textPrimary)
             Spacer()
@@ -149,7 +175,7 @@ struct SettingsView: View {
                     .overlay(Circle().stroke(ResilixTheme.glassBorder, lineWidth: 0.8))
             }
             .pressScale()
-            .accessibilityLabel("Close settings")
+            accessibilityLabel(Text(L("Close settings")))
         }
         .padding(.horizontal, ResilixTheme.space20)
         .padding(.top, ResilixTheme.space8)
@@ -158,7 +184,7 @@ struct SettingsView: View {
     private var versionFooter: some View {
         HStack {
             Spacer()
-            Text("Resilix 1.0.0")
+            Text(L("Resilix 1.0.0"))
                 .font(ResilixTheme.captionFont)
                 .foregroundStyle(ResilixTheme.textTertiary)
             Spacer()
@@ -340,7 +366,7 @@ struct SettingsLogoutRow: View {
         Button { showConfirm = true } label: {
             HStack(spacing: ResilixTheme.space12) {
                 SettingsIcon(systemName: "rectangle.portrait.and.arrow.right", color: SettingsIcon.color(for: "rectangle.portrait.and.arrow.right"))
-                Text("Log Out")
+                Text(L("Log Out"))
                     .font(ResilixTheme.font(16, .semibold))
                     .foregroundStyle(ResilixTheme.emergencyRed)
                 Spacer()
@@ -353,14 +379,14 @@ struct SettingsLogoutRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .alert("Log Out", isPresented: $showConfirm) {
-            Button("Log Out", role: .destructive) {
+        .alert(L("Log Out"), isPresented: $showConfirm) {
+            Button(L("Log Out"), role: .destructive) {
                 isAuthenticated = false
                 dismiss()
             }
-            Button("Cancel", role: .cancel) {}
+            Button(L("Cancel"), role: .cancel) {}
         } message: {
-            Text("Are you sure you want to log out?")
+            Text(L("Are you sure you want to log out?"))
         }
     }
 }
@@ -374,9 +400,9 @@ struct NotificationsSettingsView: View {
 
     var body: some View {
         Form {
-            SettingsToggleRow(icon: "bubble.left.fill", title: "New Messages", isOn: $notifyMessages)
-            SettingsToggleRow(icon: "exclamationmark.triangle.fill", title: "SOS Alerts", isOn: $notifySOS)
-            SettingsToggleRow(icon: "dot.radiowaves.left.and.right", title: "Mesh Events", isOn: $notifyMeshEvents)
+            SettingsToggleRow(icon: "bubble.left.fill", title: L("New Messages"), isOn: $notifyMessages)
+            SettingsToggleRow(icon: "exclamationmark.triangle.fill", title: L("SOS Alerts"), isOn: $notifySOS)
+            SettingsToggleRow(icon: "dot.radiowaves.left.and.right", title: L("Mesh Events"), isOn: $notifyMeshEvents)
         }
         .scrollContentBackground(.hidden)
         .background(ResilixTheme.backgroundPrimary)
@@ -392,9 +418,9 @@ struct MeshSettingsView: View {
 
     var body: some View {
         Form {
-            SettingsToggleRow(icon: "arrow.triangle.2.circlepath", title: "Auto-relay when connected", isOn: $autoRelay)
-            SettingsToggleRow(icon: "ladybug.fill", title: "Show Debug Info", isOn: $showDebugInfo)
-            SettingsNavRow(icon: "waveform.path.ecg", title: "Network Diagnostics") {
+            SettingsToggleRow(icon: "arrow.triangle.2.circlepath", title: L("Auto-relay when connected"), isOn: $autoRelay)
+            SettingsToggleRow(icon: "ladybug.fill", title: L("Show Debug Info"), isOn: $showDebugInfo)
+            SettingsNavRow(icon: "waveform.path.ecg", title: L("Network Diagnostics")) {
                 DiagnosticsView()
             }
         }
@@ -412,15 +438,15 @@ struct OfflineAISettingsView: View {
         Form {
             Section {
                 SettingsToggleRow(icon: "sparkles",
-                                  title: "Keep conversation history",
-                                  subtitle: "Stored on this device only",
+                                  title: L("Keep conversation history"),
+                                  subtitle: L("Stored on this device only"),
                                   isOn: Binding(
                                     get: { app.settings.aiConversationPersistence },
                                     set: { newValue in Task { await app.updateSettings { $0.aiConversationPersistence = newValue } } }
                                   ))
             }
 
-            Section(header: Text("Active model")) {
+            Section(header: Text(L("Active model"))) {
                 HStack {
                     Text(app.aiService.activeModel?.displayName ?? "None")
                         .foregroundStyle(ResilixTheme.textPrimary)
@@ -433,12 +459,12 @@ struct OfflineAISettingsView: View {
                     AIModelManagerView()
                         .environmentObject(app)
                 } label: {
-                    Label("Manage models", systemImage: "cpu")
+                    Label(L("Manage models"), systemImage: "cpu")
                 }
             }
 
             Section {
-                Button("Clear conversation") {
+                Button(L("Clear conversation")) {
                     Task { await app.aiService.clearConversation() }
                 }
             }
@@ -452,10 +478,10 @@ struct OfflineAISettingsView: View {
     private var statusText: String {
         guard let model = app.aiService.activeModel else { return "—" }
         switch model.availability {
-        case .ready: return "Ready"
-        case .notInstalled: return "Not installed"
-        case .runtimeUnavailable: return "No runtime"
-        case .unusable: return "Unusable"
+        case .ready: return L("Ready")
+        case .notInstalled: return L("Not installed")
+        case .runtimeUnavailable: return L("No runtime")
+        case .unusable: return L("Unusable")
         }
     }
 }
@@ -467,9 +493,9 @@ struct MapSettingsView: View {
 
     var body: some View {
         Form {
-            Section(header: Text("Installed packs")) {
+            Section(header: Text(L("Installed packs"))) {
                 if app.mapPackService.packs.isEmpty {
-                    Text("No offline map is installed. The map screen uses the online Apple tiles until a pack is imported.")
+                    Text(L("No offline map is installed. The map screen uses the online Apple tiles until a pack is imported."))
                         .font(.caption)
                         .foregroundStyle(ResilixTheme.textSecondary)
                 } else {
@@ -483,7 +509,7 @@ struct MapSettingsView: View {
                                     ResilixStatusBadge(text: "Active", color: ResilixTheme.successGreen)
                                 }
                             }
-                            Text("Zoom \(pack.minZoom)–\(pack.maxZoom) · \(ByteCountFormatter.string(fromByteCount: Int64(pack.byteCount), countStyle: .file))")
+                            Text(L("map.zoom") + " \(pack.minZoom)–\(pack.maxZoom) · \(ByteCountFormatter.string(fromByteCount: Int64(pack.byteCount), countStyle: .file))")
                                 .font(.caption2)
                                 .foregroundStyle(ResilixTheme.textTertiary)
                         }
@@ -501,9 +527,9 @@ struct MapSettingsView: View {
                 Button {
                     showImporter = true
                 } label: {
-                    Label("Import map pack", systemImage: "square.and.arrow.down")
+                    Label(L("Import map pack"), systemImage: "square.and.arrow.down")
                 }
-                Text("Storage used: \(ByteCountFormatter.string(fromByteCount: Int64(app.mapPackService.storageUsedBytes), countStyle: .file))")
+                Text(L("settings.storage.used") + ": \(ByteCountFormatter.string(fromByteCount: Int64(app.mapPackService.storageUsedBytes), countStyle: .file))")
                     .font(.caption)
                     .foregroundStyle(ResilixTheme.textTertiary)
             }
@@ -521,18 +547,18 @@ struct MapSettingsView: View {
                     Task {
                         do {
                             _ = try await app.mapPackService.importPack(from: url)
-                            message = "The map pack was imported."
+                            message = L("The map pack was imported.")
                         } catch {
                             message = error.localizedDescription
                         }
                     }
                 }
             case .failure:
-                message = "The map pack could not be opened."
+                message = L("The map pack could not be opened.")
             }
         }
-        .alert("Maps", isPresented: .constant(message != nil), presenting: message) { _ in
-            Button("OK") { message = nil }
+        .alert(L("Maps"), isPresented: .constant(message != nil), presenting: message) { _ in
+            Button(L("OK")) { message = nil }
         } message: { text in
             Text(text)
         }
@@ -557,7 +583,7 @@ struct LanguagePickerView: View {
                                 dismiss()
                             } label: {
                                 HStack(spacing: ResilixTheme.space12) {
-                                    Text(lang.rawValue)
+                                    Text(lang.label)
                                         .font(ResilixTheme.font(16, .medium))
                                         .foregroundStyle(ResilixTheme.textPrimary)
                                     Spacer()
@@ -591,7 +617,7 @@ struct LanguagePickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                         .font(ResilixTheme.font(15, .semibold))
                 }
             }

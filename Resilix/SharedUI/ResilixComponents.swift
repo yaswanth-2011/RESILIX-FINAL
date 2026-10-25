@@ -53,12 +53,12 @@ struct MeshStatusIndicator: View {
             Circle()
                 .fill(connected ? ResilixTheme.brandTeal : ResilixTheme.textTertiary)
                 .frame(width: 8, height: 8)
-            Text(connected ? "Connected" : "Offline")
+            Text(connected ? L("Connected") : L("Offline"))
                 .font(.caption)
                 .foregroundStyle(ResilixTheme.textSecondary)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(connected ? "Mesh connected" : "Mesh offline")
+        .accessibilityLabel(connected ? Text(L("Mesh connected")) : Text(L("Mesh offline")))
     }
 }
 
@@ -152,7 +152,7 @@ struct EmptyStateView: View {
 
 struct ErrorStateView: View {
     let message: String
-    var retryLabel: String = "Retry"
+    var retryLabel: String { L("Retry") }
     let retry: () -> Void
     var body: some View {
         VStack(spacing: ResilixTheme.space8) {
@@ -174,14 +174,14 @@ struct LoadingStateView: View {
     var body: some View {
         HStack(spacing: ResilixTheme.space8) {
             ProgressView()
-            Text("Loading…")
+            Text(L("Loading…"))
                 .font(.subheadline)
                 .foregroundStyle(ResilixTheme.textSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(ResilixTheme.space16)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("Loading")
+        accessibilityLabel(Text(L("Loading")))
     }
 }
 
@@ -197,7 +197,7 @@ struct SeverityBadge: View {
     }
     var body: some View {
         ResilixStatusBadge(text: severity.label, color: color)
-            .accessibilityLabel("Severity \(severity.label)")
+            .accessibilityLabel(L("ui.severity") + " \(severity.label)")
     }
 }
 
@@ -234,9 +234,9 @@ struct RoutePathView: View {
                                 .font(.caption.weight(.semibold))
                                 .foregroundStyle(.white)
                         )
-                    if index == 0 { Text("Source") }
-                    else if index == hops.count - 1 { Text("Destination") }
-                    else { Text("Relay") }
+                    if index == 0 { Text(L("Source")) }
+                    else if index == hops.count - 1 { Text(L("Destination")) }
+                    else { Text(L("Relay")) }
                 }
                 .font(.caption2)
                 .foregroundStyle(ResilixTheme.textSecondary)
@@ -250,6 +250,6 @@ struct RoutePathView: View {
             }
         }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Route " + hops.joined(separator: " through "))
+        .accessibilityLabel(L("ui.route") + " " + hops.joined(separator: " " + L("ui.through") + " "))
     }
 }

@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Stores the conversations and moves the chat payloads through the mesh.
 ///
@@ -145,7 +146,7 @@ final class MessageService: ObservableObject {
     /// Handles a payload that was decrypted by the mesh controller.
     func handleIncoming(_ delivered: DeliveredPayload) async {
         guard let message = try? JSONDecoder().decode(MeshMessage.self, from: delivered.plaintext) else {
-            lastErrorMessage = "A received message could not be read."
+            lastErrorMessage = L("A received message could not be read.")
             return
         }
         // Ignore our own echo.

@@ -1,6 +1,17 @@
 import Foundation
 
-enum IncidentStatus: String, Codable, Sendable { case active, acknowledged, resolved, expired }
+enum IncidentStatus: String, Codable, Sendable {
+    case active, acknowledged, resolved, expired
+
+    var label: String {
+        switch self {
+        case .active: return L("incident.status.active")
+        case .acknowledged: return L("incident.status.acknowledged")
+        case .resolved: return L("incident.status.resolved")
+        case .expired: return L("incident.status.expired")
+        }
+    }
+}
 
 struct Incident: Codable, Sendable, Equatable, Identifiable {
     var id: String

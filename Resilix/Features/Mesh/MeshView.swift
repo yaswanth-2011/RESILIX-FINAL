@@ -1,5 +1,7 @@
 import SwiftUI
 import MapKit
+import CoreLocation
+import Foundation
 
 // MARK: - Mesh color tokens
 // Bright, visibly distinct colors for each role / stat.
@@ -81,8 +83,8 @@ struct MeshView: View {
             .onReceive(app.meshController.$peers) { _ in
                 Task { await loadPeers() }
             }
-            .alert("Mesh", isPresented: .constant(testMessage != nil), presenting: testMessage) { _ in
-                Button("OK") { testMessage = nil }
+            .alert(L("Mesh"), isPresented: .constant(testMessage != nil), presenting: testMessage) { _ in
+                Button(L("OK")) { testMessage = nil }
             } message: { message in
                 Text(message)
             }
@@ -112,7 +114,7 @@ struct MeshView: View {
     private var headerSection: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 6) {
-                Text("Mesh Network")
+                Text(L("Mesh Network"))
                     .font(ResilixTheme.font(32, .bold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                 HStack(spacing: 8) {
@@ -121,22 +123,22 @@ struct MeshView: View {
                             .fill(ResilixTheme.successGreen)
                             .frame(width: 7, height: 7)
                             .scaleEffect(pulse ? 1.25 : 0.85)
-                        Text("Healthy")
+                        Text(L("Healthy"))
                             .font(ResilixTheme.font(13, .semibold))
                             .foregroundStyle(ResilixTheme.successGreen)
                     }
-                    Text("· \(peers.count) devices · \(app.meshController.connectedPeerIDs.count) connections")
+                    Text("· \(peers.count) " + L("ui.devices") + " · \(app.meshController.connectedPeerIDs.count) " + L("ui.connections"))
                         .font(ResilixTheme.font(13, .regular))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 8) {
-                MeshToggleChip(label: "Auto Route", isOn: Binding(
+                MeshToggleChip(label: L("Auto Route"), isOn: Binding(
                     get: { app.meshController.routing.automaticRoutingEnabled },
                     set: { newValue in app.meshController.routing.automaticRoutingEnabled = newValue }
                 ))
-                MeshToggleChip(label: "Relay", isOn: Binding(
+                MeshToggleChip(label: L("Relay"), isOn: Binding(
                     get: { app.relayManager.isRelayActive },
                     set: { newValue in Task { await app.relayManager.setRelay(newValue) } }
                 ))
@@ -158,10 +160,10 @@ struct MeshView: View {
     // visually different at a glance.
     private var statsRow: some View {
         HStack(spacing: 10) {
-            MeshStatBox(value: "\(peers.count)", label: "Members", color: MeshColors.direct)
-            MeshStatBox(value: "\(meshHealth)", label: "Health", color: MeshColors.you)
-            MeshStatBox(value: "\(app.meshController.routing.routes.count)", label: "Routes", color: MeshColors.routes)
-            MeshStatBox(value: "\(app.meshController.statistics.relayedPackets)", label: "Relayed", color: MeshColors.relay)
+            MeshStatBox(value: "\(peers.count)", label: L("Members"), color: MeshColors.direct)
+            MeshStatBox(value: "\(meshHealth)", label: L("Health"), color: MeshColors.you)
+            MeshStatBox(value: "\(app.meshController.routing.routes.count)", label: L("Routes"), color: MeshColors.routes)
+            MeshStatBox(value: "\(app.meshController.statistics.relayedPackets)", label: L("Relayed"), color: MeshColors.relay)
         }
         .padding(.horizontal, ResilixTheme.space20)
     }
@@ -169,13 +171,13 @@ struct MeshView: View {
     // MARK: - Action Cards
     private var actionCards: some View {
         VStack(spacing: 10) {
-            MeshActionRow(icon: "viewfinder", title: "Scan for Devices", subtitle: "Discover new mesh peers") {
+            MeshActionRow(icon: "viewfinder", title: L("Scan for Devices"), subtitle: L("Discover new mesh peers")) {
                 Task { await rescan() }
             }
-            MeshActionRow(icon: "waveform.path.ecg", title: "Network Diagnostics", subtitle: "Check routes & latency") {
+            MeshActionRow(icon: "waveform.path.ecg", title: L("Network Diagnostics"), subtitle: L("Check routes & latency")) {
                 showDiagnostics = true
             }
-            MeshActionRow(icon: "paperplane.fill", title: "Send Test Message", subtitle: "Watch packet travel the mesh") {
+            MeshActionRow(icon: "paperplane.fill", title: L("Send Test Message"), subtitle: L("Watch packet travel the mesh")) {
                 Task { await sendTestMessage() }
             }
         }
@@ -239,14 +241,14 @@ struct MeshView: View {
     /// Sends a short test packet to every connected peer.
     private func sendTestMessage() async {
         guard !app.meshController.connectedPeerIDs.isEmpty else {
-            testMessage = "No peer is connected yet — scan for devices first."
+            testMessage = L("No peer is connected yet — scan for devices first.")
             return
         }
         var sent = 0
         for peerID in app.meshController.connectedPeerIDs {
             do {
                 _ = try await app.meshController.sendSecurePacket(type: .chat,
-                                                                  plaintext: Data("Resilix mesh test message".utf8),
+                                                                  plaintext: Data(L("Resilix mesh test message").utf8),
                                                                   destination: peerID)
                 sent += 1
             } catch {
@@ -254,8 +256,8 @@ struct MeshView: View {
             }
         }
         testMessage = sent > 0
-            ? "Test packet sent to \(sent) peer(s)."
-            : "The test packet could not be sent."
+            ? String(format: L("Test packet sent to %@ peer(s)."), String(sent))
+            : L("The test packet could not be sent.")
     }
 }
 
@@ -409,7 +411,7 @@ struct MeshAppleMapView: View {
                 .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
                 .colorScheme(.dark)
                 .allowsHitTesting(true)
-                .accessibilityLabel("Mesh network map with \(peers.count) devices")
+                .accessibilityLabel(L("mesh.map.description") + " \(peers.count) " + L("ui.devices"))
             }
             .frame(height: 360)
             .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
@@ -421,10 +423,10 @@ struct MeshAppleMapView: View {
 
             // Legend
             HStack(spacing: 18) {
-                MeshLegendItem(color: MeshColors.you, label: "You")
-                MeshLegendItem(color: MeshColors.direct, label: "Direct")
-                MeshLegendItem(color: MeshColors.relay, label: "Relay")
-                MeshLegendItem(color: MeshColors.multiHop, label: "2+ Hop")
+                MeshLegendItem(color: MeshColors.you, label: L("You"))
+                MeshLegendItem(color: MeshColors.direct, label: L("Direct"))
+                MeshLegendItem(color: MeshColors.relay, label: L("Relay"))
+                MeshLegendItem(color: MeshColors.multiHop, label: L("2+ Hop"))
             }
             .frame(maxWidth: .infinity)
         }
@@ -454,7 +456,7 @@ private struct YouMapPin: View {
                 pulse = true
             }
         }
-        .accessibilityLabel("Your device")
+        accessibilityLabel(Text(L("Your device")))
     }
 }
 
@@ -495,7 +497,7 @@ private struct PeerMapPin: View {
                 )
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(peer.name), \(peer.connectionLabel), \(peer.signalPercent) percent signal")
+        .accessibilityLabel("\(peer.name), \(peer.connectionLabel), \(peer.signalPercent) " + L("ui.percent.signal"))
         .accessibilityAddTraits(.isButton)
     }
 }
@@ -531,9 +533,9 @@ struct MeshDeviceDetailSheet: View {
 
     private var hopCount: String {
         switch peer.hopType {
-        case .direct: return "1 hop"
-        case .relay: return "1 hop"
-        case .multiHop: return "2 hops"
+        case .direct: return L("1 hop")
+        case .relay: return L("1 hop")
+        case .multiHop: return L("2 hops")
         }
     }
 
@@ -563,7 +565,7 @@ struct MeshDeviceDetailSheet: View {
                             Circle()
                                 .fill(ResilixTheme.successGreen)
                                 .frame(width: 7, height: 7)
-                            Text("Connected")
+                            Text(L("Connected"))
                                 .font(ResilixTheme.font(13, .semibold))
                                 .foregroundStyle(ResilixTheme.successGreen)
                         }
@@ -574,9 +576,9 @@ struct MeshDeviceDetailSheet: View {
 
                 // Stats
                 HStack(spacing: 10) {
-                    MeshDetailStat(value: hopCount, label: "Hop Count")
-                    MeshDetailStat(value: "\(peer.signalPercent)", label: "Signal")
-                    MeshDetailStat(value: relayLabel, label: "Relay")
+                    MeshDetailStat(value: hopCount, label: L("Hop Count"))
+                    MeshDetailStat(value: "\(peer.signalPercent)", label: L("Signal"))
+                    MeshDetailStat(value: relayLabel, label: L("Relay"))
                 }
                 .padding(.horizontal, ResilixTheme.space20)
 
@@ -585,7 +587,7 @@ struct MeshDeviceDetailSheet: View {
                     Button {
                         dismiss()
                     } label: {
-                        Text("Message")
+                        Text(L("Message"))
                             .font(ResilixTheme.font(15, .heavy))
                             .tracking(0.6)
                             .foregroundStyle(ResilixTheme.textOnAccent)
@@ -607,7 +609,7 @@ struct MeshDeviceDetailSheet: View {
                     Button {
                         dismiss()
                     } label: {
-                        Text("View Route")
+                        Text(L("View Route"))
                             .font(ResilixTheme.font(15, .heavy))
                             .tracking(0.6)
                             .foregroundStyle(ResilixTheme.textPrimary)

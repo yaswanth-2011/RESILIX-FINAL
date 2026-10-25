@@ -13,14 +13,14 @@ enum DeliveryState: String, Codable, Sendable, CaseIterable {
 
     var label: String {
         switch self {
-        case .draft: return "Draft"
-        case .queued: return "Queued for mesh"
-        case .sending: return "Sending"
-        case .relaying: return "Relaying"
-        case .delivered: return "Delivered"
-        case .expired: return "Expired"
-        case .failed: return "No route available"
-        case .cancelled: return "Cancelled"
+        case .draft: return L("delivery.draft")
+        case .queued: return L("delivery.queued")
+        case .sending: return L("delivery.sending")
+        case .relaying: return L("delivery.relaying")
+        case .delivered: return L("delivery.delivered")
+        case .expired: return L("delivery.expired")
+        case .failed: return L("delivery.failed")
+        case .cancelled: return L("delivery.cancelled")
         }
     }
 }

@@ -1,6 +1,8 @@
 import SwiftUI
 import PhotosUI
 import AVFoundation
+import UIKit
+import Foundation
 
 // MARK: - WhatsApp-style message thread
 struct MessageThreadView: View {
@@ -38,9 +40,9 @@ struct MessageThreadView: View {
         .toolbar(.hidden, for: .tabBar)
         .toolbar(.hidden, for: .navigationBar)
         .navigationBarHidden(true)
-        .confirmationDialog("Clear this chat?", isPresented: $showClearConfirm, titleVisibility: .visible) {
-            Button("Clear Chat", role: .destructive) { messages.removeAll() }
-            Button("Cancel", role: .cancel) {}
+        .confirmationDialog(L("Clear this chat?"), isPresented: $showClearConfirm, titleVisibility: .visible) {
+            Button(L("Clear Chat"), role: .destructive) { messages.removeAll() }
+            Button(L("Cancel"), role: .cancel) {}
         }
         .onAppear {
             isMuted = mutedThreads.split(separator: "|").contains { $0 == message.threadID }
@@ -56,7 +58,7 @@ struct MessageThreadView: View {
                 UIPasteboard.general.string = message.threadID
                 #endif
             } label: {
-                Label("Copy Contact Name", systemImage: "doc.on.doc")
+                Label(L("Copy Contact Name"), systemImage: "doc.on.doc")
             }
 
             Button {
@@ -65,7 +67,7 @@ struct MessageThreadView: View {
                 if isMuted { set.insert(message.threadID) } else { set.remove(message.threadID) }
                 mutedThreads = set.joined(separator: "|")
             } label: {
-                Label(isMuted ? "Unmute Notifications" : "Mute Notifications",
+                Label(isMuted ? L("Unmute Notifications") : L("Mute Notifications"),
                       systemImage: isMuted ? "bell" : "bell.slash")
             }
 
@@ -74,7 +76,7 @@ struct MessageThreadView: View {
             Button(role: .destructive) {
                 showClearConfirm = true
             } label: {
-                Label("Clear Chat", systemImage: "trash")
+                Label(L("Clear Chat"), systemImage: "trash")
             }
         } label: {
             Image(systemName: "ellipsis")
@@ -84,7 +86,7 @@ struct MessageThreadView: View {
                 .frame(minWidth: 32, minHeight: 32)
                 .contentShape(Rectangle())
         }
-        .accessibilityLabel("Chat options")
+        accessibilityLabel(Text(L("Chat options")))
     }
 
     // MARK: Thread header — custom row with back button, avatar, name,
@@ -107,7 +109,7 @@ struct MessageThreadView: View {
                             .fill(Color.white.opacity(0.04))
                     )
             }
-            .accessibilityLabel("Back")
+            accessibilityLabel(Text(L("Back")))
 
             AvatarView(name: message.threadID,
                        size: 38,
@@ -132,8 +134,8 @@ struct MessageThreadView: View {
         let kind: MeshStatusKind
         switch route {
         case "direct":  kind = .direct
-        case "1 hop":   kind = .oneHop
-        case "2 hops":  kind = .twoHops
+        case L("1 hop"):   kind = .oneHop
+        case L("2 hops"):  kind = .twoHops
         case "relayed": kind = .relayed
         case "waiting": kind = .waiting
         default:        kind = .direct
@@ -176,8 +178,8 @@ struct MessageThreadView: View {
     private var meshLabel: String {
         switch message.lastRoute {
         case "Direct": return "Direct"
-        case "1 hop": return "1 Hop"
-        case "2 hops": return "2 Hops"
+        case L("1 hop"): return "1 Hop"
+        case L("2 hops"): return "2 Hops"
         case "Relayed": return "Relayed"
         case "Waiting": return "Waiting"
         default: return "Direct"
@@ -203,7 +205,8 @@ struct MessageThreadView: View {
     private var routeSummary: String {
         let hops = message.lastRoute.flatMap(Self.parseHops) ?? ["YOU", message.threadID]
         let arrowed = hops.joined(separator: " → ")
-        return "Route: \(arrowed) · 2 hops · 340ms avg"
+        let hopWord = hops.count == 1 ? L("ui.hop") : L("ui.hops")
+        return L("Route") + ": " + arrowed + " · " + String(hops.count) + " " + hopWord
     }
 
     private static func parseHops(_ route: String) -> [String]? {
@@ -223,7 +226,7 @@ struct MessageThreadView: View {
             Image(systemName: "wifi.slash")
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(ResilixTheme.brandAmber)
-            Text("No internet · Routing via mesh")
+            Text(L("No internet · Routing via mesh"))
                 .font(ResilixTheme.font(11, .semibold))
                 .foregroundStyle(ResilixTheme.brandAmber)
             Spacer()
@@ -265,10 +268,10 @@ struct MessageThreadView: View {
                     .foregroundStyle(ResilixTheme.textTertiary)
                     .frame(width: 32, height: 32)
             }
-            .accessibilityLabel("Emoji")
+            accessibilityLabel(Text(L("Emoji")))
 
             HStack {
-                TextField("Message", text: $draft)
+                TextField(L("Message"), text: $draft)
                     .focused($inputFocused)
                     .font(ResilixTheme.font(15, .regular))
                     .foregroundStyle(ResilixTheme.textPrimary)
@@ -278,13 +281,13 @@ struct MessageThreadView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                .accessibilityLabel("Attach")
+                accessibilityLabel(Text(L("Attach")))
                 Button { showCamera = true } label: {
                     Image(systemName: "camera")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                .accessibilityLabel("Camera")
+                accessibilityLabel(Text(L("Camera")))
             }
             .padding(.horizontal, ResilixTheme.space12)
             .padding(.vertical, ResilixTheme.space8)
@@ -303,7 +306,7 @@ struct MessageThreadView: View {
                     .shadow(color: ResilixTheme.cyanGlowStrong, radius: 6, x: 0, y: 0)
                     .shadow(color: Color.black.opacity(0.25), radius: 3, x: 0, y: 2)
             }
-            .accessibilityLabel("Voice message")
+            accessibilityLabel(Text(L("Voice message")))
 
             Button {
                 send()
@@ -319,16 +322,16 @@ struct MessageThreadView: View {
             }
             .opacity(draft.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
             .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty)
-            .accessibilityLabel("Send")
+            accessibilityLabel(Text(L("Send")))
         }
         .padding(.horizontal, ResilixTheme.space8)
         .padding(.vertical, ResilixTheme.space8)
         .background(ResilixTheme.backgroundPrimary)
-        .confirmationDialog("Attach", isPresented: $showAttachmentOptions, titleVisibility: .visible) {
-            Button("Photo Library") { showPhotoPicker = true }
-            Button("Camera") { showCamera = true }
-            Button("File") { showFileImporter = true }
-            Button("Cancel", role: .cancel) {}
+        .confirmationDialog(L("Attach"), isPresented: $showAttachmentOptions, titleVisibility: .visible) {
+            Button(L("Photo Library")) { showPhotoPicker = true }
+            Button(L("Camera")) { showCamera = true }
+            Button(L("File")) { showFileImporter = true }
+            Button(L("Cancel"), role: .cancel) {}
         }
         .fileImporter(isPresented: $showFileImporter,
                       allowedContentTypes: [.item],
@@ -337,11 +340,11 @@ struct MessageThreadView: View {
             case .success(let urls):
                 if let url = urls.first { sendFile(url) }
             case .failure:
-                transferMessage = "The file could not be opened."
+                transferMessage = L("The file could not be opened.")
             }
         }
-        .alert("Transfer", isPresented: .constant(transferMessage != nil), presenting: transferMessage) { _ in
-            Button("OK") { transferMessage = nil }
+        .alert(L("Transfer"), isPresented: .constant(transferMessage != nil), presenting: transferMessage) { _ in
+            Button(L("OK")) { transferMessage = nil }
         } message: { message in
             Text(message)
         }
@@ -564,8 +567,10 @@ struct CameraPicker: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
-        picker.sourceType = .camera
         picker.delegate = context.coordinator
+        // `sourceType = .camera` raises an exception on any device without a camera
+        // (for example the simulator), so fall back to the photo library instead.
+        picker.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera) ? .camera : .photoLibrary
         return picker
     }
     
@@ -605,12 +610,12 @@ struct VoiceRecorderView: View {
                     .foregroundStyle(isRecording ? ResilixTheme.emergencyRed : ResilixTheme.brandCyan)
                     .symbolEffect(.pulse, isActive: isRecording)
                 
-                Text(isRecording ? "Recording \(Int(recordingDuration))s" : "Tap to record")
+                Text(isRecording ? String(format: L("Recording %@s"), String(Int(recordingDuration))) : L("Tap to record"))
                     .font(.title2.weight(.semibold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                 
                 if let url = recordingURL {
-                    Text("Recorded: \(url.lastPathComponent)")
+                    Text(L("voice.recorded") + ": \(url.lastPathComponent)")
                         .font(.caption)
                         .foregroundStyle(ResilixTheme.textSecondary)
                 }
@@ -625,7 +630,7 @@ struct VoiceRecorderView: View {
                 Button {
                     if isRecording { stopRecording() } else { startRecording() }
                 } label: {
-                    Text(isRecording ? "Stop" : "Start")
+                    Text(isRecording ? L("Stop") : L("Start"))
                         .font(.headline)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
@@ -640,7 +645,7 @@ struct VoiceRecorderView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button(L("Cancel")) {
                         audioRecorder?.stop()
                         durationTimer?.invalidate()
                         if let recordingURL {
@@ -650,7 +655,7 @@ struct VoiceRecorderView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Send") {
+                    Button(L("Send")) {
                         if let url = recordingURL { onRecorded(url) }
                         dismiss()
                     }
@@ -681,7 +686,7 @@ struct VoiceRecorderView: View {
                 }
             }
             guard granted else {
-                errorMessage = "Microphone access is required to record a voice message."
+                errorMessage = L("Microphone access is required to record a voice message.")
                 return
             }
             await MainActor.run { beginRecording() }
@@ -717,7 +722,7 @@ struct VoiceRecorderView: View {
             RunLoop.main.add(timer, forMode: .common)
             durationTimer = timer
         } catch {
-            errorMessage = "The recording could not be started: \(error.localizedDescription)"
+            errorMessage = String(format: L("The recording could not be started: %@"), error.localizedDescription)
             isRecording = false
         }
     }

@@ -1,5 +1,6 @@
 import Foundation
 import CoreLocation
+import Combine
 
 /// A packet that was decrypted and is ready for the application layer.
 struct DeliveredPayload {
@@ -250,7 +251,7 @@ final class MeshController: ObservableObject {
             guard !seals.isEmpty else { throw ResilixError.routingNoRoute }
         } else {
             guard let identity = await peerKeys.identity(for: destination) else {
-                throw ResilixError.transportUnavailable("The public key of \(destination) is not known yet")
+                throw ResilixError.transportUnavailable(String(format: L("The public key of %@ is not known yet"), destination))
             }
             let box = try await security.seal(plaintext, for: destination, peerPublicKey: identity.agreementPublicKey)
             seals.append(SecureEnvelope.Seal(peerID: destination, box: box))
@@ -534,7 +535,7 @@ final class MeshController: ObservableObject {
 
     private func routeDescription(for packet: MeshPacket) -> String {
         let hops = packet.visited
-        if hops.isEmpty { return "Direct" }
+        if hops.isEmpty { return L("Direct") }
         return hops.joined(separator: " -> ")
     }
 

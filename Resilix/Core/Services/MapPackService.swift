@@ -1,5 +1,6 @@
 import Foundation
 import MapKit
+import Combine
 
 /// Stores and manages the offline map packs of the device.
 ///
@@ -55,7 +56,7 @@ final class MapPackService: ObservableObject {
 
         let fileExtension = url.pathExtension.lowercased()
         guard fileExtension == "mbtiles" || fileExtension == "sqlite" else {
-            throw ResilixError.persistenceFailed("Unsupported map format: \(fileExtension)")
+            throw ResilixError.persistenceFailed(String(format: L("Unsupported map format: %@"), fileExtension))
         }
 
         let data = try Data(contentsOf: url)
@@ -86,7 +87,7 @@ final class MapPackService: ObservableObject {
                 Task { @MainActor in self?.downloadProgress = progress }
             }
             if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
-                throw ResilixError.persistenceFailed("Download failed (HTTP \(http.statusCode))")
+                throw ResilixError.persistenceFailed(String(format: L("Download failed (HTTP %@)"), String(http.statusCode)))
             }
             let data = try Data(contentsOf: temporaryURL)
             let id = UUID().uuidString
@@ -109,12 +110,12 @@ final class MapPackService: ObservableObject {
     private func describePack(id: String, relativePath: String, name: String, data: Data) async throws -> MapPackDescriptor {
         let fileURL = persistence.baseURL.appendingPathComponent(relativePath)
         guard let reader = MBTilesReader(url: fileURL) else {
-            throw ResilixError.persistenceFailed("The file is not a readable MBTiles container")
+            throw ResilixError.persistenceFailed(L("The file is not a readable MBTiles container"))
         }
         readers[id] = reader
         let places = reader.placeNames()
         return MapPackDescriptor(id: id,
-                                 name: name.isEmpty ? "Map pack" : name,
+                                 name: name.isEmpty ? L("Map pack") : name,
                                  relativePath: relativePath,
                                  format: .mbtiles,
                                  byteCount: data.count,

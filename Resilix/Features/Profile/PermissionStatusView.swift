@@ -8,23 +8,23 @@ struct PermissionStatusView: View {
             StatusRow(
                 title: L("permissions.bluetooth"),
                 state: app.permissionService.bluetoothState,
-                detail: "Mesh discovery requires Bluetooth. Enable in Settings if denied."
+                detail: L("Mesh discovery requires Bluetooth. Enable in Settings if denied.")
             )
             StatusRow(
                 title: L("permissions.localNetwork"),
                 state: app.permissionService.localNetworkState,
-                detail: "P2P Wi-Fi uses local network discovery. Denied limits peer discovery."
+                detail: L("P2P Wi-Fi uses local network discovery. Denied limits peer discovery.")
             )
             StatusRow(
                 title: L("permissions.location"),
                 state: app.permissionService.locationState,
-                detail: "Map and SOS location sharing need location. Denied limits map features."
+                detail: L("Map and SOS location sharing need location. Denied limits map features.")
             )
             Button(L("permissions.openSettings")) {
                 app.permissionService.openSettings()
             }
             .foregroundStyle(ResilixTheme.brandTeal)
-            .accessibilityLabel("Open system settings for permissions")
+            accessibilityLabel(Text(L("Open system settings for permissions")))
         }
         .navigationTitle("Permissions")
         .background(ResilixTheme.bgPrimary)
@@ -44,7 +44,7 @@ struct PermissionStatusView: View {
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(ResilixTheme.textPrimary)
                     Spacer()
-                    Text(state.rawValue)
+                    Text(state.label)
                         .font(.caption2.weight(.semibold))
                         .padding(6)
                         .background(color.opacity(0.15))
@@ -57,7 +57,7 @@ struct PermissionStatusView: View {
             }
             .padding(.vertical, 4)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(title): \(state.rawValue)")
+            .accessibilityLabel("\(title): \(state.label)")
         }
         
         var color: Color {

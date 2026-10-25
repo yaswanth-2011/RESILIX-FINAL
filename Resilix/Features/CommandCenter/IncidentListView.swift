@@ -9,8 +9,8 @@ struct IncidentListView: View {
         List {
             if incidents.isEmpty {
                 EmptyStateView(
-                    title: "No incidents",
-                    subtitle: "No active SOS incidents.",
+                    title: L("No incidents"),
+                    subtitle: L("No active SOS incidents."),
                     icon: "shield.lefthalf.filled"
                 )
                 .listRowSeparator(.hidden)
@@ -50,7 +50,7 @@ struct IncidentRow: View {
                     .foregroundStyle(ResilixTheme.textSecondary)
                     .lineLimit(1)
                 Spacer()
-                Text("\(incident.hops ?? 0) hops")
+                Text("\(incident.hops ?? 0) " + L("ui.hops"))
                     .font(.caption2)
                     .foregroundStyle(ResilixTheme.textTertiary)
             }
@@ -66,6 +66,6 @@ struct IncidentRow: View {
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(incident.category.label) incident, \(incident.severity.label) severity, \(incident.hops ?? 0) hops")
+        .accessibilityLabel("\(incident.category.label) " + L("ui.incident") + ", \(incident.severity.label) " + L("ui.severity") + ", \(incident.hops ?? 0) " + L("ui.hops"))
     }
 }

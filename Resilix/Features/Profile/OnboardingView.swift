@@ -66,11 +66,11 @@ struct OnboardingView: View {
                         Button {
                             complete()
                         } label: {
-                            Text("SKIP")
+                            Text(L("SKIP"))
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(Color.white.opacity(0.55))
                         }
-                        .accessibilityLabel("Skip onboarding")
+                        accessibilityLabel(Text(L("Skip onboarding")))
 
                         Button {
                             if page < 2 {
@@ -79,7 +79,7 @@ struct OnboardingView: View {
                                 complete()
                             }
                         } label: {
-                            Text(page < 2 ? "NEXT" : "GET STARTED")
+                            Text(page < 2 ? L("NEXT") : L("GET STARTED"))
                                 .font(.system(size: 15, weight: .heavy))
                                 .tracking(0.5)
                                 .foregroundStyle(.white)
@@ -94,7 +94,7 @@ struct OnboardingView: View {
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
-                        .accessibilityLabel(page < 2 ? "Next page" : "Get started")
+                        .accessibilityLabel(page < 2 ? Text(L("Next page")) : Text(L("Get started")))
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 34)
@@ -164,7 +164,7 @@ private struct OnboardPage1: View {
                                 .shadow(color: ResilixTheme.brandNavy.opacity(0.3), radius: 8)
                             Image(systemName: "shield.lefthalf.filled").font(.title3).foregroundStyle(.white)
                         }
-                        Text("YOU").font(.caption2.weight(.heavy)).tracking(0.6).foregroundStyle(.white)
+                        Text(L("YOU")).font(.caption2.weight(.heavy)).tracking(0.6).foregroundStyle(.white)
                     }
                     .position(x: geo.size.width/2, y: geo.size.height/2)
                 }
@@ -175,12 +175,12 @@ private struct OnboardPage1: View {
             Spacer(minLength: 20)
 
             VStack(spacing: 12) {
-                Text("MEET RESILIX")
+                Text(L("MEET RESILIX"))
                     .font(.system(size: 22, weight: .heavy))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
 
-                Text("Communicate with nearby people even when normal networks are unavailable.")
+                Text(L("Communicate with nearby people even when normal networks are unavailable."))
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.55))
                     .multilineTextAlignment(.center)
@@ -229,8 +229,8 @@ private struct OnboardPage2: View {
                     // Nodes
                     let nodes = [
                         ("YOU", geo.size.width*0.15, geo.size.height*0.5),
-                        ("Device A", geo.size.width*0.35, geo.size.height*0.35),
-                        ("Device B", geo.size.width*0.65, geo.size.height*0.35),
+                        (L("Device A"), geo.size.width*0.35, geo.size.height*0.35),
+                        (L("Device B"), geo.size.width*0.65, geo.size.height*0.35),
                         ("RECIPIENT", geo.size.width*0.85, geo.size.height*0.5),
                     ]
                     ForEach(0..<nodes.count, id: \.self) { i in
@@ -262,12 +262,12 @@ private struct OnboardPage2: View {
             Spacer(minLength: 16)
 
             VStack(spacing: 10) {
-                Text("YOUR DEVICES BECOME THE NETWORK")
+                Text(L("YOUR DEVICES BECOME THE NETWORK"))
                     .font(.system(size: 20, weight: .heavy))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
 
-                Text("Messages can travel from device to device using available relay paths.")
+                Text(L("Messages can travel from device to device using available relay paths."))
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.55))
                     .multilineTextAlignment(.center)
@@ -303,12 +303,12 @@ private struct OnboardPage3: View {
                         .foregroundStyle(ResilixTheme.brandCyan)
                 }
 
-                Text("NO INTERNET REQUIRED")
+                Text(L("NO INTERNET REQUIRED"))
                     .font(.system(size: 22, weight: .heavy))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
 
-                Text("Resilix can communicate through nearby devices when Wi-Fi and mobile data aren't available.")
+                Text(L("Resilix can communicate through nearby devices when Wi-Fi and mobile data aren't available."))
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(Color.white.opacity(0.55))
                     .multilineTextAlignment(.center)
@@ -321,7 +321,7 @@ private struct OnboardPage3: View {
             Button {
                 // handled by parent
             } label: {
-                Text("GET STARTED")
+                Text(L("GET STARTED"))
                     .font(.system(size: 15, weight: .heavy))
                     .tracking(0.5)
                     .foregroundStyle(.white)

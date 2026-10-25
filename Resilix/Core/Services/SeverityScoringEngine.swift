@@ -19,9 +19,9 @@ enum SeverityScoringEngine {
         }()
         let total = min(base + catBonus, 120)
         let reason: String = {
-            if severity == .critical { return "Critical severity with \(category.label.lowercased()) - prioritized for immediate relay." }
-            if severity == .high { return "High severity \(category.label.lowercased()) requires prompt forwarding." }
-            return "\(category.label) reported with \(severity.label.lowercased()) severity."
+            if severity == .critical { return String(format: L("Critical severity with %@ - prioritized for immediate relay."), category.label.lowercased()) }
+            if severity == .high { return String(format: L("High severity %@ requires prompt forwarding."), category.label.lowercased()) }
+            return String(format: L("%@ reported with %@ severity."), category.label, severity.label.lowercased())
         }()
         return (total, reason)
     }

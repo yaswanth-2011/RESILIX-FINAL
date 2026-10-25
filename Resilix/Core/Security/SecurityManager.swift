@@ -183,7 +183,7 @@ actor SecurityManager {
         SecItemDelete(query as CFDictionary)
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else {
-            throw ResilixError.persistenceFailed("keychain save failed (\(status))")
+            throw ResilixError.persistenceFailed(String(format: L("keychain save failed (%@)"), String(describing: status)))
         }
     }
 
@@ -199,7 +199,7 @@ actor SecurityManager {
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         if status == errSecItemNotFound { return nil }
         guard status == errSecSuccess else {
-            throw ResilixError.persistenceFailed("keychain read failed (\(status))")
+            throw ResilixError.persistenceFailed(String(format: L("keychain read failed (%@)"), String(describing: status)))
         }
         guard let data = item as? Data else { return nil }
         return data

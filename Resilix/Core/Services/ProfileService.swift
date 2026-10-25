@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import Combine
 
 /// Stores the local profile (display name and photo).
 ///

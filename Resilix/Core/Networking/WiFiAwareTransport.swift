@@ -75,7 +75,7 @@ final class WiFiAwareTransport: MeshTransport, @unchecked Sendable {
         browser.browseResultsChangedHandler = { [weak self] results, _ in
             for result in results {
                 self?.eventContinuation?.yield(
-                    .peerDiscovered(id: result.endpoint.debugDescription, alias: "Wi-Fi Aware peer")
+                    .peerDiscovered(id: result.endpoint.debugDescription, alias: L("Wi-Fi Aware peer"))
                 )
             }
         }
@@ -90,14 +90,14 @@ final class WiFiAwareTransport: MeshTransport, @unchecked Sendable {
     }
 
     func connect(to peerID: String) async throws {
-        guard isAvailable else { throw ResilixError.transportUnavailable("Wi-Fi Aware not supported on this device") }
-        throw ResilixError.transportUnavailable("Wi-Fi Aware connection requires the Apple-granted entitlement")
+        guard isAvailable else { throw ResilixError.transportUnavailable(L("Wi-Fi Aware not supported on this device")) }
+        throw ResilixError.transportUnavailable(L("Wi-Fi Aware connection requires the Apple-granted entitlement"))
     }
 
     func disconnect(from peerID: String) async {}
 
     func sendFrame(_ data: Data, to peerID: String) async throws {
-        throw ResilixError.transportUnavailable("Wi-Fi Aware not supported on this device")
+        throw ResilixError.transportUnavailable(L("Wi-Fi Aware not supported on this device"))
     }
 
     func receivedFrames() -> AsyncStream<(Data, String)> { frameStream }

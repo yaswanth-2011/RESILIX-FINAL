@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import Combine
 
 /// Records and plays voice messages.
 ///
@@ -72,7 +73,7 @@ final class VoiceService: NSObject, ObservableObject, AVAudioRecorderDelegate, A
         recorder.delegate = self
         recorder.isMeteringEnabled = true
         guard recorder.record() else {
-            throw ResilixError.persistenceFailed("The recorder could not be started")
+            throw ResilixError.persistenceFailed(L("The recorder could not be started"))
         }
         self.recorder = recorder
         recordingURL = url
@@ -143,7 +144,7 @@ final class VoiceService: NSObject, ObservableObject, AVAudioRecorderDelegate, A
             isPlaying = true
             playbackProgress = 0
         } catch {
-            lastErrorMessage = "The voice message could not be played."
+            lastErrorMessage = L("The voice message could not be played.")
             isPlaying = false
         }
     }

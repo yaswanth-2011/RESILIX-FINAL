@@ -30,6 +30,30 @@ final class LocalizationManager: ObservableObject {
 
     @Published private(set) var currentLanguageName: String = "English"
 
+    /// Thread safe holder for the active language code.
+    ///
+    /// `L()` is called from background queues as well (transport callbacks,
+    /// AI tasks, persistence), so the active code must not be read from a
+    /// property that the main thread mutates while a worker reads it.
+    private final class LanguageState: @unchecked Sendable {
+        private let lock = NSLock()
+        private var code: String = "en"
+
+        var current: String {
+            lock.lock()
+            defer { lock.unlock() }
+            return code
+        }
+
+        func set(_ newValue: String) {
+            lock.lock()
+            code = newValue
+            lock.unlock()
+        }
+    }
+
+    private static let state = LanguageState()
+
     private init() {
         currentLanguageName = UserDefaults.standard.string(forKey: defaultsKey) ?? "English"
         apply(currentLanguageName, persist: false)
@@ -40,7 +64,7 @@ final class LocalizationManager: ObservableObject {
 
     /// Locale of the selected language.
     var locale: Locale {
-        Locale(identifier: Self.code(for: currentLanguageName))
+        Locale(identifier: Self.state.current)
     }
 
     /// BCP-47 code of a language name (falls back to English).
@@ -59,6 +83,7 @@ final class LocalizationManager: ObservableObject {
     func apply(_ name: String, persist: Bool = true) {
         currentLanguageName = Self.supportedLanguages.contains { $0.name == name } ? name : "English"
         let code = Self.code(for: currentLanguageName)
+        Self.state.set(code)
         if persist {
             UserDefaults.standard.set(currentLanguageName, forKey: defaultsKey)
         }

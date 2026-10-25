@@ -34,7 +34,9 @@ final class LiteRTModelRuntime: LocalModelRuntime {
         #if canImport(LiteRTLM)
         return nil
         #else
-        return "The LiteRT-LM package (github.com/google-ai-edge/LiteRT-LM) is not linked into this build."
+        // Runtime integration point: add the LiteRT-LM SwiftPM product
+        // (github.com/google-ai-edge/LiteRT-LM) to link the engine into this build.
+        return L("The LiteRT-LM package is not linked into this build.")
         #endif
     }
 
@@ -77,7 +79,7 @@ final class LiteRTModelRuntime: LocalModelRuntime {
             throw LocalModelError.runtimeUnavailable(error.localizedDescription)
         }
         let conversationConfiguration = ConversationConfig(
-            systemMessage: Message("You are the on-device assistant of the Resilix offline mesh app. Answer briefly and never invent emergency facts."),
+            systemMessage: Message(L("You are the on-device assistant of the Resilix offline mesh app. Answer briefly and never invent emergency facts.")),
             samplerConfig: try SamplerConfig(topK: 40, topP: 0.95, temperature: 0.7)
         )
         let conversation = try await engine.createConversation(with: conversationConfiguration)
@@ -85,7 +87,7 @@ final class LiteRTModelRuntime: LocalModelRuntime {
         self.conversation = conversation
         loadedIdentifier = model.id
         #else
-        throw LocalModelError.runtimeUnavailable(unavailableReason ?? "runtime missing")
+        throw LocalModelError.runtimeUnavailable(unavailableReason ?? L("The runtime is not available."))
         #endif
     }
 
@@ -103,7 +105,7 @@ final class LiteRTModelRuntime: LocalModelRuntime {
         AsyncThrowingStream { continuation in
             #if canImport(LiteRTLM)
             guard let conversation else {
-                continuation.finish(throwing: LocalModelError.runtimeUnavailable("No model is loaded."))
+                continuation.finish(throwing: LocalModelError.runtimeUnavailable(L("No model is loaded.")))
                 return
             }
             let message = Message(request.prompt)
@@ -125,7 +127,7 @@ final class LiteRTModelRuntime: LocalModelRuntime {
             task = work
             continuation.onTermination = { _ in work.cancel() }
             #else
-            continuation.finish(throwing: LocalModelError.runtimeUnavailable("The LiteRT-LM package is not linked into this build."))
+            continuation.finish(throwing: LocalModelError.runtimeUnavailable(L("The LiteRT-LM package is not linked into this build.")))
             #endif
         }
     }

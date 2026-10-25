@@ -28,11 +28,18 @@
 	<array>
 		<string>_resilix._tcp</string>
 		<string>_resilix-mesh._tcp</string>
+		<string>_resilix-aware._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Resilix uses local network discovery for peer-to-peer Wi-Fi mesh connections.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Resilix uses location to share approximate position in SOS and map reports only with your consent.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Resilix uses the camera so you can attach a photo to a message.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Resilix uses the microphone to record voice messages that are sent over the offline mesh.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Resilix lets you choose a photo to send over the offline mesh.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Resilix uses location to share approximate position in SOS and map reports only with your consent.</string>
 	<key>UIBackgroundModes</key>
@@ -40,6 +47,8 @@
 		<string>bluetooth-central</string>
 		<string>bluetooth-peripheral</string>
 	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Dark</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

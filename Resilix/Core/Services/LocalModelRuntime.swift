@@ -7,7 +7,7 @@ import Foundation
 /// `LocalAIService`) so that the memory usage stays predictable on older
 /// devices.
 protocol LocalModelRuntime: AnyObject {
-    /// Name of the runtime, e.g. "Apple Foundation Models".
+    /// Name of the runtime, e.g. L("Apple Foundation Models").
     var runtimeName: String { get }
     /// `true` when the runtime can be used on this device.
     var isAvailable: Bool { get }

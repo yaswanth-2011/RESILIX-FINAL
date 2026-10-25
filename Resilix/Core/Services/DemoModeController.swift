@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Drives the demo mode.
 ///
@@ -35,7 +36,7 @@ final class DemoModeController: ObservableObject {
 
     func startDemo() {
         guard isDemoMode else { return }
-        demoLog = ["Demo: simulated nodes A (source), B (relay), C (destination)"]
+        demoLog = [L("Demo: simulated nodes A (source), B (relay), C (destination)")]
         Task {
             mock.simulatePeer(MeshNode(id: "A", alias: "Node A", lastSeen: Date(), isRelay: false))
             mock.simulatePeer(MeshNode(id: "B", alias: "Relay B", lastSeen: Date(), isRelay: true))
@@ -45,17 +46,17 @@ final class DemoModeController: ObservableObject {
 
     /// Sends a packet through the simulated transport.
     func sendDemoMessage() async {
-        let text = "Need help at the north shelter"
-        demoLog.append("Demo: creating a chat packet for Node C")
+        let text = L("Need help at the north shelter")
+        demoLog.append(L("Demo: creating a chat packet for Node C"))
         do {
             let packet = try await meshController.sendPlainPacket(type: .chat,
                                                                  payload: Data(text.utf8),
                                                                  destination: "C",
                                                                  priority: .normal)
-            demoLog.append("Packet \(String(packet.id.prefix(8))) handed to the simulated transport")
-            demoLog.append("Delivery is reported only when the peer acknowledges the packet")
+            demoLog.append(String(format: L("Packet %@ handed to the simulated transport"), String(packet.id.prefix(8))))
+            demoLog.append(L("Delivery is reported only when the peer acknowledges the packet"))
         } catch {
-            demoLog.append("Demo failed: \(error.localizedDescription)")
+            demoLog.append(String(format: L("Demo failed: %@"), error.localizedDescription))
         }
     }
 

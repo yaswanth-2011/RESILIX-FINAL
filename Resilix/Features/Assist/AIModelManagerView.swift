@@ -24,11 +24,11 @@ struct AIModelManagerView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: ResilixTheme.space16) {
-                        Text("On-device models")
+                        Text(L("On-device models"))
                             .font(ResilixTheme.font(22, .bold))
                             .foregroundStyle(ResilixTheme.textPrimary)
 
-                        Text("Every model runs completely on this device. No answer ever leaves the phone.")
+                        Text(L("Every model runs completely on this device. No answer ever leaves the phone."))
                             .font(ResilixTheme.font(13, .regular))
                             .foregroundStyle(ResilixTheme.textSecondary)
 
@@ -44,7 +44,7 @@ struct AIModelManagerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                    Button(L("Done")) { dismiss() }
                         .font(ResilixTheme.font(15, .semibold))
                 }
             }
@@ -57,11 +57,11 @@ struct AIModelManagerView: View {
                         Task { await importModel(url, target: target) }
                     }
                 case .failure:
-                    message = "The model file could not be opened."
+                    message = L("The model file could not be opened.")
                 }
             }
-            .alert("AI Models", isPresented: .constant(message != nil), presenting: message) { _ in
-                Button("OK") { message = nil }
+            .alert(L("AI Models"), isPresented: .constant(message != nil), presenting: message) { _ in
+                Button(L("OK")) { message = nil }
             } message: { text in
                 Text(text)
             }
@@ -86,7 +86,7 @@ struct AIModelManagerView: View {
             }
 
             if let artifact = model.artifactID {
-                Text("Artifact: \(artifact)")
+                Text(L("assist.artifact") + ": \(artifact)")
                     .font(ResilixTheme.font(11, .regular))
                     .foregroundStyle(ResilixTheme.textTertiary)
             }
@@ -100,12 +100,12 @@ struct AIModelManagerView: View {
                 .foregroundStyle(ResilixTheme.textSecondary)
 
             if model.approximateBytes > 0 {
-                Text("Download size: about \(model.formattedSize)")
+                Text(L("assist.download.size") + " \(model.formattedSize)")
                     .font(ResilixTheme.font(11, .regular))
                     .foregroundStyle(ResilixTheme.textTertiary)
             }
 
-            Text("Licence: \(model.license)")
+            Text(L("assist.licence") + ": \(model.license)")
                 .font(ResilixTheme.font(11, .regular))
                 .foregroundStyle(ResilixTheme.textTertiary)
 
@@ -119,7 +119,7 @@ struct AIModelManagerView: View {
                 Button {
                     Task { await service.select(modelID: model.id) }
                 } label: {
-                    Text(service.activeModelID == model.id ? "Selected" : "Use")
+                    Text(service.activeModelID == model.id ? L("Selected") : L("Use"))
                         .font(ResilixTheme.font(14, .semibold))
                         .foregroundStyle(service.activeModelID == model.id ? ResilixTheme.textSecondary : .white)
                         .padding(.horizontal, 14)
@@ -136,7 +136,7 @@ struct AIModelManagerView: View {
                         importTargetID = model.id
                         showImporter = true
                     } label: {
-                        Text(model.isDownloaded ? "Replace file" : "Install file")
+                        Text(model.isDownloaded ? L("Replace file") : L("Install file"))
                             .font(ResilixTheme.font(14, .semibold))
                             .foregroundStyle(ResilixTheme.textPrimary)
                             .padding(.horizontal, 14)
@@ -150,7 +150,7 @@ struct AIModelManagerView: View {
                         Button {
                             Task { await service.deleteModel(modelID: model.id) }
                         } label: {
-                            Text("Remove")
+                            Text(L("Remove"))
                                 .font(ResilixTheme.font(14, .semibold))
                                 .foregroundStyle(ResilixTheme.emergencyRed)
                         }
@@ -177,10 +177,10 @@ struct AIModelManagerView: View {
             text = "Ready"
             color = ResilixTheme.successGreen
         case .notInstalled:
-            text = "Not installed"
+            text = L("Not installed")
             color = ResilixTheme.brandAmber
         case .runtimeUnavailable:
-            text = "No runtime"
+            text = L("No runtime")
             color = ResilixTheme.brandAmber
         case .unusable:
             text = "Unusable"
@@ -193,7 +193,7 @@ struct AIModelManagerView: View {
         do {
             try await service.importModel(from: url, for: target)
             await service.select(modelID: target)
-            message = "The model file was installed."
+            message = L("The model file was installed.")
         } catch {
             message = error.localizedDescription
         }
