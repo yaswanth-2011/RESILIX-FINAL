@@ -236,11 +236,18 @@ private struct SignInTab: View {
                 error = nil
                 loading = true
                 Task {
-                    try? await Task.sleep(nanoseconds: 600_000_000)
+                    try? await Task.sleep(nanoseconds: 400_000_000)
+                    let ok = AuthStore.validate(username: email.trimmingCharacters(in: .whitespaces),
+                                                password: password)
                     await MainActor.run {
                         loading = false
-                        showLogin = true
-                        NotificationCenter.default.post(name: .authSuccess, object: nil)
+                        if ok {
+                            AuthStore.saveSession(username: email.trimmingCharacters(in: .whitespaces))
+                            showLogin = true
+                            NotificationCenter.default.post(name: .authSuccess, object: nil)
+                        } else {
+                            error = L("Invalid email or password.")
+                        }
                     }
                 }
             } label: {
@@ -327,11 +334,18 @@ private struct CreateAccountTab: View {
                 error = nil
                 loading = true
                 Task {
-                    try? await Task.sleep(nanoseconds: 600_000_000)
+                    try? await Task.sleep(nanoseconds: 400_000_000)
+                    let ok = AuthStore.register(username: username.trimmingCharacters(in: .whitespaces),
+                                                password: password)
                     await MainActor.run {
                         loading = false
-                        showCreate = true
-                        NotificationCenter.default.post(name: .authSuccess, object: nil)
+                        if ok {
+                            AuthStore.saveSession(username: username.trimmingCharacters(in: .whitespaces))
+                            showCreate = true
+                            NotificationCenter.default.post(name: .authSuccess, object: nil)
+                        } else {
+                            error = L("Username already taken. Try another.")
+                        }
                     }
                 }
             } label: {
@@ -505,8 +519,21 @@ public struct LoginView: View {
                             }
                             Button {
                                 guard !email.isEmpty, !password.isEmpty else { error = L("Enter email and password."); return }
+                                error = nil
                                 loading = true
-                                Task { try? await Task.sleep(nanoseconds: 500_000_000); await MainActor.run { loading = false; onSuccess() } }
+                                Task {
+                                    try? await Task.sleep(nanoseconds: 400_000_000)
+                                    let ok = AuthStore.validate(username: email, password: password)
+                                    await MainActor.run {
+                                        loading = false
+                                        if ok {
+                                            AuthStore.saveSession(username: email)
+                                            onSuccess()
+                                        } else {
+                                            error = L("Invalid email or password.")
+                                        }
+                                    }
+                                }
                             } label: {
                                 HStack { if loading { ProgressView().tint(Color.black) }; Text(L("SIGN IN")).font(ResilixTheme.font(15, .heavy)).tracking(0.8) }
                                     .foregroundStyle(Color.black).frame(maxWidth: .infinity).frame(height: 56)
@@ -547,8 +574,22 @@ public struct CreateAccountView: View {
                             AuthInputField(placeholder: L("Choose a username"), text: $name, icon: "person")
                             AuthSecureField(placeholder: L("Password"), text: $password, showPassword: $showPassword)
                             Button {
+                                guard !name.isEmpty, !password.isEmpty else { error = L("Fill in all fields."); return }
+                                error = nil
                                 loading = true
-                                Task { try? await Task.sleep(nanoseconds: 500_000_000); await MainActor.run { loading = false; onSuccess() } }
+                                Task {
+                                    try? await Task.sleep(nanoseconds: 400_000_000)
+                                    let ok = AuthStore.register(username: name, password: password)
+                                    await MainActor.run {
+                                        loading = false
+                                        if ok {
+                                            AuthStore.saveSession(username: name)
+                                            onSuccess()
+                                        } else {
+                                            error = L("Username already taken. Try another.")
+                                        }
+                                    }
+                                }
                             } label: {
                                 Text(L("CREATE ACCOUNT")).font(ResilixTheme.font(15, .heavy)).tracking(0.8).foregroundStyle(Color.black).frame(maxWidth: .infinity).frame(height: 56)
                                     .background(ResilixTheme.brandCyan)

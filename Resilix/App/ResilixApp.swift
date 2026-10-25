@@ -140,6 +140,10 @@ class ResilixAppModel: ObservableObject {
     private var childChangeObservers: [AnyCancellable] = []
 
     init() {
+        // Restore session from AuthStore if the user is signed in.
+        if AuthStore.currentUsername() != nil {
+            isAuthenticated = true
+        }
         Task { @MainActor in
             await bootstrap()
         }

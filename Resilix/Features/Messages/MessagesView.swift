@@ -5,24 +5,41 @@ struct MessagesView: View {
     @State private var showComposer = false
     @State private var isLoading = false
     @State private var errorMessage: String?
+    @State private var isEditMode = false
+    @State private var threadsToDelete: Set<String> = []
     
     var body: some View {
         NavigationStack {
             ZStack {
                 List {
-                    ForEach(app.messageService.messages, id: \.id) { msg in
-                        NavigationLink(destination: MessageThreadView(message: msg)) {
-                            MessageRow(message: msg)
+                    ForEach(app.messageService.conversations, id: \.self) { threadID in
+                        let threadMessages = app.messageService.messages(in: threadID)
+                        let latest = threadMessages.last
+                        
+                        NavigationLink(destination: MessageThreadView(message: latest ?? MeshMessage(
+                            id: threadID, packetID: nil, threadID: threadID, sourceNodeID: "",
+                            destinationNodeID: "", text: "", createdAt: Date(), deliveryState: .queued,
+                            expirySeconds: nil, lastRoute: nil, priority: .normal
+                        ))) {
+                            MessageRow(threadID: threadID, message: latest)
                         }
                         .swipeActions {
                             Button(role: .destructive) {
-                                Task { await app.messageService.delete(id: msg.id) }
+                                Task { await app.messageService.deleteThread(threadID) }
+                            } label: {
+                                Label(L("Delete"), systemImage: "trash")
+                            }
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                Task { await app.messageService.deleteThread(threadID) }
                             } label: {
                                 Label(L("Delete"), systemImage: "trash")
                             }
                         }
                     }
-                    if app.messageService.messages.isEmpty {
+                    
+                    if app.messageService.conversations.isEmpty {
                         EmptyStateView(
                             title: L("No messages"),
                             subtitle: L("Messages work without internet. Start a conversation."),
@@ -39,7 +56,7 @@ struct MessagesView: View {
                     await loadMessages()
                 }
                 .overlay {
-                    if isLoading && app.messageService.messages.isEmpty {
+                    if isLoading && app.messageService.conversations.isEmpty {
                         LoadingStateView()
                     }
                 }
@@ -49,13 +66,36 @@ struct MessagesView: View {
                     Text(msg)
                 }
             }
-            .navigationTitle("Messages")
+            .navigationTitle("Chats")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button { showComposer = true } label: {
                         Image(systemName: "square.and.pencil")
                     }
                     .accessibilityLabel(Text(L("Compose new message")))
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isEditMode.toggle()
+                        if !isEditMode { threadsToDelete.removeAll() }
+                    } label: {
+                        Image(systemName: isEditMode ? "checkmark.circle.fill" : "pencil")
+                            .foregroundStyle(isEditMode ? ResilixTheme.brandCyan : ResilixTheme.textPrimary)
+                    }
+                    .accessibilityLabel(Text(isEditMode ? L("Done") : L("Edit")))
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if isEditMode {
+                        Button {
+                            Task { await deleteSelectedThreads() }
+                            isEditMode = false
+                            threadsToDelete.removeAll()
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundStyle(.red)
+                        }
+                        .accessibilityLabel(Text(L("Delete selected")))
+                    }
                 }
             }
             .sheet(isPresented: $showComposer) { MessageComposerView() }
@@ -67,45 +107,56 @@ struct MessagesView: View {
     
     private func loadMessages() async {
         isLoading = true
-        // Messages are loaded automatically by MessageService
         try? await Task.sleep(nanoseconds: 200_000_000)
         isLoading = false
     }
     
+    private func deleteSelectedThreads() async {
+        for threadID in threadsToDelete {
+            await app.messageService.deleteThread(threadID)
+        }
+    }
+    
     struct MessageRow: View {
-        let message: MeshMessage
+        let threadID: String
+        let message: MeshMessage?
+        
         var body: some View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text(message.threadID)
+                    Text(threadID)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(ResilixTheme.textPrimary)
                     Spacer()
-                    DeliveryStateView(state: message.deliveryState)
+                    if let msg = message {
+                        DeliveryStateView(state: msg.deliveryState)
+                    }
                 }
-                Text(message.previewText)
-                    .font(.subheadline)
-                    .foregroundStyle(ResilixTheme.textSecondary)
-                    .lineLimit(2)
-                HStack {
-                    Text(message.createdAt, style: .time)
-                        .font(.caption2)
-                        .foregroundStyle(ResilixTheme.textTertiary)
-                    if let r = message.lastRoute {
-                        Text("• " + r)
+                if let msg = message {
+                    Text(msg.previewText)
+                        .font(.subheadline)
+                        .foregroundStyle(ResilixTheme.textSecondary)
+                        .lineLimit(2)
+                    HStack {
+                        Text(msg.createdAt, style: .time)
                             .font(.caption2)
                             .foregroundStyle(ResilixTheme.textTertiary)
-                    }
-                    if message.deliveryState == .relaying {
-                        Text(L("• 2 hops"))
-                            .font(.caption2)
-                            .foregroundStyle(ResilixTheme.brandTeal)
+                        if let r = msg.lastRoute {
+                            Text("• " + r)
+                                .font(.caption2)
+                                .foregroundStyle(ResilixTheme.textTertiary)
+                        }
+                        if msg.deliveryState == .relaying {
+                            Text(L("• 2 hops"))
+                                .font(.caption2)
+                                .foregroundStyle(ResilixTheme.brandTeal)
+                        }
                     }
                 }
             }
             .padding(.vertical, 4)
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(L("messages.to") + " \(message.threadID), \(message.deliveryState.label)")
+            .accessibilityLabel(L("messages.to") + " " + threadID)
         }
     }
 }
