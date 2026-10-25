@@ -384,10 +384,10 @@ struct MeshAppleMapView: View {
     let peers: [MeshPeer]
     let userCoordinate: CLLocationCoordinate2D?
     let pulse: Bool
-    let onSelect: (MeshPeer) -> Void
     /// Equatable trigger (latitude) that drives recentring on first fix;
     /// CLLocationCoordinate2D itself is not Equatable.
     let locationTrigger: Double?
+    let onSelect: (MeshPeer) -> Void
 
     /// Startup centre until the first real GPS fix arrives.
     private static let fallbackCenter = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
