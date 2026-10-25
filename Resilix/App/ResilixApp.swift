@@ -9,6 +9,9 @@ struct ResilixApp: App {
     @StateObject private var appModel = ResilixAppModel()
     @AppStorage("appearance") private var appearance: String = "Dark"
     @AppStorage("isAuthenticated") private var isAuthenticated = false
+    /// `true` once the user has seen (or skipped) the opening paywall.
+    @AppStorage("hasSeenPaywall") private var hasSeenPaywall = false
+    @State private var showPaywall = false
 
     private var colorScheme: ColorScheme? {
         switch appearance {
@@ -24,6 +27,13 @@ struct ResilixApp: App {
                 if isAuthenticated {
                     RootView()
                         .environmentObject(appModel)
+                        .fullScreenCover(isPresented: $showPaywall) {
+                            PaywallView(onDismiss: completePaywall)
+                        }
+                        .onAppear {
+                            // Show the paywall once when the app is opened.
+                            if !hasSeenPaywall { showPaywall = true }
+                        }
                 } else {
                     WelcomeFlowView(isAuthenticated: $isAuthenticated)
                         .environmentObject(appModel)
@@ -34,6 +44,14 @@ struct ResilixApp: App {
             .environment(\.locale, appModel.localization.locale)
         }
     }
+
+    /// Dismisses the paywall and records that it has been seen so it is not
+    /// shown again on future launches.
+    private func completePaywall() {
+        hasSeenPaywall = true
+        showPaywall = false
+    }
+
 }
 
 // MARK: - Welcome flow — unified slider TabView, no redirect
