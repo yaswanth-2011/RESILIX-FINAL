@@ -70,10 +70,10 @@ struct HomeView: View {
                 }
 
             GlassCircleButton(systemImage: "globe", size: 32) { showLanguage = true }
-                accessibilityLabel(Text(L("Language")))
+                .accessibilityLabel(Text(L("Language")))
 
             GlassCircleButton(systemImage: "gearshape", size: 32) { showSettings = true }
-                accessibilityLabel(Text(L("Settings")))
+                .accessibilityLabel(Text(L("Settings")))
         }
         .padding(.horizontal, ResilixTheme.space16)
     }
@@ -94,7 +94,7 @@ struct HomeView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                accessibilityLabel(Text(L("Clear search")))
+                .accessibilityLabel(Text(L("Clear search")))
             }
         }
         .padding(.horizontal, ResilixTheme.space16)

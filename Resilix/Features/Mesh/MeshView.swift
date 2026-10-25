@@ -456,7 +456,7 @@ private struct YouMapPin: View {
                 pulse = true
             }
         }
-        accessibilityLabel(Text(L("Your device")))
+        .accessibilityLabel(Text(L("Your device")))
     }
 }
 

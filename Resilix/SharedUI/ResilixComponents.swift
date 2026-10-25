@@ -181,7 +181,7 @@ struct LoadingStateView: View {
         .frame(maxWidth: .infinity)
         .padding(ResilixTheme.space16)
         .accessibilityElement(children: .combine)
-        accessibilityLabel(Text(L("Loading")))
+        .accessibilityLabel(Text(L("Loading")))
     }
 }
 

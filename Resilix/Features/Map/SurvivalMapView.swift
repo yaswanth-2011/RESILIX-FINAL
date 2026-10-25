@@ -387,7 +387,7 @@ struct SurvivalMapView: View {
             LongPressGesture(minimumDuration: 0.4)
                 .onEnded { _ in show3DPopup = true }
         )
-        accessibilityLabel(Text(L("3D view options")))
+        .accessibilityLabel(Text(L("3D view options")))
     }
 
     // MARK: - Search bar (dark liquid glass — same style as card/legend/slider)
@@ -423,7 +423,7 @@ struct SurvivalMapView: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                accessibilityLabel(Text(L("Clear search")))
+                .accessibilityLabel(Text(L("Clear search")))
             }
         }
         .padding(.horizontal, 14)
@@ -694,7 +694,7 @@ private struct YouMapAnnotation: View {
                 pulse = true
             }
         }
-        accessibilityLabel(Text(L("Your device")))
+        .accessibilityLabel(Text(L("Your device")))
     }
 }
 
@@ -1011,7 +1011,6 @@ struct ThreeDPopupSheet: View {
                     } else if pitch == 0 || pitch == 30 || pitch == 65 {
                         pitch = newMode.defaultPitch
                     }
-                    onChange()
                 }
             }
 

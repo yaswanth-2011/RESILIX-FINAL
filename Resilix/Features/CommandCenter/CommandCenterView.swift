@@ -15,7 +15,7 @@ struct CommandCenterView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding(ResilixTheme.space16)
-                accessibilityLabel(Text(L("View mode")))
+                .accessibilityLabel(Text(L("View mode")))
                 
                 if showMap {
                     NavigationSplitView {
@@ -48,7 +48,7 @@ struct CommandCenterView: View {
                     } label: {
                         Image(systemName: "line.3.horizontal.decrease.circle")
                     }
-                    accessibilityLabel(Text(L("Filter by severity")))
+                    .accessibilityLabel(Text(L("Filter by severity")))
                 }
             }
             .refreshable {

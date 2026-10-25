@@ -86,7 +86,7 @@ struct MessageThreadView: View {
                 .frame(minWidth: 32, minHeight: 32)
                 .contentShape(Rectangle())
         }
-        accessibilityLabel(Text(L("Chat options")))
+        .accessibilityLabel(Text(L("Chat options")))
     }
 
     // MARK: Thread header — custom row with back button, avatar, name,
@@ -109,7 +109,7 @@ struct MessageThreadView: View {
                             .fill(Color.white.opacity(0.04))
                     )
             }
-            accessibilityLabel(Text(L("Back")))
+            .accessibilityLabel(Text(L("Back")))
 
             AvatarView(name: message.threadID,
                        size: 38,
@@ -268,7 +268,7 @@ struct MessageThreadView: View {
                     .foregroundStyle(ResilixTheme.textTertiary)
                     .frame(width: 32, height: 32)
             }
-            accessibilityLabel(Text(L("Emoji")))
+            .accessibilityLabel(Text(L("Emoji")))
 
             HStack {
                 TextField(L("Message"), text: $draft)
@@ -281,13 +281,13 @@ struct MessageThreadView: View {
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                accessibilityLabel(Text(L("Attach")))
+                .accessibilityLabel(Text(L("Attach")))
                 Button { showCamera = true } label: {
                     Image(systemName: "camera")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                 }
-                accessibilityLabel(Text(L("Camera")))
+                .accessibilityLabel(Text(L("Camera")))
             }
             .padding(.horizontal, ResilixTheme.space12)
             .padding(.vertical, ResilixTheme.space8)
@@ -306,7 +306,7 @@ struct MessageThreadView: View {
                     .shadow(color: ResilixTheme.cyanGlowStrong, radius: 6, x: 0, y: 0)
                     .shadow(color: Color.black.opacity(0.25), radius: 3, x: 0, y: 2)
             }
-            accessibilityLabel(Text(L("Voice message")))
+            .accessibilityLabel(Text(L("Voice message")))
 
             Button {
                 send()
@@ -322,7 +322,7 @@ struct MessageThreadView: View {
             }
             .opacity(draft.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
             .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty)
-            accessibilityLabel(Text(L("Send")))
+            .accessibilityLabel(Text(L("Send")))
         }
         .padding(.horizontal, ResilixTheme.space8)
         .padding(.vertical, ResilixTheme.space8)
@@ -710,9 +710,11 @@ struct VoiceRecorderView: View {
             isRecording = true
             recordingDuration = 0
             durationTimer?.invalidate()
-            let timer = Timer(timeInterval: 0.2, repeats: true) { [weak self] _ in
+            // `VoiceRecorderView` is a struct, so `[weak self]` is invalid here.
+            // `@State`'s setter is nonmutating, which lets the timer update it.
+            let timer = Timer(timeInterval: 0.2, repeats: true) { _ in
                 Task { @MainActor in
-                    guard let self, let recorder = self.audioRecorder else { return }
+                    guard let recorder = self.audioRecorder else { return }
                     self.recordingDuration = recorder.currentTime
                 }
             }

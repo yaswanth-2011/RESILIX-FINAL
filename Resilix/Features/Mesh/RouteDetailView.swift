@@ -49,7 +49,7 @@ struct RouteDetailView: View {
                         showTestResult = true
                     }
                 }.buttonStyle(.bordered).tint(ResilixTheme.brandTeal).padding(.horizontal, ResilixTheme.space16)
-                accessibilityLabel(Text(L("Test route")))
+                .accessibilityLabel(Text(L("Test route")))
                 DisclosureGroup("Details", isExpanded: $showDetails){
                     VStack(alignment:.leading, spacing:6){
                         Text(L("route.packet.id") + ": demo-\(route.destination.prefix(4))").font(.caption2.monospaced()).foregroundStyle(ResilixTheme.textTertiary)

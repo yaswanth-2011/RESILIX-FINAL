@@ -419,11 +419,11 @@ struct AssistView: View {
             }
             Spacer()
             AIGlassCircleButton(systemImage: "cpu") { showModelManager = true }
-                accessibilityLabel(Text(L("AI models")))
+                .accessibilityLabel(Text(L("AI models")))
             AIGlassCircleButton(systemImage: "gearshape") { showSettings = true }
-                accessibilityLabel(Text(L("AI settings")))
+                .accessibilityLabel(Text(L("AI settings")))
             AIGlassCircleButton(systemImage: "square.and.pencil") { vm.newChat() }
-                accessibilityLabel(Text(L("New chat")))
+                .accessibilityLabel(Text(L("New chat")))
         }
     }
 
@@ -562,7 +562,7 @@ struct AssistView: View {
                     )
                     .liquidGlassCircle(interactive: true)
             }
-            accessibilityLabel(Text(L("Voice input")))
+            .accessibilityLabel(Text(L("Voice input")))
 
             Button {
                 vm.send(vm.input)
@@ -586,7 +586,7 @@ struct AssistView: View {
                     .liquidGlassCircle(interactive: true)
             }
             .disabled(vm.input.trimmingCharacters(in: .whitespaces).isEmpty)
-            accessibilityLabel(Text(L("Send message")))
+            .accessibilityLabel(Text(L("Send message")))
         }
     }
 }

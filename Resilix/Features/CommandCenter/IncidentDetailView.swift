@@ -56,7 +56,7 @@ struct IncidentDetailView: View {
                     }
                     .frame(height: 180)
                     .clipShape(RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusMedium))
-                    accessibilityLabel(Text(L("Map showing incident location")))
+                    .accessibilityLabel(Text(L("Map showing incident location")))
                 }
                 
                 if !incident.acknowledged {
@@ -74,7 +74,7 @@ struct IncidentDetailView: View {
                     .buttonStyle(.borderedProminent)
                     .tint(ResilixTheme.brandTeal)
                     .disabled(isAcknowledging)
-                    accessibilityLabel(Text(L("Acknowledge incident")))
+                    .accessibilityLabel(Text(L("Acknowledge incident")))
                     Text(L("Acknowledgement propagates through mesh."))
                         .font(.caption2)
                         .foregroundStyle(ResilixTheme.textTertiary)

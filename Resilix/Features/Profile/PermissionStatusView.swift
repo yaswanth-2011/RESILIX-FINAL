@@ -24,7 +24,7 @@ struct PermissionStatusView: View {
                 app.permissionService.openSettings()
             }
             .foregroundStyle(ResilixTheme.brandTeal)
-            accessibilityLabel(Text(L("Open system settings for permissions")))
+            .accessibilityLabel(Text(L("Open system settings for permissions")))
         }
         .navigationTitle("Permissions")
         .background(ResilixTheme.bgPrimary)

@@ -24,7 +24,7 @@ struct MessageComposerView: View {
                             Text(peer.displayName ?? peer.alias).tag(peer.id)
                         }
                     }
-                    accessibilityLabel(Text(L("Message destination")))
+                    .accessibilityLabel(Text(L("Message destination")))
                     
                     HStack {
                         Text(L("Reachability"))
@@ -42,23 +42,23 @@ struct MessageComposerView: View {
                 Section(header: Text(L("messages.new"))) {
                     TextField(L("Message"), text: $text, axis: .vertical)
                         .lineLimit(3...6)
-                        accessibilityLabel(Text(L("Message text")))
+                        .accessibilityLabel(Text(L("Message text")))
 
                     HStack(spacing: ResilixTheme.space12) {
                         Button { showVoiceRecorder = true } label: {
                             Label(L("Voice"), systemImage: "mic.fill")
                         }
-                        accessibilityLabel(Text(L("Record a voice message")))
+                        .accessibilityLabel(Text(L("Record a voice message")))
 
                         PhotosPicker(selection: $selectedPhoto, matching: .images) {
                             Label(L("Photo"), systemImage: "photo")
                         }
-                        accessibilityLabel(Text(L("Attach a photo")))
+                        .accessibilityLabel(Text(L("Attach a photo")))
 
                         Button { showFileImporter = true } label: {
                             Label(L("File"), systemImage: "paperclip")
                         }
-                        accessibilityLabel(Text(L("Attach a file")))
+                        .accessibilityLabel(Text(L("Attach a file")))
                     }
                     
                     Picker(L("messages.expiry"), selection: $expiry) {
@@ -66,7 +66,7 @@ struct MessageComposerView: View {
                         Text(L("5 minutes")).tag(300 as TimeInterval?)
                         Text(L("1 hour")).tag(3600 as TimeInterval?)
                     }
-                    accessibilityLabel(Text(L("Message expiry")))
+                    .accessibilityLabel(Text(L("Message expiry")))
                 }
             }
             .navigationTitle(L("messages.new"))
@@ -86,7 +86,7 @@ struct MessageComposerView: View {
                         }
                     }
                     .disabled(text.isEmpty || isSending)
-                    accessibilityLabel(Text(L("Send message")))
+                    .accessibilityLabel(Text(L("Send message")))
                 }
             }
             .onChange(of: selectedPhoto) { _, item in

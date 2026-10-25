@@ -132,7 +132,7 @@ private struct LogoPlaceholderDarkView: View {
             #endif
         }
         .frame(maxWidth: .infinity)
-        accessibilityLabel(Text(L("Resilix logo")))
+        .accessibilityLabel(Text(L("Resilix logo")))
     }
 }
 
@@ -278,7 +278,7 @@ private struct SignInTab: View {
                     .foregroundStyle(Color.white.opacity(0.55))
             }
             .padding(.top, 4)
-            accessibilityLabel(Text(L("Continue as guest")))
+            .accessibilityLabel(Text(L("Continue as guest")))
         }
         .padding(.horizontal, 24)
         .padding(.top, 0)

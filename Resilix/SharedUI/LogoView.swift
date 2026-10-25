@@ -74,7 +74,7 @@ struct LogoView: View {
                 markImage(size: height)
             }
         }
-        accessibilityLabel(Text(L("Resilix logo")))
+        .accessibilityLabel(Text(L("Resilix logo")))
         .accessibilityAddTraits(.isImage)
     }
 

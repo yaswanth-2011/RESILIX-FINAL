@@ -175,7 +175,7 @@ struct SettingsView: View {
                     .overlay(Circle().stroke(ResilixTheme.glassBorder, lineWidth: 0.8))
             }
             .pressScale()
-            accessibilityLabel(Text(L("Close settings")))
+            .accessibilityLabel(Text(L("Close settings")))
         }
         .padding(.horizontal, ResilixTheme.space20)
         .padding(.top, ResilixTheme.space8)

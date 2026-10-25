@@ -70,7 +70,7 @@ struct OnboardingView: View {
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(Color.white.opacity(0.55))
                         }
-                        accessibilityLabel(Text(L("Skip onboarding")))
+                        .accessibilityLabel(Text(L("Skip onboarding")))
 
                         Button {
                             if page < 2 {

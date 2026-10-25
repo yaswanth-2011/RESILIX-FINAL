@@ -53,7 +53,7 @@ struct OfflineMapSheet: View {
                     } label: {
                         Image(systemName: "square.and.arrow.down")
                     }
-                    accessibilityLabel(Text(L("Import a map pack")))
+                    .accessibilityLabel(Text(L("Import a map pack")))
                 }
             }
             .fileImporter(isPresented: $showImporter,

@@ -12,7 +12,7 @@ struct DiagnosticsView: View {
                 DiagnosticRow(label: "Wi-Fi Aware", value: app.diagnosticsService.snapshot.wifiAwareState)
                 if app.diagnosticsService.snapshot.isDemo {
                     ResilixStatusBadge(text: L("Demo values"), color: ResilixTheme.brandAmber)
-                        accessibilityLabel(Text(L("Demo mode active")))
+                        .accessibilityLabel(Text(L("Demo mode active")))
                 }
             }
             
@@ -57,7 +57,7 @@ struct DiagnosticsView: View {
                         )
                     }
                 }
-                accessibilityLabel(Text(L("Refresh diagnostics")))
+                .accessibilityLabel(Text(L("Refresh diagnostics")))
                 
                 Button(L("diagnostics.connectivityTest")) {
                     Task {
@@ -71,7 +71,7 @@ struct DiagnosticsView: View {
                         )
                     }
                 }
-                accessibilityLabel(Text(L("Run connectivity test")))
+                .accessibilityLabel(Text(L("Run connectivity test")))
             }
         }
         .listStyle(.insetGrouped)

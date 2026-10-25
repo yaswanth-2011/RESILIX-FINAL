@@ -197,6 +197,33 @@ brace chain, since the innermost block is often just an `if`). Validated on a
 synthetic copy of the `resumed` bug: it flags that line and leaves an ordinary
 loop counter alone.
 
+### 0.8 Fifth build round — the missing dot, swept across the whole project
+
+Eight diagnostics were reported from two files. They were **two mistakes**, not eight.
+
+| Reported issue | Files | Cause | Fix |
+|---|---|---|---|
+| "Function declares an opaque return type, but has no return statements" + "Result of `Menu<Label, Content>` initializer is unused" + "Result of call to `accessibilityLabel` is unused" | `MessageThreadView.swift` (54, 55, 89) | `accessibilityLabel(Text(L("Chat options")))` was written **without its leading dot**. Inside a `@ViewBuilder` a bare call is parsed as a separate expression statement, so the `Menu { … }` above it becomes an unused result and the `some View` body ends with no return. One typo, three messages. | Leading dot restored. |
+| Same three messages | `SurvivalMapView.swift` (367, 386, 390) | Identical typo in `threeDHeaderButton`. | Leading dot restored. |
+| "'weak' may only be applied to class and class-bound protocol types" + "Variable `self` was never mutated" | `MessageThreadView.swift` (713) | `VoiceRecorderView` is a SwiftUI view, i.e. a **struct**; `[weak self]` cannot apply to it. | Capture list removed. The timer's `Task { @MainActor in … }` now reads `self.audioRecorder` directly — legal because `@State`'s setter is nonmutating, and safe because SwiftUI views are `@MainActor`-isolated and therefore implicitly `Sendable`. |
+
+Because a single missing dot produces three unrelated-looking errors, the whole
+tree was swept for the class rather than fixing the two reported lines.
+**58 further instances** were found and fixed, in 20 files (including five more
+in `MessageThreadView` and three more in `SurvivalMapView`):
+
+`AssistView` (5), `AuthViews` (2), `CommandCenterView` (2), `IncidentDetailView` (2), `HomeView` (3), `OfflineMapSheet` (1), `SurvivalMapView` (3), `MeshView` (1), `RouteDetailView` (1), `MessageComposerView` (7), `MessageThreadView` (6), `MessagesView` (1), `DiagnosticsView` (3), `OnboardingView` (1), `PermissionStatusView` (1), `ProfileView` (8), `SettingsView` (1), `SOSView` (8), `LogoView` (1), `ResilixComponents` (1).
+
+One of those sites also exposed a separate corruption: `ThreeDPopupSheet` had a
+stray argument-less `.onChange()` line inside its `onChange(of:)` handler. It was
+removed.
+
+`Tools/viewcheck.py` was added for this class. It reports (a) a SwiftUI modifier
+call at statement position with no leading dot, and (b) `[weak self]` /
+`[unowned self]` declared inside a `struct` or `enum`. Validated against a
+synthetic file: it flags both bugs and leaves a `[weak self]` inside a class
+alone.
+
 ---
 
 ## 1. What was implemented
@@ -433,5 +460,6 @@ All 64 pass the offline syntax gate. **None has been run** — that requires Xco
 ## 14. Repository state
 
 - Branch `arena/2eab602c-resilix`, pushed to `origin`. `reslix_post_audit` commit contains the entire implementation, the tooling under `Tools/`, and the final localisation sweep (chunk19 + chunk20, raw-value label patch, String-ternary fixes).
-- Verification at time of writing: `swiftcheck.py` 115/115 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1179 qualified references + implicit enum arguments, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 249 receiver calls, 0 unknown symbols · `awaitcheck.py` 0 `await` outside an async context · `capturecheck.py` 0 captured mutable vars in closures · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Verification at time of writing (tree at the round-5 commit): `swiftcheck.py` 115/115 OK · `initcheck.py` 30 call sites, 0 mismatches · `enumcheck.py` 1178 qualified references + implicit enum arguments, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 256 receiver calls, 0 unknown symbols · `awaitcheck.py` 0 `await` outside an async context · `capturecheck.py` 0 captured mutable vars in closures · `viewcheck.py` 0 dot-less modifiers, 0 weak captures in value types · `audit_keys.py` 709/709 keys, 0 missing / 0 untranslated / 0 placeholder mismatches / 0 orphans · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Round 5 changed 20 Swift files plus this report, all of it inside `@ViewBuilder` bodies and one timer closure: 58 leading dots inserted, one stray `.onChange()` deleted, one capture list removed, and one new tool (`Tools/viewcheck.py`). No view hierarchy, layout, colour, font, spacing or animation was touched.
 - Download in Xcode: clone the branch and open `Resilix.xcodeproj`; the project carries **no SwiftPM dependencies**, so it resolves and builds with the stock iOS SDK. Signing is `CODE_SIGN_STYLE = Automatic` with no `DEVELOPMENT_TEAM`, so pick your own team in *Signing & Capabilities* before running on a device.

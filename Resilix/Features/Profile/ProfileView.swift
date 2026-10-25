@@ -28,7 +28,7 @@ struct ProfileView: View {
                                 .frame(width: 48, height: 48)
                                 .clipShape(Circle())
                                 .overlay(Circle().stroke(ResilixTheme.separator.opacity(0.6), lineWidth: 0.6))
-                                accessibilityLabel(Text(L("Profile photo")))
+                                .accessibilityLabel(Text(L("Profile photo")))
                         } else {
                             LogoView(variant: .stacked, height: 48, showTagline: false)
                         }
@@ -53,7 +53,7 @@ struct ProfileView: View {
                             Label(L("Choose photo"), systemImage: "photo")
                                 .font(.subheadline)
                         }
-                        accessibilityLabel(Text(L("Choose a profile photo")))
+                        .accessibilityLabel(Text(L("Choose a profile photo")))
 
                         if profilePhoto != nil {
                             Button {
@@ -76,21 +76,21 @@ struct ProfileView: View {
                         set: { newValue in Task { await app.relayManager.setRelay(newValue) } }
                     ))
                     .tint(ResilixTheme.brandTeal)
-                    accessibilityLabel(Text(L("Enable relay participation")))
+                    .accessibilityLabel(Text(L("Enable relay participation")))
                     
                     Toggle(L("Location sharing"), isOn: Binding(
                         get: { app.settings.locationSharingEnabled },
                         set: { newValue in Task { await app.updateSettings { $0.locationSharingEnabled = newValue } } }
                     ))
                         .tint(ResilixTheme.brandTeal)
-                        accessibilityLabel(Text(L("Share location in SOS and map")))
+                        .accessibilityLabel(Text(L("Share location in SOS and map")))
 
                     Toggle(L("Message expiry"), isOn: Binding(
                         get: { app.settings.messageExpiryEnabled },
                         set: { newValue in Task { await app.updateSettings { $0.messageExpiryEnabled = newValue } } }
                     ))
                         .tint(ResilixTheme.brandTeal)
-                        accessibilityLabel(Text(L("Enable message expiry")))
+                        .accessibilityLabel(Text(L("Enable message expiry")))
                     
                     NavigationLink("Permissions", destination: PermissionStatusView())
                     NavigationLink("Diagnostics", destination: DiagnosticsView())
@@ -117,7 +117,7 @@ struct ProfileView: View {
                     Button(L("Reset local data"), role: .destructive) {
                         showResetConfirm = true
                     }
-                    accessibilityLabel(Text(L("Reset all local data")))
+                    .accessibilityLabel(Text(L("Reset all local data")))
                 }
             }
             .listStyle(.insetGrouped)
@@ -170,13 +170,13 @@ struct DemoSettingsView: View {
                 set: { app.demoController.setDemo($0) }
             ))
             .tint(ResilixTheme.brandTeal)
-            accessibilityLabel(Text(L("Enable demo mode")))
+            .accessibilityLabel(Text(L("Enable demo mode")))
             
             Button(L("Reset demo")) {
                 app.demoController.reset()
                 app.demoController.startDemo()
             }
-            accessibilityLabel(Text(L("Reset demo data")))
+            .accessibilityLabel(Text(L("Reset demo data")))
             
             Section(header: Text(L("Demo log"))) {
                 ForEach(app.demoController.demoLog, id: \.self) { log in

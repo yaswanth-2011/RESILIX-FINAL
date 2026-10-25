@@ -55,7 +55,7 @@ struct MessagesView: View {
                     Button { showComposer = true } label: {
                         Image(systemName: "square.and.pencil")
                     }
-                    accessibilityLabel(Text(L("Compose new message")))
+                    .accessibilityLabel(Text(L("Compose new message")))
                 }
             }
             .sheet(isPresented: $showComposer) { MessageComposerView() }

@@ -28,13 +28,13 @@ struct SOSView: View {
                     ForEach(SOSCategory.allCases, id: \.self) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.menu)
-                accessibilityLabel(Text(L("SOS category")))
+                .accessibilityLabel(Text(L("SOS category")))
                 
                 Picker(L("sos.severity"), selection: $severity) {
                     ForEach(SOSSeverity.allCases, id: \.self) { Text($0.label).tag($0) }
                 }
                 .pickerStyle(.segmented)
-                accessibilityLabel(Text(L("SOS severity")))
+                .accessibilityLabel(Text(L("SOS severity")))
                 
                 let scoring = SeverityScoringEngine.score(category: category, severity: severity, note: note)
                 HStack {
@@ -49,11 +49,11 @@ struct SOSView: View {
                 
                 TextField(L("sos.note"), text: $note)
                     .textFieldStyle(.roundedBorder)
-                    accessibilityLabel(Text(L("Optional note")))
+                    .accessibilityLabel(Text(L("Optional note")))
                 
                 Toggle(L("sos.shareLocation"), isOn: $shareLocation)
                     .tint(ResilixTheme.brandTeal)
-                    accessibilityLabel(Text(L("Share approximate location")))
+                    .accessibilityLabel(Text(L("Share approximate location")))
                 
                 Text(L("Location only shared with consent, minimum precision."))
                     .font(.caption2)
@@ -87,8 +87,8 @@ struct SOSView: View {
                             progress = 0
                         }
                 )
-                accessibilityLabel(Text(L("Hold to send SOS")))
-                accessibilityHint(Text(L("Long press for 1.5 seconds to confirm SOS")))
+                .accessibilityLabel(Text(L("Hold to send SOS")))
+                .accessibilityHint(Text(L("Long press for 1.5 seconds to confirm SOS")))
                 .accessibilityAddTraits(.isButton)
                 
                 // Alternative tap-to-send for accessibility
@@ -97,8 +97,8 @@ struct SOSView: View {
                 }
                 .font(.caption.weight(.medium))
                 .foregroundStyle(ResilixTheme.brandTeal)
-                accessibilityLabel(Text(L("Send SOS (alternative)")))
-                accessibilityHint(Text(L("Tap to send SOS without holding")))
+                .accessibilityLabel(Text(L("Send SOS (alternative)")))
+                .accessibilityHint(Text(L("Tap to send SOS without holding")))
                 
                 if let active = app.sosService.activeSOS {
                     ResilixCard {
