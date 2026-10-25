@@ -56,16 +56,12 @@ final class MockMeshTransport: MeshTransport, @unchecked Sendable {
     func stopDiscovery() async {}
 
     func connect(to peerID: String) async throws {
-        lock.lock()
-        connected.insert(peerID)
-        lock.unlock()
+        lock.withLock { connected.insert(peerID) }
         eventCont?.yield(.connected(id: peerID))
     }
 
     func disconnect(from peerID: String) async {
-        lock.lock()
-        connected.remove(peerID)
-        lock.unlock()
+        lock.withLock { connected.remove(peerID) }
         eventCont?.yield(.disconnected(id: peerID))
     }
 

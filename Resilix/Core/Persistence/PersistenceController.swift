@@ -21,21 +21,30 @@ actor PersistenceController {
     static let shared = PersistenceController()
     private let fm = FileManager.default
 
-    nonisolated var baseURL: URL {
-        let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-            ?? FileManager.default.temporaryDirectory
-        return root.appendingPathComponent("Resilix", isDirectory: true)
-    }
+    nonisolated var baseURL: URL { PersistenceController.directoryURL }
 
     init() {
-        try? fm.createDirectory(at: baseURL, withIntermediateDirectories: true)
+        // An actor initialiser is nonisolated, so the actor-isolated `fm`
+        // stored property cannot be read here (Swift 6 error). The singleton
+        // is used directly instead.
+        let manager = FileManager.default
+        let base = PersistenceController.directoryURL
+        try? manager.createDirectory(at: base, withIntermediateDirectories: true)
         for name in [ResilixConstants.mediaDirectoryName,
                      ResilixConstants.profileDirectoryName,
                      ResilixConstants.mapDirectoryName,
                      ResilixConstants.modelDirectoryName] {
-            try? fm.createDirectory(at: baseURL.appendingPathComponent(name, isDirectory: true),
-                                    withIntermediateDirectories: true)
+            try? manager.createDirectory(at: base.appendingPathComponent(name, isDirectory: true),
+                                         withIntermediateDirectories: true)
         }
+    }
+
+    /// Location of the application's storage root. Kept `static` so that the
+    /// nonisolated initialiser can use it without touching actor state.
+    static var directoryURL: URL {
+        let root = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
+        return root.appendingPathComponent("Resilix", isDirectory: true)
     }
 
     private func url(for file: String) -> URL { baseURL.appendingPathComponent(file) }

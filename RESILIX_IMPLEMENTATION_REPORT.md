@@ -112,6 +112,35 @@ failure modes.
 
 ---
 
+### 0.5 Second build round — five more errors
+
+These were a second wave: Swift stops type-checking a file once it has
+errors, so diagnostics that depend on an earlier failure only appear after
+the first ones are fixed.
+
+| Reported error | Cause | Fix |
+|---|---|---|
+| `AppLifecycleService.swift:50` — `MeshController` has no member `processQueuedPackets` | The method is called `processQueue()`. The name was invented at the call site. | Call renamed. The foreground path now really does drain the queue, in addition to the 2 s forwarding loop. |
+| `MeshController.swift:420` — no throwing calls within `try` | `decryptPayload(_:) async -> Data?` reports failures through `lastError` and returns `nil`; it does not throw. | The stray `try` was removed. |
+| `MeshController.swift:513` — cannot find `receivedFrom` in scope | `relay(_:receivedFrom:)` has the external label `receivedFrom` but the internal name `peerID`. | Compared against `peerID`, which is what the guard means: never send a packet back to the peer it came from. |
+| `MockMeshTransport.swift:59/61/66/68` — `NSLock.lock()`/`unlock()` unavailable from asynchronous contexts | `connect`/`disconnect` are `async`, and Swift 6 rejects unscoped locking there. | Both use `lock.withLock { }`. |
+| `PersistenceController.swift:36` — cannot access `fm` in a nonisolated initializer | An actor initialiser is nonisolated, so it cannot read the actor-isolated `fm` stored property. | `init` uses `FileManager.default` directly and a new `static var directoryURL`; `baseURL` delegates to it. |
+
+Three more checkers were added after this round, each validated against
+deliberately broken input before being trusted:
+
+- `Tools/semanticcheck.py` — flags `try` on a call that no in-project
+  declaration makes throwing (374 functions indexed), and `NSLock.lock()` /
+  `unlock()` inside `async` functions. Caught the first two defect classes
+  above on synthetic input.
+- `Tools/memberresolve.py` — indexes 256 project types and 80 explicitly
+  typed properties, then checks 166 receiver calls for members that exist on
+  the receiver's declared type. Catches the `processQueuedPackets` class.
+  Local variables, `for` bindings and member names that collide across types
+  are excluded to keep it free of false positives.
+
+---
+
 ## 1. What was implemented
 
 ### 1.1 Networking — real transports, not simulation
@@ -346,5 +375,5 @@ All 64 pass the offline syntax gate. **None has been run** — that requires Xco
 ## 14. Repository state
 
 - Branch `arena/2eab602c-resilix`, pushed to `origin`. `reslix_post_audit` commit contains the entire implementation, the tooling under `Tools/`, and the final localisation sweep (chunk19 + chunk20, raw-value label patch, String-ternary fixes).
-- Verification at time of writing: `swiftcheck.py` 114/114 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1143 qualified references, 0 unknown · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Verification at time of writing: `swiftcheck.py` 114/114 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1143 qualified references, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 166 receiver calls, 0 unknown symbols · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
 - Download in Xcode: clone the branch and open `Resilix.xcodeproj`; the project carries **no SwiftPM dependencies**, so it resolves and builds with the stock iOS SDK. Signing is `CODE_SIGN_STYLE = Automatic` with no `DEVELOPMENT_TEAM`, so pick your own team in *Signing & Capabilities* before running on a device.

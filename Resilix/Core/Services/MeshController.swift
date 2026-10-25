@@ -417,7 +417,7 @@ final class MeshController: ObservableObject {
             return
         }
 
-        guard let plaintext = try await decryptPayload(packet) else {
+        guard let plaintext = await decryptPayload(packet) else {
             statistics.droppedPackets += 1
             return
         }
@@ -510,7 +510,7 @@ final class MeshController: ObservableObject {
 
         let route = await routingEngine.bestRoute(to: packet.destinationNodeID)
         let nextHop = route?.nextHop
-        guard let nextHop, nextHop != receivedFrom, connectedPeerIDs.contains(nextHop) else {
+        guard let nextHop, nextHop != peerID, connectedPeerIDs.contains(nextHop) else {
             // No usable next hop: remember the packet until a route appears.
             try? await relayQueue.enqueue(forwarded)
             queuedPacketCount = await relayQueue.count

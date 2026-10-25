@@ -47,7 +47,7 @@ class AppLifecycleService: ObservableObject {
                 await meshController?.start()
             }
             // Process any queued packets that may have been persisted
-            await meshController?.processQueuedPackets()
+            await meshController?.processQueue()
         }
     }
     
