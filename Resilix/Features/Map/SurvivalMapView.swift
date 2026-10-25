@@ -252,7 +252,7 @@ struct SurvivalMapView: View {
                         userCoordinate = newCoordinate
                     }
                     // Recentre once, when the first real fix arrives.
-                    guard let newCoordinate = app.locationService.coordinate,
+                    guard let _ = app.locationService.coordinate,
                           !didCenterOnUser else { return }
                     didCenterOnUser = true
                     apply3DCameraIfNeeded()

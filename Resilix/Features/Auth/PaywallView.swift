@@ -158,63 +158,68 @@ struct PaywallView: View {
 
         var body: some View {
             Button(action: onSelect) {
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack(spacing: 8) {
-                        Text(plan.title)
-                            .font(ResilixTheme.font(17, .semibold))
-                            .foregroundStyle(.white)
-                        if plan.isPopular {
-                            Text("Popular")
-                                .font(ResilixTheme.font(10, .bold))
-                                .foregroundStyle(Color.black)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(ResilixTheme.brandCyan)
-                                .clipShape(Capsule())
-                        }
-                        Spacer()
-                        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundStyle(isSelected ? ResilixTheme.brandCyan : Color.white.opacity(0.25))
+                cardContent
+            }
+            .buttonStyle(.plain)
+        }
+
+        @ViewBuilder
+        private var cardContent: some View {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    Text(plan.title)
+                        .font(ResilixTheme.font(17, .semibold))
+                        .foregroundStyle(.white)
+                    if plan.isPopular {
+                        Text("Popular")
+                            .font(ResilixTheme.font(10, .bold))
+                            .foregroundStyle(Color.black)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(ResilixTheme.brandCyan)
+                            .clipShape(Capsule())
                     }
-                    Text(plan.subtitle)
-                        .font(ResilixTheme.font(13, .regular))
-                        .foregroundStyle(Color.white.opacity(0.5))
-                    HStack(alignment: .firstBaseline, spacing: 4) {
-                        Text(plan.price)
-                            .font(ResilixTheme.font(34, .bold))
-                            .foregroundStyle(.white)
-                        if !plan.period.isEmpty {
-                            Text(plan.period)
+                    Spacer()
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(isSelected ? ResilixTheme.brandCyan : Color.white.opacity(0.25))
+                }
+                Text(plan.subtitle)
+                    .font(ResilixTheme.font(13, .regular))
+                    .foregroundStyle(Color.white.opacity(0.5))
+                HStack(alignment: .firstBaseline, spacing: 4) {
+                    Text(plan.price)
+                        .font(ResilixTheme.font(34, .bold))
+                        .foregroundStyle(.white)
+                    if !plan.period.isEmpty {
+                        Text(plan.period)
+                            .font(ResilixTheme.font(13, .regular))
+                            .foregroundStyle(Color.white.opacity(0.5))
+                    }
+                }
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(plan.features, id: \.self) { feature in
+                        HStack(spacing: 8) {
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundStyle(ResilixTheme.brandCyan)
+                            Text(feature)
                                 .font(ResilixTheme.font(13, .regular))
-                                .foregroundStyle(Color.white.opacity(0.5))
-                        }
-                    }
-                    VStack(alignment: .leading, spacing: 6) {
-                        ForEach(plan.features, id: \.self) { feature in
-                            HStack(spacing: 8) {
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 12, weight: .bold))
-                                    .foregroundStyle(ResilixTheme.brandCyan)
-                                Text(feature)
-                                    .font(ResilixTheme.font(13, .regular))
-                                    .foregroundStyle(Color.white.opacity(0.85))
-                            }
+                                .foregroundStyle(Color.white.opacity(0.85))
                         }
                     }
                 }
-                .padding(18)
-                .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(Color.white.opacity(0.02))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .stroke(isSelected ? ResilixTheme.brandCyan.opacity(0.5) : Color.white.opacity(0.08), lineWidth: isSelected ? 1.5 : 1)
-                        )
-                )
-                .liquidGlassRounded(cornerRadius: 20, interactive: true)
             }
-            .buttonStyle(.plain)
+            .padding(18)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color.white.opacity(0.02))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(isSelected ? ResilixTheme.brandCyan.opacity(0.5) : Color.white.opacity(0.08), lineWidth: isSelected ? 1.5 : 1)
+                    )
+            )
+            .liquidGlassRounded(cornerRadius: 20, interactive: true)
         }
     }
 }

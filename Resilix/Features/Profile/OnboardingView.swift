@@ -142,7 +142,6 @@ private struct OnboardPage1: View {
                     // Nodes
                     ForEach(0..<4, id: \.self) { i in
                         let angle = Double(i) * 90 * .pi/180 - 90 * .pi/180
-                        let r: CGFloat = 90
                         let x = geo.size.width/2 + cos(angle) * 100
                         let y = geo.size.height/2 + sin(angle) * 100
                         Circle()
