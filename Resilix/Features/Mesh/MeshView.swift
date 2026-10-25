@@ -53,8 +53,8 @@ struct MeshView: View {
     @State private var hasAppeared: Bool = false
     @State private var showDiagnostics: Bool = false
     @State private var testMessage: String?
-
-    private let userCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
+    /// The device's real position (`nil` until the first GPS fix).
+    @State private var userCoordinate: CLLocationCoordinate2D? = nil
 
     var body: some View {
         NavigationStack {
@@ -99,7 +99,11 @@ struct MeshView: View {
                     withAnimation(.easeInOut(duration: 1.4).repeatForever(autoreverses: true)) {
                         pulse = true
                     }
+                    startLocationUpdates()
                 }
+            }
+            .onChange(of: app.locationService.coordinate) { _, newCoordinate in
+                if let newCoordinate { userCoordinate = newCoordinate }
             }
             .sheet(item: $selectedPeer) { peer in
                 MeshDeviceDetailSheet(peer: peer)
@@ -153,6 +157,19 @@ struct MeshView: View {
             selectedPeer = peer
         }
         .padding(.horizontal, ResilixTheme.space20)
+    }
+
+    // MARK: - Location
+    /// Starts real location updates so the mesh map shows the actual position
+    /// of this device instead of a fixed placeholder.
+    private func startLocationUpdates() {
+        if app.locationService.authorization == .notDetermined {
+            app.locationService.requestPermission()
+        }
+        app.locationService.startUpdates()
+        if let coordinate = app.locationService.coordinate {
+            userCoordinate = coordinate
+        }
     }
 
     // MARK: - Stats Row
@@ -360,16 +377,60 @@ private struct MeshActionRow: View {
 // MARK: - Apple Maps Network View
 struct MeshAppleMapView: View {
     let peers: [MeshPeer]
-    let userCoordinate: CLLocationCoordinate2D
+    let userCoordinate: CLLocationCoordinate2D?
     let pulse: Bool
     let onSelect: (MeshPeer) -> Void
 
+    /// Startup centre until the first real GPS fix arrives.
+    private static let fallbackCenter = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
+
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090),
+            center: fallbackCenter,
             span: MKCoordinateSpan(latitudeDelta: 0.012, longitudeDelta: 0.012)
         )
     )
+    /// `true` once the camera has been centred on the first real fix.
+    @State private var didCenterOnUser = false
+
+    /// The device itself — shown only once it has a real GPS fix.
+    private struct MeshYouMark: Identifiable {
+        let id = "you"
+        let coordinate: CLLocationCoordinate2D
+    }
+
+    /// One dotted connection line from "You" to a peer that shared a position.
+    private struct MeshLine: Identifiable {
+        let id = UUID()
+        let from: CLLocationCoordinate2D
+        let to: CLLocationCoordinate2D
+        let color: Color
+    }
+
+    /// The "You" marker — present only once the phone has a real GPS fix.
+    private var youMark: [MeshYouMark] {
+        guard let userCoordinate else { return [] }
+        return [MeshYouMark(coordinate: userCoordinate)]
+    }
+
+    /// Dotted connection lines from the real position to every peer that shared
+    /// a position — empty until the first GPS fix.
+    private var meshLines: [MeshLine] {
+        guard let userCoordinate else { return [] }
+        return peers.compactMap { peer in
+            guard let coordinate = peer.coordinate else { return nil }
+            return MeshLine(from: userCoordinate, to: coordinate,
+                            color: lineColor(for: peer.hopType))
+        }
+    }
+
+    /// Peers that shared a position, together with that position.
+    private var pinnedPeers: [(peer: MeshPeer, coordinate: CLLocationCoordinate2D)] {
+        peers.compactMap { peer in
+            guard let coordinate = peer.coordinate else { return nil }
+            return (peer, coordinate)
+        }
+    }
 
     private func lineColor(for hop: MeshPeer.HopType) -> Color {
         MeshColors.pin(for: hop)
@@ -380,31 +441,30 @@ struct MeshAppleMapView: View {
             // The map
             ZStack(alignment: .topTrailing) {
                 Map(position: $cameraPosition, interactionModes: [.pan, .zoom]) {
-                    // "You" center node
-                    Annotation("You", coordinate: userCoordinate) {
-                        YouMapPin()
-                    }
-
-                    // Dotted mesh connection lines (You → peer)
-                    ForEach(peers) { peer in
-                        if let coordinate = peer.coordinate {
-                            MapPolyline(coordinates: [userCoordinate, coordinate])
-                                .stroke(
-                                    lineColor(for: peer.hopType).opacity(0.65),
-                                    style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [5, 4])
-                                )
+                    // "You" center node — only at the real GPS fix.
+                    ForEach(youMark) { mark in
+                        Annotation("You", coordinate: mark.coordinate) {
+                            YouMapPin()
                         }
                     }
 
+                    // Dotted mesh connection lines (You → peer) — only from
+                    // the real position, never from a made-up coordinate.
+                    ForEach(Array(meshLines.enumerated()), id: \.offset) { _, line in
+                        MapPolyline(coordinates: [line.from, line.to])
+                            .stroke(
+                                line.color.opacity(0.65),
+                                style: StrokeStyle(lineWidth: 1.6, lineCap: .round, dash: [5, 4])
+                            )
+                    }
+
                     // Peer annotations (only peers that shared a position)
-                    ForEach(peers) { peer in
-                        if let coordinate = peer.coordinate {
-                            Annotation(peer.name, coordinate: coordinate) {
-                                PeerMapPin(peer: peer, pulse: pulse)
-                                    .onTapGesture {
-                                        onSelect(peer)
-                                    }
-                            }
+                    ForEach(Array(pinnedPeers.enumerated()), id: \.offset) { _, item in
+                        Annotation(item.peer.name, coordinate: item.coordinate) {
+                            PeerMapPin(peer: item.peer, pulse: pulse)
+                                .onTapGesture {
+                                    onSelect(item.peer)
+                                }
                         }
                     }
                 }
@@ -429,6 +489,20 @@ struct MeshAppleMapView: View {
                 MeshLegendItem(color: MeshColors.multiHop, label: L("2+ Hop"))
             }
             .frame(maxWidth: .infinity)
+            // Centre on the first real GPS fix, then leave the map alone so
+            // the user can pan.
+            .onChange(of: userCoordinate) { _, newCoordinate in
+                guard let newCoordinate, !didCenterOnUser else { return }
+                didCenterOnUser = true
+                withAnimation(.easeInOut(duration: 0.35)) {
+                    cameraPosition = .camera(MapCamera(
+                        centerCoordinate: newCoordinate,
+                        distance: 3000,
+                        heading: 0,
+                        pitch: 0
+                    ))
+                }
+            }
         }
     }
 }

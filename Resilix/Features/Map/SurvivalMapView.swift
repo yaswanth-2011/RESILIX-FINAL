@@ -128,18 +128,19 @@ struct SurvivalMapView: View {
     // Live 2-finger gesture state (drag adjusts pitch, pinch adjusts distance)
     @GestureState private var gesturePitchDelta: Double = 0
     @GestureState private var gestureDistanceScale: CGFloat = 1
-    /// `true` once the camera has been centred on the device's own position.
+    /// `true` once the camera has been centred on the first real GPS fix.
     @State private var didCenterOnUser = false
+    /// The device's real position (`nil` until the first GPS fix — the map
+    /// never shows a made-up location as "You").
+    @State private var userCoordinate: CLLocationCoordinate2D? = nil
+    /// Centre of the map: the real fix once we have one, otherwise the
+    /// temporary startup centre so the map is never blank.
+    private var mapCenter: CLLocationCoordinate2D {
+        userCoordinate ?? Self.fallbackCoordinate
+    }
 
     /// Centre used before the first GPS fix (and on the simulator, which has none).
     private static let fallbackCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
-
-    /// The device's real position. Falls back to `fallbackCoordinate` only
-    /// until the first fix arrives, so a marker is never placed at a made-up
-    /// location once the phone knows where it is.
-    private var userCoordinate: CLLocationCoordinate2D {
-        app.locationService.coordinate ?? Self.fallbackCoordinate
-    }
 
     enum MapFilter: String, CaseIterable, Identifiable {
         case all = "All"
@@ -174,14 +175,17 @@ struct SurvivalMapView: View {
                 // (just below the status bar) and the slider sits at a
                 // consistent position above the tab bar.
                 Map(position: $cameraPosition, interactionModes: [.pan, .zoom, .rotate, .pitch]) {
-                    Annotation("You", coordinate: userCoordinate, anchor: .bottom) {
-                        YouMapAnnotation()
+                    // "You" at the real GPS fix only (zero or one marker).
+                    ForEach(youMark) { mark in
+                        Annotation("You", coordinate: mark.coordinate, anchor: .bottom) {
+                            YouMapAnnotation()
+                        }
                     }
 
                     // Halo polylines — soft white underlay so the line pops
                     // off any map style (satellite, standard, hybrid…).
-                    ForEach(visiblePeers) { peer in
-                        MapPolyline(coordinates: [userCoordinate, peer.coordinate])
+                    ForEach(connectionLines) { line in
+                        MapPolyline(coordinates: [line.from, line.to])
                             .stroke(
                                 Color.white.opacity(0.45),
                                 style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round)
@@ -190,10 +194,10 @@ struct SurvivalMapView: View {
 
                     // Core polylines — bold colored marching dashes flowing
                     // from "You" out to each peer.
-                    ForEach(visiblePeers) { peer in
-                        MapPolyline(coordinates: [userCoordinate, peer.coordinate])
+                    ForEach(connectionLines) { line in
+                        MapPolyline(coordinates: [line.from, line.to])
                             .stroke(
-                                color(for: peer.kind),
+                                line.color,
                                 style: StrokeStyle(
                                     lineWidth: 3.5,
                                     lineCap: .round,
@@ -229,11 +233,23 @@ struct SurvivalMapView: View {
                 .gesture(threeDGesture)
                 .onAppear {
                     apply3DCameraIfNeeded()
+                    // Start real location updates (permission is requested if
+                    // we don't have it yet; the delegate starts updates once
+                    // authorized).
+                    if app.locationService.authorization == .notDetermined {
+                        app.locationService.requestPermission()
+                    }
+                    app.locationService.startUpdates()
                     didCenterOnUser = app.locationService.coordinate != nil
+                    if let coordinate = app.locationService.coordinate {
+                        userCoordinate = coordinate
+                    }
                 }
-                .onChange(of: app.locationService.coordinate?.latitude) { _, _ in
+                .onChange(of: app.locationService.coordinate) { _, newCoordinate in
+                    // Keep the marker on the live real position.
+                    if let newCoordinate { userCoordinate = newCoordinate }
                     // Recentre once, when the first real fix arrives.
-                    guard !didCenterOnUser, app.locationService.coordinate != nil else { return }
+                    guard let newCoordinate, !didCenterOnUser else { return }
                     didCenterOnUser = true
                     apply3DCameraIfNeeded()
                 }
@@ -591,7 +607,37 @@ struct SurvivalMapView: View {
         return byFilter.filter { $0.name.lowercased().contains(query) }
     }
 
-    private func color(for kind: MapPeer.Kind) -> Color {
+    
+/// One marker: the device itself, shown only at the real GPS fix.
+private struct YouMapMark: Identifiable {
+    let id = "you"
+    let coordinate: CLLocationCoordinate2D
+}
+
+/// One mesh connection line drawn from "You" to a peer.
+private struct MapConnectionLine: Identifiable {
+    let id = UUID()
+    let from: CLLocationCoordinate2D
+    let to: CLLocationCoordinate2D
+    let color: Color
+}
+
+/// The "You" marker — present only once the phone has a real GPS fix.
+private var youMark: [YouMapMark] {
+    guard let userCoordinate else { return [] }
+    return [YouMapMark(coordinate: userCoordinate)]
+}
+
+/// Connection lines from the real position to every visible peer — empty
+/// until the first GPS fix, so the map never draws lines from a made-up spot.
+private var connectionLines: [MapConnectionLine] {
+    guard let userCoordinate else { return [] }
+    return visiblePeers.map {
+        MapConnectionLine(from: userCoordinate, to: $0.coordinate, color: color(for: $0.kind))
+    }
+}
+
+private func color(for kind: MapPeer.Kind) -> Color {
         switch kind {
         case .direct:  return MapColors.direct
         case .relay:   return MapColors.relay
@@ -642,7 +688,7 @@ struct SurvivalMapView: View {
 
     /// Apply the camera based on the current style + 3D pitch + 3D mode.
     private func apply3DCameraIfNeeded() {
-        let center = userCoordinate
+        let center = mapCenter
         let effectivePitch = threeDMode == .off ? 0 : pitch3D
         if threeDMode != .off {
             // 3D camera (any map style) — uses the user-controlled pitch.

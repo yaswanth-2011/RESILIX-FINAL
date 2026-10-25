@@ -28,25 +28,19 @@ struct NearbyDevice: Identifiable {
         }
     }
 
-    init(node: MeshNode, distance: String = "120m", hopType: HopType = .direct, signalPercent: Int = 95) {
+    init(node: MeshNode, distance: String, hopType: HopType, signalPercent: Int, coordinate: CLLocationCoordinate2D? = nil) {
         self.id = node.id
         self.name = node.alias
         self.distance = distance
         self.hopType = hopType
         self.signalPercent = signalPercent
         self.isRelay = node.isRelay
+        self.coordinate = coordinate
         self.accentGradient = AvatarView.gradient(for: node.alias)
     }
 
-    init(name: String, distance: String, hopType: HopType, signalPercent: Int, isRelay: Bool = false) {
-        self.id = UUID().uuidString
-        self.name = name
-        self.distance = distance
-        self.hopType = hopType
-        self.signalPercent = signalPercent
-        self.isRelay = isRelay
-        self.accentGradient = AvatarView.gradient(for: name)
-    }
+    /// The position the peer shared with the mesh (nil when it did not share one).
+    let coordinate: CLLocationCoordinate2D?
 }
 
 // MARK: - Nearby View (iOS-unique glass, MapKit mini-map, pulse)
@@ -56,6 +50,7 @@ struct NearbyView: View {
     @State private var scanState: ScanState = .idle
     @State private var pulsePhase: CGFloat = 0
     @State private var hasAppeared = false
+    @State private var didCenterOnUser = false
     @Namespace private var scanNamespace
     @State private var mapPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
@@ -63,8 +58,11 @@ struct NearbyView: View {
             span: MKCoordinateSpan(latitudeDelta: 0.015, longitudeDelta: 0.015)
         )
     )
-    private let userCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
-    @State private var deviceCoordinates: [CLLocationCoordinate2D] = []
+    /// The device's real position (`nil` until the first GPS fix).
+    @State private var userCoordinate: CLLocationCoordinate2D? = nil
+    /// Startup centre until the first real fix arrives.
+    private static let fallbackCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
+    var mapCenter: CLLocationCoordinate2D { userCoordinate ?? Self.fallbackCoordinate }
     /// Node id of the peer whose chat is being opened from a card.
     @State private var chatPeerID: String?
 
@@ -126,8 +124,25 @@ struct NearbyView: View {
             .onAppear {
                 if !hasAppeared {
                     hasAppeared = true
-                    loadDemoDevices()
+                    // Use the real GPS position for the mini map.
+                    if app.locationService.authorization == .notDetermined {
+                        app.locationService.requestPermission()
+                    }
+                    app.locationService.startUpdates()
+                    if let coordinate = app.locationService.coordinate {
+                        userCoordinate = coordinate
+                    }
+                    // Show the peers the mesh transports really discovered.
+                    loadDevices()
                 }
+            }
+            // Keep the mini map on the live real position.
+            .onChange(of: app.locationService.coordinate) { _, newCoordinate in
+                if let newCoordinate { userCoordinate = newCoordinate }
+            }
+            // Refresh the list whenever a transport discovers or loses a peer.
+            .onReceive(app.meshController.$peers) { _ in
+                loadDevices()
             }
         }
     }
@@ -228,20 +243,23 @@ struct NearbyView: View {
         ZStack {
             // Real Apple Map — no box behind, map fills the area
             Map(position: $mapPosition) {
-                // User iPhone — Find My style device image (iPhone)
-                Annotation("", coordinate: userCoordinate) {
-                    Image(systemName: "iphone.circle.fill")
-                        .font(.system(size: 34))
-                        .foregroundStyle(.white, ResilixTheme.brandCyan)
-                        .padding(3)
-                        .background(Circle().fill(Color.black.opacity(0.25)))
+                // User iPhone — Find My style device image (iPhone), shown at
+                // the real GPS fix only (zero or one marker).
+                ForEach(nearbyYouMark) { mark in
+                    Annotation("", coordinate: mark.coordinate) {
+                        Image(systemName: "iphone.circle.fill")
+                            .font(.system(size: 34))
+                            .foregroundStyle(.white, ResilixTheme.brandCyan)
+                            .padding(3)
+                            .background(Circle().fill(Color.black.opacity(0.25)))
+                    }
                 }
 
-                // Other devices — Find My style phone/device images
-                ForEach(Array(deviceCoordinates.enumerated()), id: \.offset) { idx, coord in
-                    Annotation("", coordinate: coord) {
-                        let isRelay = devices[safe: idx]?.isRelay ?? false
-                        Image(systemName: devicePinImage(isRelay: isRelay, idx: idx))
+                // Other devices — Find My style phone/device images, placed at
+                // the positions those peers really shared with the mesh.
+                ForEach(Array(mapPins.enumerated()), id: \.offset) { idx, pin in
+                    Annotation("", coordinate: pin.coordinate) {
+                        Image(systemName: devicePinImage(isRelay: pin.isRelay, idx: pin.index))
                             .font(.system(size: 28))
                             .foregroundStyle(.white, ResilixTheme.brandCyan)
                             .padding(2)
@@ -252,10 +270,18 @@ struct NearbyView: View {
                     }
                 }
             }
-            .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             .allowsHitTesting(false)
             .colorScheme(.dark)
+            .onChange(of: mapCenter) { _, _ in
+                // Centre on the first real GPS fix, then leave the map alone
+                // so the user can pan.
+                guard !didCenterOnUser, userCoordinate != nil else { return }
+                didCenterOnUser = true
+                mapPosition = .region(
+                    MKCoordinateRegion(center: mapCenter, span: MKCoordinateSpan(latitudeDelta: 0.015, longitudeDelta: 0.015))
+                )
+            }
 
             // Pulsing rings emanating from iPhone center
             ForEach(0..<3, id: \.self) { i in
@@ -270,6 +296,31 @@ struct NearbyView: View {
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .padding(.horizontal, 20)
     }
+
+
+
+/// The device itself — shown only once it has a real GPS fix.
+private struct NearbyYouMark: Identifiable {
+    let id = "you"
+    let coordinate: CLLocationCoordinate2D
+}
+
+private var nearbyYouMark: [NearbyYouMark] {
+    guard let userCoordinate else { return [] }
+    return [NearbyYouMark(coordinate: userCoordinate)]
+}
+
+/// Peers that shared a position with the mesh, paired with their card index
+/// (used to pick the pin icon). Indices stay aligned with `devices`.
+private var mapPins: [(coordinate: CLLocationCoordinate2D, isRelay: Bool, index: Int)] {
+    var result: [(coordinate: CLLocationCoordinate2D, isRelay: Bool, index: Int)] = []
+    for (index, device) in devices.enumerated() {
+        if let coordinate = device.coordinate {
+            result.append((coordinate: coordinate, isRelay: device.isRelay, index: index))
+        }
+    }
+    return result
+}
 
     private func devicePinImage(isRelay: Bool, idx: Int) -> String {
         if isRelay {
@@ -337,11 +388,9 @@ struct NearbyView: View {
             scanState = .scanning
             devices = [] // removal to bottom via transition
             pulsePhase = 0
-            deviceCoordinates = []
         }
-        // Stage 2: slightly delayed — map is now visible, generate pins and start pulsing/scan animation
+        // Stage 2: slightly delayed — map is now visible, start pulsing/scan animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
-            generateDeviceCoordinates()
             withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: false)) {
                 pulsePhase = 1.0
             }
@@ -351,7 +400,7 @@ struct NearbyView: View {
             try? await Task.sleep(nanoseconds: 3_600_000_000)
             await MainActor.run {
                 withAnimation(.spring(response: 0.52, dampingFraction: 0.85)) {
-                    loadDemoDevices() // insertion from bottom
+                    loadDevices() // insertion from bottom
                     scanState = .complete
                 }
                 withAnimation(.easeOut(duration: 0.35)) {
@@ -361,15 +410,7 @@ struct NearbyView: View {
         }
     }
 
-    /// The pins are placed on the positions the peers really shared.
-    private func generateDeviceCoordinates() {
-        var coords: [CLLocationCoordinate2D] = []
-        for node in app.meshController.peers {
-            guard let latitude = node.latitude, let longitude = node.longitude else { continue }
-            coords.append(CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
-        }
-        deviceCoordinates = coords
-    }
+
 
     private func devicePinColor(for idx: Int) -> Color {
         let palette: [Color] = [
@@ -379,22 +420,13 @@ struct NearbyView: View {
         return palette[idx % palette.count]
     }
 
-    /// Fills the list with the peers that were really discovered.
+    /// Fills the list with the peers that were really discovered by the mesh
+    /// transports (Bluetooth / peer-to-peer Wi-Fi / Wi-Fi Aware). No made-up
+    /// names or distances are ever shown.
     ///
     /// The distance is only shown when the peer shared its position, the
     /// signal value comes from the link quality of the transport.
-    private func loadDemoDevices() {
-        if app.demoController.isDemoMode {
-            devices = [
-                NearbyDevice(name: "Sarah K.", distance: "120m", hopType: .direct, signalPercent: 95),
-                NearbyDevice(name: "Marcus D.", distance: "340m", hopType: .oneHop, signalPercent: 72),
-                NearbyDevice(name: "ResBot-a", distance: "510m", hopType: .oneHop, signalPercent: 63, isRelay: true),
-                NearbyDevice(name: "James R.", distance: "780m", hopType: .twoHops, signalPercent: 44),
-                NearbyDevice(name: "Emma T.", distance: "1.1km", hopType: .twoHops, signalPercent: 38),
-            ]
-            return
-        }
-
+    private func loadDevices() {
         let nodes = app.meshController.peers
         devices = nodes.prefix(6).map { node in
             let connected = app.meshController.isConnected(to: node.id)
@@ -408,15 +440,16 @@ struct NearbyView: View {
             } else {
                 hopType = .twoHops
             }
-            var distance = "—"
+            var coordinate: CLLocationCoordinate2D?
             if let latitude = node.latitude, let longitude = node.longitude {
-                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                distance = app.locationService.formattedDistance(to: coordinate) ?? "—"
+                coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             }
+            let distance = coordinate.flatMap { app.locationService.formattedDistance(to: $0) } ?? "—"
             return NearbyDevice(node: node,
                                 distance: distance,
                                 hopType: hopType,
-                                signalPercent: app.meshController.signalStrength(for: node.id) ?? 0)
+                                signalPercent: app.meshController.signalStrength(for: node.id) ?? 0,
+                                coordinate: coordinate)
         }
     }
 

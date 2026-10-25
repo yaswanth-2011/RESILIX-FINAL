@@ -15,12 +15,27 @@ struct OfflineAIEngine: ResilixLocalAI {
     func respond(to query: String, knowledge: [FirstAidTopic]) async -> (text: String, source: String) {
         try? await Task.sleep(nanoseconds: 600_000_000)
         let q = query.lowercased()
-        if q.contains("burn") { return (format(topic: knowledge.first(where: { $0.id == "burn" })!), L("Local AI · Knowledge base")) }
-        if q.contains("bleed") { return (format(topic: knowledge.first(where: { $0.id == "bleeding" })!), L("Local AI · Knowledge base")) }
-        if q.contains("cpr") || q.contains("heart") || q.contains("unresponsive") { return (format(topic: knowledge.first(where: { $0.id == "cpr" })!), L("Local AI · Knowledge base")) }
-        if q.contains("chok") { return (format(topic: knowledge.first(where: { $0.id == "choking" })!), L("Local AI · Knowledge base")) }
-        if q.contains("fracture") || q.contains("break") || q.contains("bone") { return (format(topic: knowledge.first(where: { $0.id == "fracture" })!), L("Local AI · Knowledge base")) }
-        if q.contains("hypotherm") || q.contains("cold") || q.contains("freez") { return (format(topic: knowledge.first(where: { $0.id == "hypothermia" })!), L("Local AI · Knowledge base")) }
+        if q.contains("burn"), let topic = knowledge.first(where: { $0.id == "burn" }) {
+            return (format(topic: topic), L("Local AI · Knowledge base"))
+        }
+        if q.contains("bleed"), let topic = knowledge.first(where: { $0.id == "bleeding" }) {
+            return (format(topic: topic), L("Local AI · Knowledge base"))
+        }
+        if (q.contains("cpr") || q.contains("heart") || q.contains("unresponsive")),
+           let topic = knowledge.first(where: { $0.id == "cpr" }) {
+            return (format(topic: topic), L("Local AI · Knowledge base"))
+        }
+        if q.contains("chok"), let topic = knowledge.first(where: { $0.id == "choking" }) {
+            return (format(topic: topic), L("Local AI · Knowledge base"))
+        }
+        if (q.contains("fracture") || q.contains("break") || q.contains("bone")),
+           let topic = knowledge.first(where: { $0.id == "fracture" }) {
+            return (format(topic: topic), L("Local AI · Knowledge base"))
+        }
+        if (q.contains("hypotherm") || q.contains("cold") || q.contains("freez")),
+           let topic = knowledge.first(where: { $0.id == "hypothermia" }) {
+            return (format(topic: topic), L("Local AI · Knowledge base"))
+        }
         let scored = knowledge.map { topic -> (FirstAidTopic, Int) in
             let text = (topic.id + " " + topic.title + " " + topic.category + " " + topic.steps.joined(separator: " ")).lowercased()
             let score = q.split(separator: " ").filter { text.contains($0) }.count
@@ -158,9 +173,27 @@ final class AssistViewModel: ObservableObject {
         try? await persistence.save(settings, to: "ai_settings.json")
     }
 
-    func send(_ text: String) {
+    /// Sends a user message and produces the assistant answer.
+    ///
+    /// Repeated taps while an answer is being produced are ignored, and an
+    /// identical question that was already answered in this turn is not
+    /// re-answered, so the same answer never appears twice (the offline AI
+    /// gives one clear, correct answer per question).
+    func send(_ text: String, isRegenerate: Bool = false) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
+        // A reply is already being produced: ignore repeated taps so the
+        // same answer is never appended twice.
+        guard !isTyping else { return }
+        // The exact same question was already answered in this turn —
+        // showing it again would repeat the answer instead of adding new
+        // information. Regenerate is allowed to repeat on purpose.
+        if !isRegenerate,
+           let lastUser = messages.last(where: { $0.role == .user }),
+           lastUser.text == trimmed,
+           messages.last?.role == .assistant {
+            return
+        }
         messages.append(ChatMessage(role: .user, text: trimmed))
         hasUserSentMessage = true
         input = ""
@@ -223,7 +256,7 @@ final class AssistViewModel: ObservableObject {
 
     func regenerate() {
         guard let lastUser = messages.last(where: { $0.role == .user }) else { return }
-        send(lastUser.text)
+        send(lastUser.text, isRegenerate: true)
     }
 }
 
@@ -376,16 +409,9 @@ struct AssistView: View {
         }
     }
 
-    // MARK: - Header (logo + title + pill + actions)
+    // MARK: - Header (title + pill + actions)
     private var aiHeader: some View {
         HStack(alignment: .center, spacing: 12) {
-            // Use the dark placeholder logo asset
-            Image("ResilixLogoPlaceholderDark")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 36)
-                .shadow(color: ResilixTheme.cyanGlowStrong, radius: 4)
-
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 8) {
                     // Bigger and less bold
