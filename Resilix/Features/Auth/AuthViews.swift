@@ -578,6 +578,7 @@ public struct CreateAccountView: View {
     @State private var password = ""
     @State private var showPassword = false
     @State private var loading = false
+    @State private var error: String?
 
     public var body: some View {
         NavigationStack {
