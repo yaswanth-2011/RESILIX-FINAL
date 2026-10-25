@@ -279,6 +279,7 @@
 		4A28A448D526473EB9CE4AD1 /* Resilix */ = {
 			isa = PBXGroup;
 			children = (
+				9481C4BC2DEB467AAE394464 /* Core/Models/FirstAidTopic.swift */,
 				44D54B947D176E926BB7C030 /* Features/Map/OfflineTileOverlay.swift */,
 				980C2756A90F5E8B9E8A50A9 /* Features/Map/OfflineMapSheet.swift */,
 				55EF9271DD09096C19BE0B7C /* Features/Assist/AIModelManagerView.swift */,
@@ -392,21 +393,12 @@
 			path = Resilix;
 			sourceTree = "<group>";
 		};
-		BAB8849A303EF4E2000B9D6B /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				9481C4BC2DEB467AAE394464 /* Core/Models/FirstAidTopic.swift */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		E04B49A431CC4D20A2A62746 = {
 			isa = PBXGroup;
 			children = (
 				4A28A448D526473EB9CE4AD1 /* Resilix */,
 				FF13072B530143CD9B6C74FF /* ResilixTests */,
 				116C44ED43B94B6F94C3EF42 /* Products */,
-				BAB8849A303EF4E2000B9D6B /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
