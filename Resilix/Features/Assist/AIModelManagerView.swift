@@ -182,7 +182,7 @@ struct AIModelManagerView: View {
                 .font(ResilixTheme.font(16, .semibold))
                 .foregroundStyle(ResilixTheme.textPrimary)
 
-            VStack(alignment: .leading, spacing: ResilixTheme.space6) {
+            VStack(alignment: .leading, spacing: ResilixTheme.space4) {
                 installGuideRow(
                     icon: "arrow.down.circle",
                     title: L("assist.install.gemma.title"),

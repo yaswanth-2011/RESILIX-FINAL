@@ -41,6 +41,7 @@
 		56AFD0C365674CE0A00BD572 /* Core/Models/DemoNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6621F1D2E0D34A9BAF505FE3 /* Core/Models/DemoNode.swift */; };
 		5D86856E84E14AEFA0C2402D /* Core/Services/MessageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59C83FD4F3A4182AF3E30CA /* Core/Services/MessageService.swift */; };
 		A1B2C3D4E5F6A7B8C9D0E1F2 /* Core/Services/AuthStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2C3D4E5F6A7B8C9D0E1F2A3 /* Core/Services/AuthStore.swift */; };
+		C3D4E5F6A7B8C9D0E1F2A3B4 /* Core/Services/DefaultMapPackCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* Core/Services/DefaultMapPackCreator.swift */; };
 		6309474896734051BB97D34B /* Features/Nearby/NearbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E7824F4E0244F0B39A8D54 /* Features/Nearby/NearbyView.swift */; };
 		6CE51CDC8CF045AF8C559D11 /* Features/Profile/ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E09156B6C3A04C9D9CB49BA3 /* Features/Profile/ProfileView.swift */; };
 		6FDD268AFAD548958CEC9E1B /* Features/Assist/AssistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ABA1B68F6F34E47A65EA43B /* Features/Assist/AssistView.swift */; };
@@ -212,6 +213,7 @@
 		E30337F15A12455389990498 /* Core/Routing/PacketValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/PacketValidator.swift; sourceTree = "<group>"; };
 		E59C83FD4F3A4182AF3E30CA /* Core/Services/MessageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/MessageService.swift; sourceTree = "<group>"; };
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* Core/Services/AuthStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/AuthStore.swift; sourceTree = "<group>"; };
+		D4E5F6A7B8C9D0E1F2A3B4C5 /* Core/Services/DefaultMapPackCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/DefaultMapPackCreator.swift; sourceTree = "<group>"; };
 		E5D0CDDB248F43B7A44C9FDE /* Core/Services/AppLifecycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/AppLifecycleService.swift; sourceTree = "<group>"; };
 		E70838A7248E4D4D8D9D97E0 /* Core/Services/ConnectivityCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/ConnectivityCoordinator.swift; sourceTree = "<group>"; };
 		E70C73D71F4B4F84819BF610 /* Features/Profile/PermissionStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Profile/PermissionStatusView.swift; sourceTree = "<group>"; };
@@ -364,6 +366,7 @@
 				815AD62861934FF6AC6E9F8C /* Core/Services/ResourceService.swift */,
 				E59C83FD4F3A4182AF3E30CA /* Core/Services/MessageService.swift */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* Core/Services/AuthStore.swift */,
+				D4E5F6A7B8C9D0E1F2A3B4C5 /* Core/Services/DefaultMapPackCreator.swift */,
 				E70838A7248E4D4D8D9D97E0 /* Core/Services/ConnectivityCoordinator.swift */,
 				DF26F37FFDE84E6BBB4E067C /* Core/Services/PermissionService.swift */,
 				06E11A9D647F4E4C9C8B76C0 /* App/InfoPlist.swift */,
@@ -638,6 +641,7 @@
 				B7C0CBFF58904818886B8D27 /* Core/Services/ResourceService.swift in Sources */,
 				5D86856E84E14AEFA0C2402D /* Core/Services/MessageService.swift in Sources */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* Core/Services/AuthStore.swift in Sources */,
+				C3D4E5F6A7B8C9D0E1F2A3B4 /* Core/Services/DefaultMapPackCreator.swift in Sources */,
 				FB9140406D494CC78ACF2789 /* Core/Services/ConnectivityCoordinator.swift in Sources */,
 				1D21C41867BA4280B7301C0A /* Core/Services/PermissionService.swift in Sources */,
 				E9DF02852AFC4DA09FB89DE5 /* App/InfoPlist.swift in Sources */,

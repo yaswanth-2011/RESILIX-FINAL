@@ -10,7 +10,9 @@ public struct WelcomeView: View {
     @Binding var isGuest: Bool
     @State private var selectedMode: AuthMode = .signIn
     @State private var logoOpacity: Double = 0
-    @State private var logoScale: CGFloat = 0.92
+    @State private var logoScale: CGFloat = 0.3
+    @State private var logoRotation: Double = -15
+    @State private var showContent: Bool = false
 
     public enum AuthMode: String, CaseIterable, Hashable {
         case signIn = "Sign In"
@@ -64,13 +66,20 @@ public struct WelcomeView: View {
                             LogoPlaceholderDarkView(height: 220)
                                 .scaleEffect(logoScale)
                                 .opacity(logoOpacity)
+                                .rotationEffect(.degrees(logoRotation))
                                 .padding(.bottom, 22)
                                 .onAppear {
-                                    withAnimation(.easeOut(duration: 0.7).delay(0.15)) {
+                                    withAnimation(.easeOut(duration: 0.8).delay(0.1)) {
                                         logoOpacity = 1
                                         logoScale = 1.0
+                                        logoRotation = 0
+                                    }
+                                    withAnimation(.easeOut(duration: 0.6).delay(0.6)) {
+                                        showContent = true
                                     }
                                 }
+                                .scaleEffect(showContent ? 1.0 : 1.0)
+                                .transition(.scale.combined(with: .opacity))
 
                             // Native TabView pill liquid glass — slider, close to login
                             AuthModeSlider(selectedMode: $selectedMode)
