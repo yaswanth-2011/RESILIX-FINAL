@@ -29,7 +29,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCES = ROOT / "Resilix"
+# The test target is compiled too, so it is checked with the same rules.
+SOURCES = [ROOT / "Resilix"] + ([ROOT / "ResilixTests"] if (ROOT / "ResilixTests").is_dir() else [])
 
 
 def strip_comments_and_strings(text: str) -> str:
@@ -182,7 +183,7 @@ def check_lock_in_async(files: dict[Path, str]) -> list[str]:
 def main() -> int:
     verbose = "--verbose" in sys.argv
     files: dict[Path, str] = {}
-    for path in sorted(SOURCES.rglob("*.swift")):
+    for path in sorted(p for root in SOURCES for p in root.rglob("*.swift")):
         files[path] = strip_comments_and_strings(path.read_text())
 
     functions = collect_functions(files)

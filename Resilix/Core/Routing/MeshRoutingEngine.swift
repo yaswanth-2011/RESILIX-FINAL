@@ -40,7 +40,9 @@ class MeshRoutingEngine: ObservableObject {
     // MARK: - Scoring
 
     /// Deterministic route scoring - unit testable. Lower is better.
-    static func scoreRoute(_ route: MeshRoute, failurePenalty: Int = 0) -> Double {
+    /// Pure scoring function: `nonisolated` so it can be used from tests and
+    /// from background contexts without hopping to the main actor.
+    nonisolated static func scoreRoute(_ route: MeshRoute, failurePenalty: Int = 0) -> Double {
         let hopCost = Double(route.hopCount) * 10
         let qualityCost: Double = {
             switch route.quality {

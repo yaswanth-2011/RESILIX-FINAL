@@ -28,7 +28,7 @@ actor RelayQueue {
     var count: Int { queue.count }
     var totalBytes: Int { queue.reduce(0) { $0 + $1.packet.payloadEnvelope.count } }
 
-    func enqueue(_ packet: MeshPacket) throws {
+    func enqueue(_ packet: MeshPacket) async throws {
         guard queue.count < maxLength else { throw ResilixError.queueFull }
         guard totalBytes + packet.payloadEnvelope.count <= maxBytes else { throw ResilixError.queueFull }
         if queue.contains(where: { $0.packet.id == packet.id }) { return }
@@ -49,7 +49,7 @@ actor RelayQueue {
         await persist()
     }
 
-    func dequeue() -> QueuedPacket? {
+    func dequeue() async -> QueuedPacket? {
         guard !queue.isEmpty else { return nil }
         let item = queue.removeFirst()
         await persist()
@@ -59,24 +59,25 @@ actor RelayQueue {
     func peek() -> QueuedPacket? { queue.first }
 
     /// Removes a packet from the queue (after it was delivered).
-    func dequeueMatching(id: String) {
+    func dequeueMatching(id: String) async {
         let before = queue.count
         queue.removeAll { $0.packet.id == id }
         if before != queue.count { await persist() }
     }
 
     @discardableResult
-    func removeExpired(now: Date = Date()) -> Int {
+    func removeExpired(now: Date = Date()) async -> Int {
         let before = queue.count
         queue.removeAll { $0.packet.isExpired || now > $0.packet.expiresAt }
         if before != queue.count { await persist() }
         return before - queue.count
     }
 
-    func incrementRetry(for id: String) {
+    func incrementRetry(for id: String) async {
         if let i = queue.firstIndex(where: { $0.packet.id == id }) {
             queue[i].retryCount += 1
             queue[i].nextRetry = Date().addingTimeInterval(pow(2.0, Double(queue[i].retryCount)) * 2)
+            await persist()
         }
     }
 

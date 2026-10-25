@@ -37,7 +37,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCES = ROOT / "Resilix"
+# The test target is compiled too, so it is checked with the same rules.
+SOURCES = [ROOT / "Resilix"] + ([ROOT / "ResilixTests"] if (ROOT / "ResilixTests").is_dir() else [])
 
 TYPE_KEYWORDS = ("class", "struct", "enum", "actor", "protocol")
 
@@ -223,16 +224,35 @@ def index_typed_properties(files: dict[Path, str],
             if len(names) == 1 and next(iter(names)) in types}
 
 
+def index_local_instances(files: dict[Path, str], types: dict[str, set[str]]) -> dict[Path, dict[str, str]]:
+    """file -> {local name: project type} for `let q = RelayQueue()`.
+
+    Only names that map to exactly one project type *within that file* are
+    used, which makes the inference safe for tests (each test function builds
+    its own fresh instance) without needing real type checking.
+    """
+    per_file: dict[Path, dict[str, set[str]]] = {}
+    for path, source in files.items():
+        found: dict[str, set[str]] = {}
+        for m in re.finditer(r"\b(?:let|var)\s+([A-Za-z_]\w*)\s*=\s*([A-Z][A-Za-z_]\w*)\s*\(", source):
+            if m.group(2) in types:
+                found.setdefault(m.group(1), set()).add(m.group(2))
+        per_file[path] = {name: names for name, names in found.items() if len(names) == 1}
+    return {path: {name: next(iter(names)) for name, names in table.items()}
+            for path, table in per_file.items()}
+
+
 def main() -> int:
     quiet = "--quiet" in sys.argv
     files: dict[Path, str] = {}
-    for path in sorted(SOURCES.rglob("*.swift")):
+    for path in sorted(p for root in SOURCES for p in root.rglob("*.swift")):
         files[path] = strip_comments_and_strings(path.read_text())
 
     types = index_types(files)
     depths = {path: depth_table(source) for path, source in files.items()}
     locals_by_file: dict[Path, set[str]] = {}
     properties = index_typed_properties(files, types, depths, locals_by_file)
+    instances = index_local_instances(files, types)
     all_members: set[str] = set()
     for members in types.values():
         all_members |= members
@@ -244,10 +264,12 @@ def main() -> int:
         for m in re.finditer(r"\b([a-z_]\w*)\s*\??\.\s*([A-Za-z_]\w*)\s*\(", source):
             receiver, method = m.group(1), m.group(2)
             type_name = properties.get(receiver)
-            if type_name is None:
-                continue
-            if receiver in locals_by_file.get(path, set()):
-                continue  # a local variable shadows the property
+            if type_name is None or receiver in locals_by_file.get(path, set()):
+                # Fall back to a local instance created in this file
+                # (`let queue = RelayQueue()`), which the tests use heavily.
+                type_name = instances.get(path, {}).get(receiver)
+                if type_name is None:
+                    continue
             checked += 1
             if method in types[type_name] or method in ALLOWED:
                 continue
@@ -261,6 +283,7 @@ def main() -> int:
 
     print(f"project types: {len(types)}")
     print(f"typed properties: {len(properties)}")
+    print(f"files with local instances: {sum(1 for v in instances.values() if v)}")
     print(f"receiver calls checked: {checked}")
     print(f"unknown symbols: {len(unknown)}")
     for entry in unknown:

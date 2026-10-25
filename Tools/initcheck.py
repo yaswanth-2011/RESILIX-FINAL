@@ -33,7 +33,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCES = ROOT / "Resilix"
+# The test target is compiled too, so it is checked with the same rules.
+SOURCES = [ROOT / "Resilix"] + ([ROOT / "ResilixTests"] if (ROOT / "ResilixTests").is_dir() else [])
 
 DECL_MODIFIERS = r"(?:(?:public|internal|private|fileprivate|open|final)\s+)*"
 
@@ -231,7 +232,7 @@ def main() -> int:
     verbose = "--verbose" in sys.argv
     declarations: dict[str, list[list[tuple[str, bool]]]] = {}
     files: dict[Path, str] = {}
-    for path in sorted(SOURCES.rglob("*.swift")):
+    for path in sorted(p for root in SOURCES for p in root.rglob("*.swift")):
         raw = path.read_text()
         clean = strip_comments_and_strings(raw)
         files[path] = clean

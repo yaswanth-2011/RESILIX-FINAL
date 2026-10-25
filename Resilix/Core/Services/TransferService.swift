@@ -337,7 +337,7 @@ final class TransferService: ObservableObject {
     // MARK: - Chunk framing
 
     /// Binary framing of a chunk: transfer id (36 bytes) + index (4 bytes).
-    static func frameChunk(transferID: String, index: Int, chunk: Data) -> Data {
+    nonisolated static func frameChunk(transferID: String, index: Int, chunk: Data) -> Data {
         var data = Data(transferID.utf8)
         let value = UInt32(index)
         data.append(UInt8((value >> 24) & 0xFF))
@@ -349,7 +349,7 @@ final class TransferService: ObservableObject {
     }
 
     /// Parses the binary framing of a chunk.
-    static func parseChunk(_ data: Data) -> (transferID: String, index: Int, chunk: Data)? {
+    nonisolated static func parseChunk(_ data: Data) -> (transferID: String, index: Int, chunk: Data)? {
         guard data.count >= 40 else { return nil }
         let idEnd = data.index(data.startIndex, offsetBy: 36)
         guard let transferID = String(data: data[data.startIndex..<idEnd], encoding: .utf8) else { return nil }

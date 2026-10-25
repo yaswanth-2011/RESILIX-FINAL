@@ -65,9 +65,12 @@ final class MeshPacketTests: XCTestCase {
     func testDuplicateSuppression() async {
         let store = DeduplicationStore(maxSize: 10)
         let id = UUID().uuidString
-        XCTAssertTrue(await store.insert(id))
-        XCTAssertTrue(await store.isDuplicate(id))
-        XCTAssertFalse(await store.insert(id))
+        let inserted = await store.insert(id)
+        let duplicate = await store.isDuplicate(id)
+        let insertedAgain = await store.insert(id)
+        XCTAssertTrue(inserted)
+        XCTAssertTrue(duplicate)
+        XCTAssertFalse(insertedAgain)
     }
 
     func testSOSPriorityOverNormal() {
@@ -76,11 +79,16 @@ final class MeshPacketTests: XCTestCase {
 
     func testQueueBoundaries() async throws {
         let queue = RelayQueue(maxLength: 2, maxBytes: 1000)
-        let packet = makePacket(payload: Data(repeating: 0, count: 100))
-        try await queue.enqueue(packet)
-        try await queue.enqueue(packet)
+        let payload = Data(repeating: 0, count: 100)
+        // Distinct packets: `makePacket` mints a new identifier every call. Sending
+        // the *same* packet twice is deduplicated by `enqueue`, which would leave
+        // the queue below its limit and make the third call succeed.
+        try await queue.enqueue(makePacket(payload: payload))
+        try await queue.enqueue(makePacket(payload: payload))
+        let count = await queue.count
+        XCTAssertEqual(count, 2)
         do {
-            try await queue.enqueue(packet)
+            try await queue.enqueue(makePacket(payload: payload))
             XCTFail("The queue must reject a third packet")
         } catch {
             XCTAssertTrue(error is ResilixError)

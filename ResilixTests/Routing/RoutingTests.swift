@@ -2,8 +2,7 @@ import XCTest
 @testable import Resilix
 
 final class RoutingTests: XCTestCase {
-    func testRouteSelectionPrefersFewerHops() async {
-        let engine = await MainActor.run { MeshRoutingEngine() }
+    func testRouteSelectionPrefersFewerHops() {
         let short = MeshRoute(destination: "C", nextHop: "B", hopCount: 2, transport: .peerToPeerWiFi, quality: .stable, freshness: Date(), failureScore: 0, hops: [])
         let long = MeshRoute(destination: "C", nextHop: "D", hopCount: 3, transport: .peerToPeerWiFi, quality: .stable, freshness: Date(), failureScore: 0, hops: [])
         XCTAssertLessThan(MeshRoutingEngine.scoreRoute(short), MeshRoutingEngine.scoreRoute(long))
@@ -26,7 +25,8 @@ final class RoutingTests: XCTestCase {
         let stale = MeshRoute(destination: "C", nextHop: "B", hopCount: 2, transport: .bluetooth, quality: .stable, freshness: Date().addingTimeInterval(-1000), failureScore: 0, hops: [])
         await table.upsert(stale)
         await table.expireStale()
-        XCTAssertNil(await table.route(to: "C"))
+        let expiredRoute = await table.route(to: "C")
+        XCTAssertNil(expiredRoute)
     }
 
     func testDedupBounded() async {
@@ -34,7 +34,8 @@ final class RoutingTests: XCTestCase {
         _ = await store.insert("1")
         _ = await store.insert("2")
         _ = await store.insert("3")
-        XCTAssertEqual(await store.count(), 2)
+        let remaining = await store.count()
+        XCTAssertEqual(remaining, 2)
     }
 
     func testRelayQueueOrderingSOSFirst() async throws {
@@ -62,7 +63,8 @@ final class RoutingTests: XCTestCase {
         let packet = makePacket()
         try await queue.enqueue(packet)
         await queue.dequeueMatching(id: packet.id)
-        XCTAssertEqual(await queue.count, 0)
+        let remaining = await queue.count
+        XCTAssertEqual(remaining, 0)
     }
 
     func testHopLimitStopsForwarding() {

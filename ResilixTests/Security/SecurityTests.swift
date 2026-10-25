@@ -41,11 +41,13 @@ final class SecurityTests: XCTestCase {
         let message = Data("sign me".utf8)
         let signature = try await manager.sign(message)
         let publicKey = try await manager.signingPublicKey()
-        XCTAssertTrue(await manager.verify(signature, for: message, publicKey: publicKey))
+        let isValid = await manager.verify(signature, for: message, publicKey: publicKey)
+        XCTAssertTrue(isValid)
 
         var tampered = message
         tampered[0] = tampered[0] ^ 0xFF
-        XCTAssertFalse(await manager.verify(signature, for: tampered, publicKey: publicKey))
+        let isValidForTampered = await manager.verify(signature, for: tampered, publicKey: publicKey)
+        XCTAssertFalse(isValidForTampered)
     }
 
     func testCanonicalBytesIgnoreTTLAndHopCount() {

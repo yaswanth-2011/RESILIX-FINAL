@@ -68,9 +68,11 @@ final class PersistenceTests: XCTestCase {
         try await controller.write(payload, to: "Media/test.bin")
         let read = try await controller.read(from: "Media/test.bin")
         XCTAssertEqual(read, payload)
-        XCTAssertTrue(await controller.fileExists(at: "Media/test.bin"))
+        let exists = await controller.fileExists(at: "Media/test.bin")
+        XCTAssertTrue(exists)
         await controller.removeFile(at: "Media/test.bin")
-        XCTAssertFalse(await controller.fileExists(at: "Media/test.bin"))
+        let existsAfterRemoval = await controller.fileExists(at: "Media/test.bin")
+        XCTAssertFalse(existsAfterRemoval)
     }
 
     func testStorageLimitRemovesOldestFiles() async throws {

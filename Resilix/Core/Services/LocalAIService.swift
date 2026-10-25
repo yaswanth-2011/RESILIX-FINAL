@@ -40,7 +40,7 @@ final class LocalAIService: ObservableObject {
     // MARK: - Catalogue
 
     /// The exact model identifiers. Nothing is substituted silently.
-    static func catalogue() -> [LocalModelDescriptor] {
+    nonisolated static func catalogue() -> [LocalModelDescriptor] {
         [
             LocalModelDescriptor(id: "gemma-4-e2b",
                                  family: .gemma,

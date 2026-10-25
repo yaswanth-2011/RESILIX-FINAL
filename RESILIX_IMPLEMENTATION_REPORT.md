@@ -139,6 +139,36 @@ deliberately broken input before being trusted:
   Local variables, `for` bindings and member names that collide across types
   are excluded to keep it free of false positives.
 
+### 0.6 Third build round — actor methods that could not suspend, and the test target
+
+The reported error was one bug repeated four times: `RelayQueue` is an actor,
+so its members are *called* with `await` from outside, which hides the fact
+that a synchronous member cannot suspend internally. `enqueue`, `dequeue`,
+`dequeueMatching` and `removeExpired` each ended in `await persist()`. They are
+now `async`, and every call site already used `try await` / `await`, so
+nothing downstream changed.
+
+Sweeping the same class of problem across the project found more:
+
+| Problem | Impact | Fix |
+|---|---|---|
+| `incrementRetry` mutated the retry count and backoff date but never persisted them | After a relaunch a failing packet retried immediately, ignoring the exponential backoff the queue had computed. | It now persists, and is `async`. |
+| 10 `await` calls sat inside `XCTAssert*` autoclosures (`XCTAssertTrue(await store.insert(id))`) | The assertion argument is a non-async autoclosure, so the whole test target failed to compile. | Each awaited value is bound to a local first. |
+| `MeshRoutingEngine.scoreRoute`, `LocalAIService.catalogue`, `TransferService.frameChunk`/`parseChunk` are static members of `@MainActor` types | They were main-actor isolated, so the non-`@MainActor` test classes could not call them synchronously — and the same limitation applied to any background caller. | All four are `nonisolated`; they are pure functions of their arguments and touch no actor state. |
+| `RoutingTests` built a `MeshRoutingEngine` through `MainActor.run` and never used it | Dead code, and it forced a needless `async` on the test. | Removed. |
+| `testQueueBoundaries` enqueued the **same** packet three times | `enqueue` de-duplicates by packet id, so the queue never reached its limit and the "third packet must be rejected" assertion could never pass. The test would have failed the first time it ran. | It now enqueues three distinct packets and asserts the count reaches the limit first. |
+
+A checker for the root cause was added: **`Tools/awaitcheck.py`** walks every
+file with a context stack (function bodies, `Task { }`, async closures, and
+SwiftUI's `.task` / `.refreshable`, which are async without saying so) and
+reports `await` outside an asynchronous context. Pointed at the pre-fix
+`RelayQueue` it reproduces all four errors at the exact reported lines
+(49, 55, 65, 72).
+
+`enumcheck.py` also gained a pass for implicit enum arguments
+(`MeshRoute(quality: .stable)`), and all four structural checkers now scan
+`ResilixTests` as well as `Resilix`, because the test target is compiled too.
+
 ---
 
 ## 1. What was implemented
@@ -375,5 +405,5 @@ All 64 pass the offline syntax gate. **None has been run** — that requires Xco
 ## 14. Repository state
 
 - Branch `arena/2eab602c-resilix`, pushed to `origin`. `reslix_post_audit` commit contains the entire implementation, the tooling under `Tools/`, and the final localisation sweep (chunk19 + chunk20, raw-value label patch, String-ternary fixes).
-- Verification at time of writing: `swiftcheck.py` 114/114 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1143 qualified references, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 166 receiver calls, 0 unknown symbols · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Verification at time of writing: `swiftcheck.py` 114/114 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1179 qualified references + implicit enum arguments, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 249 receiver calls, 0 unknown symbols · `awaitcheck.py` 0 `await` outside an async context · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
 - Download in Xcode: clone the branch and open `Resilix.xcodeproj`; the project carries **no SwiftPM dependencies**, so it resolves and builds with the stock iOS SDK. Signing is `CODE_SIGN_STYLE = Automatic` with no `DEVELOPMENT_TEAM`, so pick your own team in *Signing & Capabilities* before running on a device.
