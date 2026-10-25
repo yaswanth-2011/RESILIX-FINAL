@@ -187,7 +187,7 @@ struct PaywallView: View {
                 Text(plan.subtitle)
                     .font(ResilixTheme.font(13, .regular))
                     .foregroundStyle(Color.white.opacity(0.5))
-                HStack(alignment: .firstBaseline, spacing: 4) {
+                HStack(alignment: .center, spacing: 4) {
                     Text(plan.price)
                         .font(ResilixTheme.font(34, .bold))
                         .foregroundStyle(.white)
