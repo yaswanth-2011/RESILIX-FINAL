@@ -208,12 +208,17 @@ final class AssistViewModel: ObservableObject {
                 // base answers (this is a local retrieval, not a model).
                 let result = await engine.respond(to: trimmed, knowledge: knowledge)
                 isTyping = false
-                messages.append(ChatMessage(role: .assistant, text: result.text, source: result.source))
+                appendAssistant(text: result.text, source: result.source)
             }
         }
     }
 
     /// Streams the answer of the selected on-device model.
+    ///
+    /// The model output is de-duplicated before it is shown: consecutive
+    /// repeated sentences (for example \u201cHello. How can I help\u2026\u201d x N) are
+    /// collapsed to a single occurrence, so the assistant always gives one
+    /// clear, correct answer instead of looping.
     private func answerWithModel(_ service: LocalAIService, prompt: String) async {
         var answer = ""
         var index: Int?
@@ -221,10 +226,10 @@ final class AssistViewModel: ObservableObject {
             for try await piece in service.ask(prompt: prompt) {
                 answer += piece
                 if let index {
-                    messages[index].text = answer
+                    messages[index].text = deduplicateResponse(answer)
                 } else {
                     messages.append(ChatMessage(role: .assistant,
-                                               text: answer,
+                                               text: deduplicateResponse(answer),
                                                source: service.activeModel?.displayName))
                     index = messages.count - 1
                 }
@@ -240,6 +245,33 @@ final class AssistViewModel: ObservableObject {
             }
         }
         isTyping = false
+    }
+
+    /// Appends an assistant message, collapsing any consecutive repeated
+    /// sentences so a looping model shows one clear answer instead of the
+    /// same phrase over and over.
+    private func appendAssistant(text: String, source: String?) {
+        let cleaned = deduplicateResponse(text)
+        // Never append two identical assistant messages in a row.
+        if messages.last?.text == cleaned, messages.last?.role == .assistant {
+            return
+        }
+        messages.append(ChatMessage(role: .assistant, text: cleaned, source: source))
+    }
+
+    /// Collapses consecutive repeated sentences/phrases. A model that loops
+    /// (for example \u201cHello. How can I help with your Resilix app?\u201d x N) is
+    /// shown once instead of many times.
+    private func deduplicateResponse(_ text: String) -> String {
+        let parts = text.components(separatedBy: ". ")
+        var result: [String] = []
+        for part in parts {
+            let trimmed = part.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { continue }
+            if result.last == trimmed { continue }
+            result.append(trimmed)
+        }
+        return result.joined(separator: ". ")
     }
 
     func sendQuickAction(_ action: QuickAction) {

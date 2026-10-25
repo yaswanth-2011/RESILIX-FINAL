@@ -29,9 +29,34 @@ final class MapPackService: ObservableObject {
 
     func load() async {
         packs = await persistence.loadMapPacks()
+        // Preinstall a starter offline map pack so the map works offline
+        // from the very first launch — no import or download required.
+        if packs.isEmpty,
+           let bytes = DefaultMapPackCreator.createStarterPackBytes() {
+            do {
+                try await importStarterPack(bytes: bytes)
+            } catch {
+                lastErrorMessage = error.localizedDescription
+            }
+        }
         if let first = packs.first, activePackID == nil {
             activePackID = first.id
         }
+    }
+
+    /// Imports the preinstalled starter MBTiles pack into the maps directory.
+    private func importStarterPack(bytes: Data) async throws {
+        let id = UUID().uuidString
+        let relativePath = "\(ResilixConstants.mapDirectoryName)/\(id).mbtiles"
+        try await persistence.write(bytes, to: relativePath)
+
+        let descriptor = try await describePack(id: id,
+                                                relativePath: relativePath,
+                                                name: L("map.starter.name"),
+                                                data: bytes)
+        packs.append(descriptor)
+        activePackID = id
+        try? await persistence.saveMapPacks(packs)
     }
 
     var activePack: MapPackDescriptor? {

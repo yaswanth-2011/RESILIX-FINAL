@@ -42810,6 +42810,77 @@
         }
       }
     },
+    "map.starter.name": {
+      "extractionState": "stale",
+      "localizations": {
+        "bn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "স্র্রয়ाजु"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starter Map"
+          }
+        },
+        "gu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "આਯೕ્ોાઓ"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "सर्वाटम"
+          }
+        },
+        "kn": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ಎಲ್ಲಾયानु"
+          }
+        },
+        "ml": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "സിയാഗ്യാനाजु"
+          }
+        },
+        "mr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "सर्वाटम"
+          }
+        },
+        "pa": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ਸਰ्पाटम"
+          }
+        },
+        "ta": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "அன்பக்கற்றுர்"
+          }
+        },
+        "te": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "అనाटम"
+          }
+        },
+        "ur": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مُسنومتیرینغنکشک"
+          }
+        }
+      }
+    },
     "map.filter.routes": {
       "extractionState": "manual",
       "localizations": {
@@ -50476,6 +50547,138 @@
           "stringUnit": {
             "state": "translated",
             "value": "• 2 ہاپ"
+          }
+        }
+      }
+    },
+    "assist.install.title": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install local models"
+          }
+        }
+      }
+    },
+    "assist.install.gemma.title": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemma 4 E2B"
+          }
+        }
+      }
+    },
+    "assist.install.gemma.sub": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2.6 B parameter on-device model (google/gemma-4-E2B)"
+          }
+        }
+      }
+    },
+    "assist.install.gemma.url": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://huggingface.co/google/gemma-4-E2B"
+          }
+        }
+      }
+    },
+    "assist.install.qwen.title": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qwen3 0.6B"
+          }
+        }
+      }
+    },
+    "assist.install.qwen.sub": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0.6 B parameter on-device model (Qwen/Qwen3-0.6B)"
+          }
+        }
+      }
+    },
+    "assist.install.qwen.url": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://huggingface.co/Qwen/Qwen3-0.6B"
+          }
+        }
+      }
+    },
+    "assist.install.runtime.title": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LiteRT-LM runtime"
+          }
+        }
+      }
+    },
+    "assist.install.runtime.sub": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Required to run Gemma and Qwen on-device"
+          }
+        }
+      }
+    },
+    "assist.install.runtime.url": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://github.com/google-ai-edge/litert-lm"
+          }
+        }
+      }
+    },
+    "assist.install.note": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download the .litertlm model file, then tap “Install file” on the model card and select it. Models run entirely offline — nothing is uploaded."
+          }
+        }
+      }
+    },
+    "assist.install.get": {
+      "extractionState": "stale",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get"
           }
         }
       }

@@ -32,6 +32,10 @@ struct AIModelManagerView: View {
                             .font(ResilixTheme.font(13, .regular))
                             .foregroundStyle(ResilixTheme.textSecondary)
 
+                        // How-to-install guidance so the bundled models are
+                        // visible and actionable instead of hidden.
+                        installGuideCard
+
                         ForEach(service.selectableModes) { model in
                             modelCard(model)
                         }
@@ -167,6 +171,77 @@ struct AIModelManagerView: View {
             RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusLarge, style: .continuous)
                 .stroke(ResilixTheme.separator.opacity(0.6), lineWidth: 0.6)
         )
+    }
+
+    // MARK: - Install guide
+
+    /// Shows where to get Gemma/Qwen model files and how to enable them.
+    private var installGuideCard: some View {
+        VStack(alignment: .leading, spacing: ResilixTheme.space10) {
+            Text(L("assist.install.title"))
+                .font(ResilixTheme.font(16, .semibold))
+                .foregroundStyle(ResilixTheme.textPrimary)
+
+            VStack(alignment: .leading, spacing: ResilixTheme.space6) {
+                installGuideRow(
+                    icon: "arrow.down.circle",
+                    title: L("assist.install.gemma.title"),
+                    subtitle: L("assist.install.gemma.sub"),
+                    url: L("assist.install.gemma.url")
+                )
+                Divider().background(ResilixTheme.separator)
+                installGuideRow(
+                    icon: "arrow.down.circle",
+                    title: L("assist.install.qwen.title"),
+                    subtitle: L("assist.install.qwen.sub"),
+                    url: L("assist.install.qwen.url")
+                )
+                Divider().background(ResilixTheme.separator)
+                installGuideRow(
+                    icon: "chip.fill",
+                    title: L("assist.install.runtime.title"),
+                    subtitle: L("assist.install.runtime.sub"),
+                    url: L("assist.install.runtime.url")
+                )
+            }
+
+            Text(L("assist.install.note"))
+                .font(ResilixTheme.font(11, .regular))
+                .foregroundStyle(ResilixTheme.textTertiary)
+        }
+        .padding(ResilixTheme.space16)
+        .background(ResilixTheme.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusLarge, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: ResilixTheme.cornerRadiusLarge, style: .continuous)
+                .stroke(ResilixTheme.separator.opacity(0.6), lineWidth: 0.6)
+        )
+    }
+
+    private func installGuideRow(icon: String, title: String, subtitle: String, url: String) -> some View {
+        HStack(spacing: ResilixTheme.space10) {
+            Image(systemName: icon)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(ResilixTheme.brandCyan)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(ResilixTheme.font(13, .semibold))
+                    .foregroundStyle(ResilixTheme.textPrimary)
+                Text(subtitle)
+                    .font(ResilixTheme.font(11, .regular))
+                    .foregroundStyle(ResilixTheme.textSecondary)
+            }
+            Spacer()
+            Link(destination: URL(string: url)!) {
+                HStack(spacing: 4) {
+                    Text(L("assist.install.get")).font(ResilixTheme.font(11, .semibold))
+                    Image(systemName: "arrow.up.right.square").font(.system(size: 11))
+                }
+                .foregroundStyle(ResilixTheme.brandCyan)
+            }
+        }
+        .padding(.vertical, 2)
     }
 
     private func stateBadge(for model: LocalModelDescriptor) -> some View {
