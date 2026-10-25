@@ -1,6 +1,6 @@
 # Resilix — Implementation Report
 
-**Repository:** `yaswanth-2011/Resilix` · **Branch:** `arena/2eab602c-resilix` · **Base commit:** `8c4295a` · **HEAD:** `9ab2ad2`
+**Repository:** `yaswanth-2011/Resilix` · **Branch:** `arena/2eab602c-resilix` · **Base commit:** `8c4295a` · **HEAD:** `36dc1a7`
 **Target:** iOS 17.0+ · Swift 5 · `Resilix.xcodeproj` (app `com.resilix.app`) · schemes `Resilix`, `ResilixTests`
 **Scale:** 105 app sources + 9 test sources registered in the Xcode project, ~16,400 lines of Swift.
 
@@ -18,6 +18,7 @@
 | Xcode project integrity | **PASS** — `Tools/sync_xcodeproj.py` + custom validator: brace balance 0, **0 dangling object references**, 105 app + 9 test files all present on disk and in their Sources phases, **no file on disk left out of a target**. |
 | Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **709 keys × 11 languages = 7,799 translated units**, every key fully translated, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches, 0 orphan keys** (`Tools/l10n/audit_keys.py`). |
 | Localised-screen literal sweep | **PASS** — `Tools/l10n/audit_uiliterals.py`: every SwiftUI `Text/Label/Button/navigationTitle/NavigationLink/…` literal resolves to a catalog key with 11 translations; **0 problems** (only empty/symbol-only literals remain, which carry no translatable text). |
+| Static semantic checks (8 tools) | **PASS** — `swiftcheck` 115/115 parse · `initcheck` 30 call sites / 0 mismatches · `enumcheck` 0 unknown members · `semanticcheck` 0 non-throwing `try`, 0 `lock` in async · `memberresolve` 256 receiver calls / 0 unknown symbols · `awaitcheck` 0 misplaced `await` · `capturecheck` 0 captured vars mutated in closures · `viewcheck` 0 dot-less modifiers, 0 weak captures in value types. These are source-level heuristics, not a compiler: a green row means the five reported error classes are absent, not that the target compiles. |
 | Design-frozen check | **PASS** — the theme file diff contains **no numeric change**: all 32 colour tokens have identical RGB values before/after, all scalar spacing tokens and the `font()` helper are byte-identical. The only theme edit is the helper's internal shape (`dynamic` → `adaptive` with `RGB`/`RGBA` structs) and it is behaviour-identical. |
 | Empty actions / placeholders | **PASS** — 0 `TODO`/`FIXME`/`fatalError`; the only empty closures are SwiftUI `role: .cancel` buttons (auto-dismiss), protocol `init(){}` stubs, and the `MockMeshTransport`/demo-only no-ops. |
 
