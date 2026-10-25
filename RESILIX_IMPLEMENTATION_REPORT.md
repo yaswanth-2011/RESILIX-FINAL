@@ -1,6 +1,6 @@
 # Resilix — Implementation Report
 
-**Repository:** `yaswanth-2011/Resilix` · **Branch:** `arena/2eab602c-resilix` · **Base commit:** `8c4295a` · **HEAD:** `36dc1a7`
+**Repository:** `yaswanth-2011/Resilix` · **Branch:** `arena/2eab602c-resilix` · **Base commit:** `8c4295a` · **HEAD:** `2015fc0`
 **Target:** iOS 17.0+ · Swift 5 · `Resilix.xcodeproj` (app `com.resilix.app`) · schemes `Resilix`, `ResilixTests`
 **Scale:** 105 app sources + 9 test sources registered in the Xcode project, ~16,400 lines of Swift.
 
@@ -18,7 +18,7 @@
 | Xcode project integrity | **PASS** — `Tools/sync_xcodeproj.py` + custom validator: brace balance 0, **0 dangling object references**, 105 app + 9 test files all present on disk and in their Sources phases, **no file on disk left out of a target**. |
 | Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **709 keys × 11 languages = 7,799 translated units**, every key fully translated, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches, 0 orphan keys** (`Tools/l10n/audit_keys.py`). |
 | Localised-screen literal sweep | **PASS** — `Tools/l10n/audit_uiliterals.py`: every SwiftUI `Text/Label/Button/navigationTitle/NavigationLink/…` literal resolves to a catalog key with 11 translations; **0 problems** (only empty/symbol-only literals remain, which carry no translatable text). |
-| Static semantic checks (8 tools) | **PASS** — `swiftcheck` 115/115 parse · `initcheck` 30 call sites / 0 mismatches · `enumcheck` 0 unknown members · `semanticcheck` 0 non-throwing `try`, 0 `lock` in async · `memberresolve` 256 receiver calls / 0 unknown symbols · `awaitcheck` 0 misplaced `await` · `capturecheck` 0 captured vars mutated in closures · `viewcheck` 0 dot-less modifiers, 0 weak captures in value types. These are source-level heuristics, not a compiler: a green row means the five reported error classes are absent, not that the target compiles. |
+| Static semantic checks (9 tools) | **PASS** — `swiftcheck` 115/115 parse · `initcheck` 30 call sites / 0 mismatches · `enumcheck` 0 unknown members · `semanticcheck` 0 non-throwing `try`, 0 `lock` in async · `memberresolve` 256 receiver calls / 0 unknown symbols · `awaitcheck` 0 misplaced `await` · `capturecheck` 0 captured vars mutated in closures · `viewcheck` 0 dot-less modifiers, 0 weak captures in value types · `scopecheck` 320 types / 546 called identifiers, 0 unresolved. These are source-level heuristics, not a compiler: a green row means the five reported error classes are absent, not that the target compiles. |
 | Design-frozen check | **PASS** — the theme file diff contains **no numeric change**: all 32 colour tokens have identical RGB values before/after, all scalar spacing tokens and the `font()` helper are byte-identical. The only theme edit is the helper's internal shape (`dynamic` → `adaptive` with `RGB`/`RGBA` structs) and it is behaviour-identical. |
 | Empty actions / placeholders | **PASS** — 0 `TODO`/`FIXME`/`fatalError`; the only empty closures are SwiftUI `role: .cancel` buttons (auto-dismiss), protocol `init(){}` stubs, and the `MockMeshTransport`/demo-only no-ops. |
 
@@ -224,6 +224,47 @@ call at statement position with no leading dot, and (b) `[weak self]` /
 `[unowned self]` declared inside a `struct` or `enum`. Validated against a
 synthetic file: it flags both bugs and leaves a `[weak self]` inside a class
 alone.
+
+### 0.9 Sixth build round — a view lost in a refactor, and the helpers it owned
+
+Four diagnostics, all in `NearbyView.swift`. They were **one cause**: when that
+file was rewritten in `9ab2ad2`, three declarations were dropped while their
+call sites and two of their helpers survived.
+
+| Reported issue | Cause | Fix |
+|---|---|---|
+| `Extraneous argument label 'safe:' in subscript` | The bounds-checked `Array` subscript lived in the old file and was not carried over. | `private extension Array { subscript(safe:) }` restored. |
+| `Cannot use optional chaining on non-optional value of type 'NearbyDevice'` | Same missing subscript: without it the subscript resolved to `Array`'s own and returned a non-optional. | Fixed by the same restoration. |
+| `Cannot find 'NearbyDeviceCard' in scope` | The card view was deleted in the rewrite; its initialiser call remained. | `NearbyDeviceCard` restored from the initial commit (`8c4295a`), with the original layout, sizes, gradients and glass capsules. |
+| `Cannot find 'filledCount' in scope` | `barHeight`/`barColor` had been moved into `NearbyView` but their owner, `SignalBarsView`, was dropped along with `filledCount`. | `SignalBarsView` restored and the two stray helpers removed from `NearbyView`. |
+
+Restoring the card exposed three places where the original was not usable as-is:
+
+* **The Message button had an empty action** ("future: navigate to
+  MessageThreadView"). It now pushes the real thread for that peer via
+  `navigationDestination(item:)`. The seed message is never rendered — the
+  thread shows the persisted history only — and it carries the peer alias so
+  the header shows a name.
+* **Threads are keyed by node id**, which the header printed verbatim. The
+  header now resolves the alias (seed → live mesh → stored key).
+* **Incoming direct messages kept the sender's key** (the receiver's own id),
+  so a reply would have addressed this device. `MessageService.handleIncoming`
+  re-keys them by `sourceNodeID`, giving both sides one thread per conversation.
+* `devices[safe: idx]?.isRelay ?? (idx == 2)` invented a relay for the third
+  pin. It is now `?? false`.
+
+Localisation of the restored card: `"Message"`, `"Signal"` and the hop labels
+(`"Direct"`, `"1 Hop"`, `"2 Hops"`) all use existing catalog keys; the
+percentage is `Text(verbatim:)`, so no new keys were needed and the catalog
+stays at 709 × 11.
+
+`Tools/scopecheck.py` was added for this class: it reports a referenced type
+that is declared nowhere (this is exactly `NearbyDeviceCard`) and a bare
+identifier called from code that is declared nowhere. Validated in both
+directions on a synthetic file. The same sweep then audited the whole tree:
+**320 referenced types and 546 called identifiers, 0 unresolved** once the
+framework allowlist is accounted for. Reading-only identifiers (the
+`filledCount` shape) are still outside its reach — stated in the tool itself.
 
 ---
 
@@ -461,6 +502,6 @@ All 64 pass the offline syntax gate. **None has been run** — that requires Xco
 ## 14. Repository state
 
 - Branch `arena/2eab602c-resilix`, pushed to `origin`. `reslix_post_audit` commit contains the entire implementation, the tooling under `Tools/`, and the final localisation sweep (chunk19 + chunk20, raw-value label patch, String-ternary fixes).
-- Verification at time of writing (tree at the round-5 commit): `swiftcheck.py` 115/115 OK · `initcheck.py` 30 call sites, 0 mismatches · `enumcheck.py` 1178 qualified references + implicit enum arguments, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 256 receiver calls, 0 unknown symbols · `awaitcheck.py` 0 `await` outside an async context · `capturecheck.py` 0 captured mutable vars in closures · `viewcheck.py` 0 dot-less modifiers, 0 weak captures in value types · `audit_keys.py` 709/709 keys, 0 missing / 0 untranslated / 0 placeholder mismatches / 0 orphans · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Verification at time of writing (tree at the round-6 commit): `swiftcheck.py` 115/115 OK · `initcheck.py` 30 call sites, 0 mismatches · `enumcheck.py` 1178 qualified references + implicit enum arguments, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 256 receiver calls, 0 unknown symbols · `awaitcheck.py` 0 `await` outside an async context · `capturecheck.py` 0 captured mutable vars in closures · `viewcheck.py` 0 dot-less modifiers, 0 weak captures in value types · `scopecheck.py` 320 types / 546 called identifiers, 0 unresolved · `audit_keys.py` 709/709 keys, 0 missing / 0 untranslated / 0 placeholder mismatches / 0 orphans · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
 - Round 5 changed 20 Swift files plus this report, all of it inside `@ViewBuilder` bodies and one timer closure: 58 leading dots inserted, one stray `.onChange()` deleted, one capture list removed, and one new tool (`Tools/viewcheck.py`). No view hierarchy, layout, colour, font, spacing or animation was touched.
 - Download in Xcode: clone the branch and open `Resilix.xcodeproj`; the project carries **no SwiftPM dependencies**, so it resolves and builds with the stock iOS SDK. Signing is `CODE_SIGN_STYLE = Automatic` with no `DEVELOPMENT_TEAM`, so pick your own team in *Signing & Capabilities* before running on a device.

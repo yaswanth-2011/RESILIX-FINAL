@@ -50,6 +50,21 @@ struct MessageThreadView: View {
         }
     }
 
+    /// Name shown in the header.
+    ///
+    /// Threads are keyed by node id, which is not human-readable. The seed
+    /// message carries the alias when a chat is opened from the Nearby list;
+    /// otherwise the peer is looked up in the live mesh before falling back to
+    /// the stored key (which is already a name for demo threads).
+    private var threadTitle: String {
+        if let alias = message.senderAlias, !alias.isEmpty { return alias }
+        if let alias = app.meshController.peers.first(where: { $0.id == message.threadID })?.alias,
+           !alias.isEmpty {
+            return alias
+        }
+        return message.threadID
+    }
+
     // MARK: Thread menu (⋯)
     private var threadMenu: some View {
         Menu {
@@ -117,7 +132,7 @@ struct MessageThreadView: View {
                        color: AvatarView.color(for: message.threadID))
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(message.threadID)
+                Text(threadTitle)
                     .font(ResilixTheme.font(17, .bold))
                     .foregroundStyle(ResilixTheme.textPrimary)
                     .lineLimit(1)

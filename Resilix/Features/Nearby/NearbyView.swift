@@ -65,6 +65,8 @@ struct NearbyView: View {
     )
     private let userCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
     @State private var deviceCoordinates: [CLLocationCoordinate2D] = []
+    /// Node id of the peer whose chat is being opened from a card.
+    @State private var chatPeerID: String?
 
     enum ScanState { case idle, scanning, complete }
 
@@ -115,6 +117,9 @@ struct NearbyView: View {
                 }
                 .animation(.spring(response: 0.45, dampingFraction: 0.88), value: scanState)
                 .animation(.spring(response: 0.4, dampingFraction: 0.9), value: devices.count)
+                .navigationDestination(item: $chatPeerID) { peerID in
+                    MessageThreadView(message: threadSeed(for: peerID))
+                }
             }
             .background(Color.black)
             .navigationBarHidden(true)
@@ -235,7 +240,7 @@ struct NearbyView: View {
                 // Other devices — Find My style phone/device images
                 ForEach(Array(deviceCoordinates.enumerated()), id: \.offset) { idx, coord in
                     Annotation("", coordinate: coord) {
-                        let isRelay = devices[safe: idx]?.isRelay ?? (idx == 2)
+                        let isRelay = devices[safe: idx]?.isRelay ?? false
                         Image(systemName: devicePinImage(isRelay: isRelay, idx: idx))
                             .font(.system(size: 28))
                             .foregroundStyle(.white, ResilixTheme.brandCyan)
@@ -292,7 +297,7 @@ struct NearbyView: View {
         VStack(spacing: 12) {
             ForEach(Array(devices.enumerated()), id: \.element.id) { idx, device in
                 NearbyDeviceCard(device: device) {
-                    // Open chat — future: navigate to MessageThreadView
+                    chatPeerID = device.id
                 }
                 .transition(.asymmetric(
                     insertion: .move(edge: .bottom).combined(with: .opacity),
@@ -414,6 +419,149 @@ struct NearbyView: View {
                                 signalPercent: app.meshController.signalStrength(for: node.id) ?? 0)
         }
     }
+
+    /// Seed for `MessageThreadView`.
+    ///
+    /// The thread is keyed by the peer's node id, so replies are addressed to
+    /// that node and its stored history (if any) shows up. The seed is never
+    /// displayed: the thread renders the persisted messages only.
+    private func threadSeed(for peerID: String) -> MeshMessage {
+        MeshMessage(id: "nearby-\(peerID)",
+                    packetID: nil,
+                    threadID: peerID,
+                    sourceNodeID: peerID,
+                    destinationNodeID: peerID,
+                    text: "",
+                    createdAt: Date(),
+                    deliveryState: .queued,
+                    expirySeconds: nil,
+                    lastRoute: nil,
+                    priority: .normal,
+                    senderAlias: devices.first { $0.id == peerID }?.name,
+                    isOutgoing: true)
+    }
+}
+
+// MARK: - Safe Array (bounds-checked subscript used by the map pins)
+private extension Array {
+    subscript(safe index: Int) -> Element? { indices.contains(index) ? self[index] : nil }
+}
+
+// MARK: - Device Card (liquid glass, ResilixTheme fonts/colors — same as Chats)
+private struct NearbyDeviceCard: View {
+    let device: NearbyDevice
+    let action: () -> Void
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 12) {
+            // Avatar — vibrant unique gradient per profile (red/orange/blue/purple/sea green)
+            ZStack {
+                Circle()
+                    .fill(device.accentGradient)
+                    .frame(width: 52, height: 52)
+                    .shadow(color: AvatarView.color(for: device.name).opacity(0.35), radius: 6, y: 2)
+                if device.isRelay {
+                    Image(systemName: "server.rack")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(.white)
+                } else {
+                    Image(systemName: "person.2.fill")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(.white.opacity(0.95))
+                }
+            }
+            .overlay(
+                Circle()
+                    .strokeBorder(Color.white.opacity(0.14), lineWidth: 0.8)
+            )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(device.name)
+                    .font(ResilixTheme.font(16, .semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+
+                HStack(spacing: 6) {
+                    HStack(spacing: 3) {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundStyle(Color.white.opacity(0.4))
+                        Text(device.distance)
+                            .font(ResilixTheme.font(13, .medium))
+                            .foregroundStyle(Color.white.opacity(0.55))
+                    }
+
+                    Text(L(device.hopType.rawValue))
+                        .font(ResilixTheme.font(11, .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(device.hopType.badgeColor)
+                        .clipShape(Capsule())
+                }
+
+                Text(verbatim: "\(device.signalPercent)%")
+                    .font(ResilixTheme.font(12, .regular))
+                    .foregroundStyle(Color.white.opacity(0.38))
+            }
+
+            Spacer(minLength: 6)
+
+            // 4-bar signal — properly bottom-aligned, vertically centered in card
+            SignalBarsView(percent: device.signalPercent)
+
+            // Message button — nearby low-opacity liquid glass capsule
+            Button(action: action) {
+                Text(L("Message"))
+                    .font(ResilixTheme.font(14, .semibold))
+                    .foregroundStyle(ResilixTheme.textOnAccent)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 9)
+                    .background(
+                        LinearGradient(
+                            colors: [ResilixTheme.brandCyan, ResilixTheme.brandTeal],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(Capsule())
+                    .nearbyGlassCapsule(interactive: true)
+                    .shadow(color: ResilixTheme.cyanGlowStrong, radius: 6, y: 2)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.white.opacity(0.015))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.white.opacity(0.03), lineWidth: 0.7)
+                )
+        )
+        .nearbyGlassRounded(cornerRadius: 18, interactive: false)
+    }
+}
+
+// MARK: - Signal Bars (always 4 vertical bars, bottom-aligned, middle of card)
+private struct SignalBarsView: View {
+    let percent: Int
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 2.5) {
+            ForEach(0..<4, id: \.self) { i in
+                RoundedRectangle(cornerRadius: 1.5, style: .continuous)
+                    .fill(barColor(for: i))
+                    .frame(width: 3.5, height: barHeight(for: i))
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(L("Signal")))
+        .accessibilityValue(Text(verbatim: "\(percent)%"))
+    }
+
+    private var filledCount: Int { min(4, max(0, Int(ceil(Double(percent) / 25.0)))) }
 
     private func barHeight(for index: Int) -> CGFloat {
         let h: [CGFloat] = [5, 8, 11, 14]

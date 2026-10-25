@@ -152,10 +152,19 @@ final class MessageService: ObservableObject {
         // Ignore our own echo.
         guard message.sourceNodeID != meshController.localNodeID else { return }
 
-        if let existingIndex = messages.firstIndex(where: { $0.id == message.id }) {
-            messages[existingIndex] = message
+        // The sender keyed the thread by *our* id (it is the destination from
+        // its point of view). Re-key it by the sender so that both sides end up
+        // with one thread per conversation, addressed to the other party.
+        var incoming = message
+        if incoming.destinationNodeID == meshController.localNodeID,
+           !incoming.sourceNodeID.isEmpty {
+            incoming.threadID = incoming.sourceNodeID
+        }
+
+        if let existingIndex = messages.firstIndex(where: { $0.id == incoming.id }) {
+            messages[existingIndex] = incoming
         } else {
-            messages.append(message)
+            messages.append(incoming)
         }
         await persist()
     }
