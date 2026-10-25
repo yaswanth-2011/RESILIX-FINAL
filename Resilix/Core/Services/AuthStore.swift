@@ -25,7 +25,7 @@ enum AuthStore {
     /// Registers a new account. Returns false if the username is taken.
     @discardableResult
     static func register(username: String, password: String) -> Bool {
-        let users = loadUsers()
+        var users = loadUsers()
         guard !users.contains(where: { $0.username.lowercased() == username.lowercased() }) else {
             return false
         }

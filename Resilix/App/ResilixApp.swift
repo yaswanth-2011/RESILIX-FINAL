@@ -63,6 +63,12 @@ struct WelcomeFlowView: View {
 
     var body: some View {
         WelcomeView(showLogin: $showLogin, showCreate: $showCreate, isGuest: $isGuest)
+            .onAppear {
+                // Restore session from AuthStore if the user is signed in.
+                if AuthStore.currentUsername() != nil {
+                    isAuthenticated = true
+                }
+            }
             .onChange(of: isGuest) { _, newValue in if newValue { completeAuth() } }
             .onChange(of: showLogin) { _, newValue in if newValue { completeAuth() } }
             .onChange(of: showCreate) { _, newValue in if newValue { completeAuth() } }
@@ -140,10 +146,6 @@ class ResilixAppModel: ObservableObject {
     private var childChangeObservers: [AnyCancellable] = []
 
     init() {
-        // Restore session from AuthStore if the user is signed in.
-        if AuthStore.currentUsername() != nil {
-            isAuthenticated = true
-        }
         Task { @MainActor in
             await bootstrap()
         }
