@@ -128,8 +128,18 @@ struct SurvivalMapView: View {
     // Live 2-finger gesture state (drag adjusts pitch, pinch adjusts distance)
     @GestureState private var gesturePitchDelta: Double = 0
     @GestureState private var gestureDistanceScale: CGFloat = 1
+    /// `true` once the camera has been centred on the device's own position.
+    @State private var didCenterOnUser = false
 
-    private let userCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
+    /// Centre used before the first GPS fix (and on the simulator, which has none).
+    private static let fallbackCoordinate = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
+
+    /// The device's real position. Falls back to `fallbackCoordinate` only
+    /// until the first fix arrives, so a marker is never placed at a made-up
+    /// location once the phone knows where it is.
+    private var userCoordinate: CLLocationCoordinate2D {
+        app.locationService.coordinate ?? Self.fallbackCoordinate
+    }
 
     enum MapFilter: String, CaseIterable, Identifiable {
         case all = "All"
@@ -217,7 +227,16 @@ struct SurvivalMapView: View {
                 // 2-finger gesture: drag up/down to adjust pitch (3D-ness),
                 // pinch to zoom in/out (distance).
                 .gesture(threeDGesture)
-                .onAppear { apply3DCameraIfNeeded() }
+                .onAppear {
+                    apply3DCameraIfNeeded()
+                    didCenterOnUser = app.locationService.coordinate != nil
+                }
+                .onChange(of: app.locationService.coordinate?.latitude) { _, _ in
+                    // Recentre once, when the first real fix arrives.
+                    guard !didCenterOnUser, app.locationService.coordinate != nil else { return }
+                    didCenterOnUser = true
+                    apply3DCameraIfNeeded()
+                }
                 .onChange(of: styleOption) { _, _ in apply3DCameraIfNeeded() }
                 .onChange(of: threeDMode) { _, _ in apply3DCameraIfNeeded() }
                 .onChange(of: pitch3D) { _, _ in apply3DCameraIfNeeded() }
@@ -533,16 +552,30 @@ struct SurvivalMapView: View {
     }
 
     // MARK: - Data
+    /// Real markers only.
+    ///
+    /// * mesh peers that have shared a position (they only do so when the user
+    ///   enabled location sharing on both devices), and
+    /// * resources that were actually recorded on this device or received from
+    ///   another node.
+    ///
+    /// A node without coordinates is not drawn, and nothing is generated to
+    /// make the map look busier than the radio really is.
     private var peers: [MapPeer] {
-        let base = userCoordinate
-        return [
-            MapPeer(id: "m1", name: "Sarah K.",  kind: .direct,  coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0018, longitude: base.longitude - 0.0014)),
-            MapPeer(id: "m2", name: "Marcus D.", kind: .direct,  coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0009, longitude: base.longitude + 0.0021)),
-            MapPeer(id: "m3", name: "ResBot-α",  kind: .relay,   coordinate: CLLocationCoordinate2D(latitude: base.latitude + 0.0024, longitude: base.longitude + 0.0010)),
-            MapPeer(id: "m4", name: "James R.",  kind: .relay,   coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0015, longitude: base.longitude + 0.0022)),
-            MapPeer(id: "m5", name: L("Shelter 1"), kind: .shelter, coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0022, longitude: base.longitude - 0.0010)),
-            MapPeer(id: "m6", name: L("Shelter 2"), kind: .shelter, coordinate: CLLocationCoordinate2D(latitude: base.latitude - 0.0010, longitude: base.longitude - 0.0023)),
-        ]
+        let meshPeers: [MapPeer] = app.meshController.peers.compactMap { node in
+            guard let latitude = node.latitude, let longitude = node.longitude else { return nil }
+            return MapPeer(id: node.id,
+                           name: node.displayName ?? node.alias,
+                           kind: app.meshController.isConnected(to: node.id) ? .direct : .relay,
+                           coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude))
+        }
+        let resourceMarkers: [MapPeer] = app.resourceService.resources.map { resource in
+            MapPeer(id: "resource-\(resource.id)",
+                    name: resource.title,
+                    kind: .shelter,
+                    coordinate: resource.coordinate)
+        }
+        return meshPeers + resourceMarkers
     }
 
     private var visiblePeers: [MapPeer] {

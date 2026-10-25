@@ -16,7 +16,7 @@
 | Physical device run (2–3 iPhones, BLE + P2P Wi-Fi, real relay) | **NOT PERFORMED** — no devices. |
 | Offline syntax validation | **PASS** — `Tools/swiftcheck.py` (tree-sitter-swift 0.7.4): **115/115 files parse with 0 errors**. |
 | Xcode project integrity | **PASS** — `Tools/sync_xcodeproj.py` + custom validator: brace balance 0, **0 dangling object references**, 105 app + 9 test files all present on disk and in their Sources phases, **no file on disk left out of a target**. |
-| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **709 keys × 11 languages = 7,799 translated units**, every key fully translated, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches, 0 orphan keys** (`Tools/l10n/audit_keys.py`). |
+| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **707 keys × 11 languages = 7,777 translated units**, every key fully translated, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches, 0 orphan keys** (`Tools/l10n/audit_keys.py`). |
 | Localised-screen literal sweep | **PASS** — `Tools/l10n/audit_uiliterals.py`: every SwiftUI `Text/Label/Button/navigationTitle/NavigationLink/…` literal resolves to a catalog key with 11 translations; **0 problems** (only empty/symbol-only literals remain, which carry no translatable text). |
 | Design-frozen check | **PASS** — the theme file diff contains **no numeric change**: all 32 colour tokens have identical RGB values before/after, all scalar spacing tokens and the `font()` helper are byte-identical. The only theme edit is the helper's internal shape (`dynamic` → `adaptive` with `RGB`/`RGBA` structs) and it is behaviour-identical. |
 | Empty actions / placeholders | **PASS** — 0 `TODO`/`FIXME`/`fatalError`; the only empty closures are SwiftUI `role: .cancel` buttons (auto-dismiss), protocol `init(){}` stubs, and the `MockMeshTransport`/demo-only no-ops. |
@@ -34,6 +34,24 @@
 | Inert `.photosPicker(isPresented:)` bound to a constant-`false` binding in `MessageComposerView` | Dead modifier; the visible `PhotosPicker` button worked but the code implied a second, non-functional picker path. | Stub binding and modifier removed; the working inline `PhotosPicker` is untouched. |
 
 The remaining literal-scan hits are non-defects: SF Symbol names, interpolation-only fragments, and pure `LocalizedStringKey` literals that already resolve to catalog entries.
+
+### 0.2 Build blockers found and fixed (reported against Xcode 26)
+
+| # | Defect | Symptom in Xcode | Fix |
+|---|---|---|---|
+| 1 | App target declared `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx"` while `SUPPORTS_MACCATALYST = NO` and `SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO` | Xcode lists **My Mac** as a run destination for an iOS-only app, compiles every `import UIKit` against the macOS SDK and reports `No such module 'UIKit'` / `Unable to resolve module dependency: 'UIKit'` at `Core/Services/ProfileService.swift:2`. | `SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"` in both configurations. The app is UIKit/CoreBluetooth/MapKit-iOS based, so a macOS destination was never valid. |
+| 2 | `UnavailableModelRuntime` applied `??` to `unavailableReason`, which is a non-optional `String` | `Left side of nil coalescing operator '??' has non-optional type 'String'` (compile error) in `LocalModelRuntime.swift:46` and `:53`. | The stored value is now `private let reason: String` and the protocol requirement is satisfied by `var unavailableReason: String? { reason }`; both throws use `reason` directly. |
+| 3 | `AppleFoundationModelRuntime` stored `LanguageModelSession` — an iOS 26-only type — as a typed property | On Xcode 26 `canImport(FoundationModels)` is **true**, so the property forces `@available(iOS 26.0, *)` onto a class the app instantiates on iOS 17. | The session is held as `AnyObject?` and cast back inside `#available(iOS 26.0, *)` guards, so the concrete type is never referenced from an older-availability context. |
+| 4 | `LaunchScreen.storyboard` had a file reference but was missing from the Resources build phase, while `Info.plist` declares `UILaunchStoryboardName = LaunchScreen` | Blank launch screen at runtime; a flashing white one against a dark UI. | Added to the Resources phase; background changed to black to match `UIUserInterfaceStyle = Dark`. |
+| 5 | `AccentColor.colorset` declared a universal idiom with **no colour components** | Unconfigured asset (and a white launch tint). | Filled with the brand cyan the app already uses (light `0.33/0.44/0.57`, dark `0.56/0.66/0.77`). |
+
+### 0.3 Functional defects found and fixed in the same audit
+
+| Defect | Impact | Fix |
+|---|---|---|
+| `MessageService.load()`, `SOSService.load()` and `ResourceService.load()` were **never called** | Messages, SOS history and map resources were written to disk but never restored, so every list looked empty after a relaunch — persistence was effectively write-only. | All three are loaded during `bootstrap()`. |
+| The map's "You" pin was the constant `CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)` and its six peers ("Sarah K.", "Marcus D.", "ResBot-α", "James R.", "Shelter 1/2") were generated at fixed offsets from it | The map showed an invented location and fabricated people — exactly the simulated state the brief forbids. | The pin uses `LocationService.coordinate`; markers come from real mesh peers that shared a position and from persisted `MapResource` entries. A node without coordinates is simply not drawn. The camera recentres once, on the first real fix. |
+| `ResilixAppModel` did not forward its child services' `objectWillChange` | Only `MeshView` subscribed directly, so peer/message/location changes did not refresh the other screens until an unrelated change touched the app model. | `bridgeChildChanges()` republishes the 14 child services through the app model. |
 
 **No claim of a successful build is made anywhere in this report.** The parser is a *syntax* gate, not a type-checker: it cannot catch a type mismatch, a wrong argument label, or a missing symbol. Those risks are enumerated in §13.
 
@@ -152,9 +170,9 @@ MBTiles (SQLite) packs and tile directories imported by the user into the app co
 |---|---|---|
 | English | en | source language (fallback) |
 | Hindi, Telugu, Tamil, Kannada, Malayalam | hi, te, ta, kn, ml | **784 / 784 keys** |
-| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | **709 / 709 keys** |
+| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | **707 / 707 keys** |
 
-**Catalog totals:** 709 keys × 11 languages = **7,799 translated string units** in `Resilix/Resources/Localizable.xcstrings`.
+**Catalog totals:** 707 keys × 11 languages = **7,777 translated string units** in `Resilix/Resources/Localizable.xcstrings`.
 **Automated audits (both green):**
 - `Tools/l10n/audit_keys.py` → 710 referenced keys, 0 missing from catalog, 0 untranslated, 0 placeholder-count mismatches, **0 orphan keys**.
 - `Tools/swiftcheck.py`, `Tools/sync_xcodeproj.py` → 114/114 files parse; project adds/removes 0 files.

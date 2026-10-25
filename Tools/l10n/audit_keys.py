@@ -45,7 +45,9 @@ for path in sorted(ROOT.rglob("*.swift")):
         if key.strip():
             referenced.setdefault(key, set()).add(rel)
     for match in PLAIN.finditer(text):
-        referenced.setdefault(to_key(match.group(2)), set()).add(rel)
+        key = to_key(match.group(2))
+        if key.strip():
+            referenced.setdefault(key, set()).add(rel)
 
 catalog = json.loads(CATALOG.read_text())["strings"]
 

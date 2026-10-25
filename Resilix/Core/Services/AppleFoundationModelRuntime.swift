@@ -9,13 +9,19 @@ import FoundationModels
 /// The framework is only present in the iOS 26 SDK and later. On older
 /// systems the runtime reports itself as unavailable and the user is shown
 /// the truthful reason instead of a silent fallback to a cloud service.
+///
+/// The session is held as `AnyObject` on purpose. `LanguageModelSession` is
+/// annotated `@available(iOS 26.0, *)`, and a typed stored property would force
+/// that availability onto this whole class (which the app-wide runtime list
+/// needs on iOS 17), so the concrete type is only referenced inside
+/// `#available` guards.
 final class AppleFoundationModelRuntime: LocalModelRuntime {
     let runtimeName = L("Apple Foundation Models")
 
     private var task: Task<Void, Never>?
 
     #if canImport(FoundationModels)
-    private var session: LanguageModelSession?
+    private var sessionBox: AnyObject?
     private var loadedIdentifier: String?
     #endif
 
@@ -53,8 +59,7 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
 
     var isLoaded: Bool {
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, *) { return session != nil }
-        return false
+        return sessionBox != nil
         #else
         return false
         #endif
@@ -73,7 +78,8 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
         if #available(iOS 26.0, *) {
             switch SystemLanguageModel.default.availability {
             case .available:
-                session = LanguageModelSession(instructions: L("You are the on-device assistant of the Resilix offline mesh app. Answer briefly and never invent emergency facts."))
+                let session = LanguageModelSession(instructions: L("You are the on-device assistant of the Resilix offline mesh app. Answer briefly and never invent emergency facts."))
+                sessionBox = session
                 loadedIdentifier = model.id
                 return
             case .unavailable(let reason):
@@ -90,7 +96,7 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
         task?.cancel()
         task = nil
         #if canImport(FoundationModels)
-        session = nil
+        sessionBox = nil
         loadedIdentifier = nil
         #endif
     }
@@ -99,7 +105,7 @@ final class AppleFoundationModelRuntime: LocalModelRuntime {
         AsyncThrowingStream { continuation in
             #if canImport(FoundationModels)
             if #available(iOS 26.0, *) {
-                guard let session else {
+                guard let session = sessionBox as? LanguageModelSession else {
                     continuation.finish(throwing: LocalModelError.runtimeUnavailable(L("No model is loaded.")))
                     return
                 }

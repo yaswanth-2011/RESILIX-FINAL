@@ -31,26 +31,29 @@ protocol LocalModelRuntime: AnyObject {
 /// AI: the service reports the missing runtime instead of using it.
 final class UnavailableModelRuntime: LocalModelRuntime {
     let runtimeName: String
-    let unavailableReason: String
+    private let reason: String
 
     init(runtimeName: String, reason: String) {
         self.runtimeName = runtimeName
-        self.unavailableReason = reason
+        self.reason = reason
     }
 
     var isAvailable: Bool { false }
     var isLoaded: Bool { false }
     var loadedModelID: String? { nil }
 
+    /// Matches the optional requirement of `LocalModelRuntime` exactly.
+    var unavailableReason: String? { reason }
+
     func load(model: LocalModelDescriptor, modelURL: URL?) async throws {
-        throw LocalModelError.runtimeUnavailable(unavailableReason ?? "runtime missing")
+        throw LocalModelError.runtimeUnavailable(reason)
     }
 
     func unload() {}
 
     func generate(request: LocalModelRequest) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
-            continuation.finish(throwing: LocalModelError.runtimeUnavailable(unavailableReason ?? "runtime missing"))
+            continuation.finish(throwing: LocalModelError.runtimeUnavailable(reason))
         }
     }
 

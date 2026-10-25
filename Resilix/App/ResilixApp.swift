@@ -1,6 +1,7 @@
 // xcode: set sdk=iOS
 
 import SwiftUI
+import Combine
 
 // Cinematic launch: black → cyan seed point → nodes → connections → logo fade/zoom (~2s).
 @main
@@ -109,6 +110,11 @@ class ResilixAppModel: ObservableObject {
     @Published var isMeshRunning = false
 
     private var locationTask: Task<Void, Never>?
+    /// Keeps the views observing this model in sync with the child services.
+    /// SwiftUI only tracks the object placed in the environment, so without this
+    /// bridge a new peer or message would not refresh the UI until something
+    /// else touched `ResilixAppModel`'s own `@Published` properties.
+    private var childChangeObservers: [AnyCancellable] = []
 
     init() {
         Task { @MainActor in
@@ -118,6 +124,7 @@ class ResilixAppModel: ObservableObject {
 
     /// Loads the persisted state and starts the mesh.
     private func bootstrap() async {
+        bridgeChildChanges()
         settings = await persistence.loadSettings()
         nodeID = await loadOrCreateNodeID()
 
@@ -148,6 +155,13 @@ class ResilixAppModel: ObservableObject {
         // Location sharing (only when the user enabled it).
         startLocationSharingIfEnabled()
 
+        // Persisted conversations, SOS history and map resources. Without these
+        // the data is written to disk but never restored into memory after a
+        // relaunch, so every list would look empty.
+        await messageService.load()
+        await sosService.load()
+        await resourceService.load()
+
         // Offline map packs and AI models.
         await mapPackService.load()
         await aiService.load()
@@ -160,6 +174,31 @@ class ResilixAppModel: ObservableObject {
             await demoController.startDemo()
         }
         #endif
+    }
+
+    /// Re-publishes the changes of the child services through this model.
+    private func bridgeChildChanges() {
+        let publishers: [ObservableObjectPublisher] = [
+            meshController.objectWillChange,
+            messageService.objectWillChange,
+            sosService.objectWillChange,
+            relayManager.objectWillChange,
+            transferService.objectWillChange,
+            aiService.objectWillChange,
+            mapPackService.objectWillChange,
+            profileService.objectWillChange,
+            locationService.objectWillChange,
+            voiceService.objectWillChange,
+            resourceService.objectWillChange,
+            permissionService.objectWillChange,
+            diagnosticsService.objectWillChange,
+            demoController.objectWillChange,
+        ]
+        for publisher in publishers {
+            publisher
+                .sink { [weak self] in self?.objectWillChange.send() }
+                .store(in: &childChangeObservers)
+        }
     }
 
     /// Shares the own position with the mesh when the user allowed it.

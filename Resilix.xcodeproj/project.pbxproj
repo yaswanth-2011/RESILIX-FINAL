@@ -12,6 +12,7 @@
 		148580DB623C43F7997D771E /* Core/Models/ResourceCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C39392B592F40AD942E0794 /* Core/Models/ResourceCategory.swift */; };
 		156CD5621AAF4773BD90EB58 /* Features/Mesh/RouteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F3D233B2AB4B1CA3AFA32B /* Features/Mesh/RouteDetailView.swift */; };
 		16B5BB1AE452412F96E37B16 /* Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D8D78C4B4EA4CDAB3704C09 /* Resources/Assets.xcassets */; };
+		7C4A1E9B2D3F4A5B8C6D0E11 /* Resources/LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91B2C666508A4CEF9DDAA092 /* Resources/LaunchScreen.storyboard */; };
 		18585AD26BF64E18A75BDFEC /* Core/Services/SOSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A17A49F9DE4E9DAB4F7CED /* Core/Services/SOSService.swift */; };
 		1D21C41867BA4280B7301C0A /* Core/Services/PermissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF26F37FFDE84E6BBB4E067C /* Core/Services/PermissionService.swift */; };
 		2463A5E6EDEC497A86FD3737 /* Core/Models/LinkQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB5C750CEE84007B1FD70D0 /* Core/Models/LinkQuality.swift */; };
@@ -499,6 +500,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				16B5BB1AE452412F96E37B16 /* Resources/Assets.xcassets in Resources */,
+				7C4A1E9B2D3F4A5B8C6D0E11 /* Resources/LaunchScreen.storyboard in Resources */,
 				2B1C0A0A1B2C3D4E5F607081 /* Resources/Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -772,7 +774,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.resilix.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -807,7 +809,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.resilix.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
