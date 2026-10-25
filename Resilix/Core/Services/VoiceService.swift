@@ -26,26 +26,32 @@ final class VoiceService: NSObject, ObservableObject, AVAudioRecorderDelegate, A
     // MARK: - Permission
 
     func requestPermission() async -> Bool {
-        let granted: Bool = await withCheckedContinuation { continuation in
-            if #available(iOS 17.0, *) {
-                AVAudioApplication.requestRecordPermission { allowed in
-                    continuation.resume(returning: allowed)
-                }
-            } else {
-                AVAudioSession.sharedInstance().requestRecordPermission { allowed in
-                    continuation.resume(returning: allowed)
-                }
+        // The deployment target is iOS 17, where the recording permission lives
+        // on `AVAudioApplication`. `AVAudioSession.recordPermission` is
+        // deprecated and returns a *different* enum type.
+        let granted = await withCheckedContinuation { continuation in
+            AVAudioApplication.requestRecordPermission { allowed in
+                continuation.resume(returning: allowed)
             }
         }
         permissionGranted = granted
         return granted
     }
 
-    var permissionStatus: AVAudioSession.RecordPermission {
-        if #available(iOS 17.0, *) {
-            return AVAudioApplication.shared.recordPermission
+    /// Microphone permission, normalised across the audio stack's two enums.
+    enum MicrophonePermission: String {
+        case undetermined
+        case denied
+        case granted
+    }
+
+    var permissionStatus: MicrophonePermission {
+        switch AVAudioApplication.shared.recordPermission {
+        case .undetermined: return .undetermined
+        case .denied: return .denied
+        case .granted: return .granted
+        @unknown default: return .undetermined
         }
-        return AVAudioSession.sharedInstance().recordPermission
     }
 
     // MARK: - Recording
@@ -57,7 +63,7 @@ final class VoiceService: NSObject, ObservableObject, AVAudioRecorderDelegate, A
             throw ResilixError.permissionDenied("microphone")
         }
         let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
+        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
         try session.setActive(true)
 
         let url = FileManager.default.temporaryDirectory

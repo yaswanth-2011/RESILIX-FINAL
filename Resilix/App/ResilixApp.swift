@@ -110,6 +110,11 @@ class ResilixAppModel: ObservableObject {
     @Published var isMeshRunning = false
 
     private var locationTask: Task<Void, Never>?
+    /// Last position shared with the mesh. Held on the main-actor isolated
+    /// model rather than in a captured local: mutating a captured `var` from
+    /// the sharing task is an error under Swift 6.
+    private var lastSharedLatitude: Double?
+    private var lastSharedLongitude: Double?
     /// Keeps the views observing this model in sync with the child services.
     /// SwiftUI only tracks the object placed in the environment, so without this
     /// bridge a new peer or message would not refresh the UI until something
@@ -210,18 +215,21 @@ class ResilixAppModel: ObservableObject {
         }
         locationService.requestPermission()
         locationService.startUpdates()
-        var lastLatitude: Double?
-        var lastLongitude: Double?
-        locationTask = Task { @MainActor in
+        lastSharedLatitude = nil
+        lastSharedLongitude = nil
+        locationTask = Task { @MainActor [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(nanoseconds: 15_000_000_000)
-                guard let coordinate = locationService.coordinate else { continue }
-                let changed = lastLatitude.map { abs($0 - coordinate.latitude) > 0.0005 } ?? true
+                // Bail out once the model is gone instead of spinning forever.
+                guard let self else { return }
+                guard let coordinate = self.locationService.coordinate else { continue }
+                let last = self.lastSharedLatitude
+                let changed = last.map { abs($0 - coordinate.latitude) > 0.0005 } ?? true
                 guard changed else { continue }
-                lastLatitude = coordinate.latitude
-                lastLongitude = coordinate.longitude
-                await meshController.broadcastLocation(latitude: coordinate.latitude,
-                                                       longitude: coordinate.longitude)
+                self.lastSharedLatitude = coordinate.latitude
+                self.lastSharedLongitude = coordinate.longitude
+                await self.meshController.broadcastLocation(latitude: coordinate.latitude,
+                                                            longitude: coordinate.longitude)
             }
         }
     }

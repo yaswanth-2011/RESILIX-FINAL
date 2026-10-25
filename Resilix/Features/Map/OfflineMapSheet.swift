@@ -281,7 +281,9 @@ struct OfflineMapPreview: UIViewRepresentable {
     }
 
     func updateUIView(_ mapView: MKMapView, context: Context) {
-        if let overlay, !mapView.overlays.contains(where: { ($0 as? MKTileOverlay)?.tileTemplate == overlay.tileTemplate }) {
+        // `MKTileOverlay` exposes no template for comparison; identity is the
+        // only reliable test for "this exact overlay is already installed".
+        if let overlay, !mapView.overlays.contains(where: { ($0 as? MKTileOverlay) === overlay }) {
             mapView.removeOverlays(mapView.overlays)
             mapView.addOverlay(overlay, level: .aboveLabels)
         }

@@ -502,7 +502,7 @@ final class MeshController: ObservableObject {
         guard let decision = relayDecision else { return }
         guard decision(packet) else { return }
 
-        var forwarded = packet.withDecrementedTTL().markedVisited(by: nodeID)
+        let forwarded = packet.withDecrementedTTL().markedVisited(by: nodeID)
         guard forwarded.ttl > 0 else {
             onDeliveryUpdate?(packet.id, .expired)
             return

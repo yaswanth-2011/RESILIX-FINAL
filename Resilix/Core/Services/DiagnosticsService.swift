@@ -56,7 +56,7 @@ class DiagnosticsService: ObservableObject {
             }
         }
         
-        let routeCount = await routingEngine?.routes.count ?? 0
+        let routeCount = routingEngine?.routes.count ?? 0
         let forwarded = relayManager?.forwardedCount ?? 0
         let queue = queueCount
         

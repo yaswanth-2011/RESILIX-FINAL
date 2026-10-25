@@ -235,8 +235,11 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
                 if let existing = self.connectionTasks[peerID] {
                     c.resume(returning: existing)
                 } else {
-                    let task = Task { [weak self] () throws -> NWConnection in
-                        guard let self else { throw ResilixError.transportUnavailable(L("Wi-Fi transport stopped")) }
+                    // The enclosing `queue.async` already holds `self` for the
+                    // duration of the block; capturing it weakly here contradicted
+                    // that. The task is released as soon as the connection
+                    // attempt finishes (see the `defer` that removes it).
+                    let task = Task { () throws -> NWConnection in
                         guard let endpoint = await self.endpoint(for: peerID) else {
                             throw ResilixError.transportUnavailable(String(format: L("No route to %@"), peerID))
                         }
@@ -262,21 +265,20 @@ final class PeerToPeerWiFiTransport: MeshTransport, @unchecked Sendable {
 
     private func startAndWait(_ connection: NWConnection) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            var resumed = false
+            // The state handler runs on `queue`; a captured `var` cannot be
+            // mutated from there under Swift 6, and the first terminal state
+            // must be the only one that resumes the continuation.
+            let gate = OnceGate()
             connection.stateUpdateHandler = { state in
                 switch state {
                 case .ready:
-                    guard !resumed else { return }
-                    resumed = true
-                    continuation.resume()
+                    if gate.claim() { continuation.resume() }
                 case .failed(let error):
-                    guard !resumed else { return }
-                    resumed = true
-                    continuation.resume(throwing: error)
+                    if gate.claim() { continuation.resume(throwing: error) }
                 case .cancelled:
-                    guard !resumed else { return }
-                    resumed = true
-                    continuation.resume(throwing: ResilixError.transportUnavailable(L("Connection cancelled")))
+                    if gate.claim() {
+                        continuation.resume(throwing: ResilixError.transportUnavailable(L("Connection cancelled")))
+                    }
                 default:
                     break
                 }

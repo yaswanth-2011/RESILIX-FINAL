@@ -674,15 +674,12 @@ struct VoiceRecorderView: View {
     
     private func startRecording() {
         Task {
-            let granted: Bool = await withCheckedContinuation { continuation in
-                if #available(iOS 17.0, *) {
-                    AVAudioApplication.requestRecordPermission { allowed in
-                        continuation.resume(returning: allowed)
-                    }
-                } else {
-                    AVAudioSession.sharedInstance().requestRecordPermission { allowed in
-                        continuation.resume(returning: allowed)
-                    }
+            // iOS 17 deployment target: the recording permission lives on
+            // `AVAudioApplication`; the AVAudioSession equivalent is deprecated
+            // and returns a different type.
+            let granted = await withCheckedContinuation { continuation in
+                AVAudioApplication.requestRecordPermission { allowed in
+                    continuation.resume(returning: allowed)
                 }
             }
             guard granted else {

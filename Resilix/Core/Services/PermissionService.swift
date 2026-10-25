@@ -34,6 +34,7 @@ class PermissionService: ObservableObject {
             case .unauthorized: bluetoothState = .denied
             case .unsupported: bluetoothState = .unsupported
             case .resetting: bluetoothState = .notDetermined
+            case .unknown: bluetoothState = .notDetermined
             @unknown default: bluetoothState = .notDetermined
             }
         }
@@ -42,7 +43,9 @@ class PermissionService: ObservableObject {
         checkLocalNetworkPermission()
         
         // Location
-        let status = CLLocationManager.authorizationStatus()
+        // `CLLocationManager.authorizationStatus()` (a class method) was
+        // deprecated in iOS 14; the instance property is the current API.
+        let status = locationManager.authorizationStatus
         switch status {
         case .authorizedAlways, .authorizedWhenInUse: locationState = .authorized
         case .denied: locationState = .denied
@@ -57,39 +60,36 @@ class PermissionService: ObservableObject {
         let params = NWParameters()
         params.includePeerToPeer = true
         let browser = NWBrowser(for: .bonjourWithTXTRecord(type: "_resilix._tcp", domain: "local."), using: params)
-        var didComplete = false
-        
+        // The handler and the timeout below race; the first outcome wins and
+        // the other stands down. A captured `var` cannot be mutated from a
+        // concurrently executing closure under Swift 6.
+        let gate = OnceGate()
+
         browser.stateUpdateHandler = { [weak self] state in
-            guard !didComplete else { return }
             switch state {
             case .ready:
-                didComplete = true
+                guard gate.claim() else { return }
                 Task { @MainActor in self?.localNetworkState = .authorized }
                 browser.cancel()
             case .failed(let error):
-                didComplete = true
+                guard gate.claim() else { return }
                 let nsError = error as NSError
-                if nsError.code == 1 { // Permission denied
-                    Task { @MainActor in self?.localNetworkState = .denied }
-                } else {
-                    Task { @MainActor in self?.localNetworkState = .authorized }
-                }
+                let outcome: PermissionState = nsError.code == 1 ? .denied : .authorized
+                Task { @MainActor in self?.localNetworkState = outcome }
                 browser.cancel()
             case .cancelled:
-                if !didComplete {
-                    didComplete = true
-                    Task { @MainActor in self?.localNetworkState = .notDetermined }
-                }
-            default: break
+                guard gate.claim() else { return }
+                Task { @MainActor in self?.localNetworkState = .notDetermined }
+            default:
+                break
             }
         }
         browser.start(queue: .main)
-        
+
         // Timeout after 2 seconds
         Task {
             try? await Task.sleep(nanoseconds: 2_000_000_000)
-            if !didComplete {
-                didComplete = true
+            if gate.claim() {
                 browser.cancel()
                 await MainActor.run { self.localNetworkState = .notDetermined }
             }

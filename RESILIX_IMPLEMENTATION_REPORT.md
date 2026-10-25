@@ -16,7 +16,7 @@
 | Physical device run (2–3 iPhones, BLE + P2P Wi-Fi, real relay) | **NOT PERFORMED** — no devices. |
 | Offline syntax validation | **PASS** — `Tools/swiftcheck.py` (tree-sitter-swift 0.7.4): **115/115 files parse with 0 errors**. |
 | Xcode project integrity | **PASS** — `Tools/sync_xcodeproj.py` + custom validator: brace balance 0, **0 dangling object references**, 105 app + 9 test files all present on disk and in their Sources phases, **no file on disk left out of a target**. |
-| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **707 keys × 11 languages = 7,777 translated units**, every key fully translated, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches, 0 orphan keys** (`Tools/l10n/audit_keys.py`). |
+| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **709 keys × 11 languages = 7,799 translated units**, every key fully translated, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches, 0 orphan keys** (`Tools/l10n/audit_keys.py`). |
 | Localised-screen literal sweep | **PASS** — `Tools/l10n/audit_uiliterals.py`: every SwiftUI `Text/Label/Button/navigationTitle/NavigationLink/…` literal resolves to a catalog key with 11 translations; **0 problems** (only empty/symbol-only literals remain, which carry no translatable text). |
 | Design-frozen check | **PASS** — the theme file diff contains **no numeric change**: all 32 colour tokens have identical RGB values before/after, all scalar spacing tokens and the `font()` helper are byte-identical. The only theme edit is the helper's internal shape (`dynamic` → `adaptive` with `RGB`/`RGBA` structs) and it is behaviour-identical. |
 | Empty actions / placeholders | **PASS** — 0 `TODO`/`FIXME`/`fatalError`; the only empty closures are SwiftUI `role: .cancel` buttons (auto-dismiss), protocol `init(){}` stubs, and the `MockMeshTransport`/demo-only no-ops. |
@@ -169,6 +169,34 @@ reports `await` outside an asynchronous context. Pointed at the pre-fix
 (`MeshRoute(quality: .stable)`), and all four structural checkers now scan
 `ResilixTests` as well as `Resilix`, because the test target is compiled too.
 
+### 0.7 Fourth build round — API mistakes, deprecations, and Swift 6 captures
+
+| Reported issue | Cause | Fix |
+|---|---|---|
+| `MKTileOverlay has no member 'tileTemplate'` (×2) | `MKTileOverlay` exposes no template to compare against; the check was invented. | The overlay is compared by identity (`($0 as? MKTileOverlay) === overlay`), which is the only reliable "this exact overlay is installed" test. |
+| `AVAudioApplication.recordPermission` cannot convert to `AVAudioSession.RecordPermission` | The two audio APIs return **different enum types**, and the property was typed with the deprecated one. | `permissionStatus` now returns a project enum (`VoiceService.MicrophonePermission`) mapped from `AVAudioApplication.shared.recordPermission`. |
+| `recordPermission` deprecated in iOS 17 (×2), `allowBluetooth` deprecated in iOS 8 | Availability fallbacks that can never run on an iOS 17 deployment target. | The fallbacks are gone (`AVAudioApplication` only) and the option is `allowBluetoothHFP`. The same duplicated fallback in `MessageThreadView.startRecording` was fixed too. |
+| `Result of call to 'withLock' is unused` (×2) | `Dictionary.insert`/`remove` return a value, so the lock's closure returned a value that was discarded. | `_ =` inside the closure. |
+| `'weak' ownership of capture 'self' differs from … outer scope` | A `Task` inside `queue.async` captured `self` weakly while the enclosing closure held it strongly. | The task captures `self` consistently; it is released when the connection attempt finishes. |
+| `Reference/mutation of captured var 'resumed'` (×6) | A `var` used as a "resume only once" flag inside a `stateUpdateHandler`, which runs concurrently. | New `OnceGate` (`Resilix/Core/Concurrency/OnceGate.swift`): a lock-guarded one-shot claim, used by the connection continuation. |
+| `No 'async' operations occur within 'await'` | `DiagnosticsService` and `MeshRoutingEngine` are both `@MainActor`, so the access is synchronous. | `await` removed. |
+| `Variable 'forwarded' was never mutated` | `withDecrementedTTL()`/`markedVisited(by:)` return new values. | `let`. |
+| `Switch must be exhaustive` (CBManagerState) | `.unknown` was missing; `@unknown default` does **not** cover a known case. | `.unknown` added. |
+| `authorizationStatus()` deprecated in iOS 14 | Class method instead of instance property. | `locationManager.authorizationStatus`. |
+| `Reference/mutation of captured var 'didComplete'` (×5) | Same one-shot flag pattern as `resumed`, raced by a 2 s timeout. | The same `OnceGate`. |
+
+Found by the same sweep, not yet reported by the build:
+
+* `ResilixApp.swift` captured two local `var`s (`lastLatitude`/`lastLongitude`) and mutated them inside the location-sharing `Task`. That is the same Swift 6 error, one round early; the state now lives on the `@MainActor` model, and the loop exits when the model is deallocated instead of spinning.
+* The `#available(iOS 17.0, *)` microphone fallback in `MessageThreadView` duplicated the deprecated call.
+* One string key became unused when the dead branch was removed, and was pruned from all 11 languages (709 keys remain).
+
+`Tools/capturecheck.py` was added for the last class: it reports a local `var`
+declared inside a function and mutated inside a closure (walking the whole
+brace chain, since the innermost block is often just an `if`). Validated on a
+synthetic copy of the `resumed` bug: it flags that line and leaves an ordinary
+loop counter alone.
+
 ---
 
 ## 1. What was implemented
@@ -284,11 +312,11 @@ MBTiles (SQLite) packs and tile directories imported by the user into the app co
 |---|---|---|
 | English | en | source language (fallback) |
 | Hindi, Telugu, Tamil, Kannada, Malayalam | hi, te, ta, kn, ml | **784 / 784 keys** |
-| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | **707 / 707 keys** |
+| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | **709 / 709 keys** |
 
-**Catalog totals:** 707 keys × 11 languages = **7,777 translated string units** in `Resilix/Resources/Localizable.xcstrings`.
+**Catalog totals:** 709 keys × 11 languages = **7,799 translated string units** in `Resilix/Resources/Localizable.xcstrings`.
 **Automated audits (both green):**
-- `Tools/l10n/audit_keys.py` → 710 referenced keys, 0 missing from catalog, 0 untranslated, 0 placeholder-count mismatches, **0 orphan keys**.
+- `Tools/l10n/audit_keys.py` → 709 referenced keys, 0 missing from catalog, 0 untranslated, 0 placeholder-count mismatches, **0 orphan keys**.
 - `Tools/swiftcheck.py`, `Tools/sync_xcodeproj.py` → 114/114 files parse; project adds/removes 0 files.
 - `Tools/l10n/audit_uiliterals.py` → **0 problems**: no hard-coded English remains in any `Text`/`Label`/`Button`/`navigationTitle`/`NavigationLink`/`Section`/`TextField`/`Toggle`/`alert` title on a localised screen.
 
@@ -405,5 +433,5 @@ All 64 pass the offline syntax gate. **None has been run** — that requires Xco
 ## 14. Repository state
 
 - Branch `arena/2eab602c-resilix`, pushed to `origin`. `reslix_post_audit` commit contains the entire implementation, the tooling under `Tools/`, and the final localisation sweep (chunk19 + chunk20, raw-value label patch, String-ternary fixes).
-- Verification at time of writing: `swiftcheck.py` 114/114 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1179 qualified references + implicit enum arguments, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 249 receiver calls, 0 unknown symbols · `awaitcheck.py` 0 `await` outside an async context · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
+- Verification at time of writing: `swiftcheck.py` 115/115 OK · `initcheck.py` 0 mismatches / 0 duplicate initialisers · `enumcheck.py` 1179 qualified references + implicit enum arguments, 0 unknown · `semanticcheck.py` 0 non-throwing `try`, 0 `lock` in async · `memberresolve.py` 249 receiver calls, 0 unknown symbols · `awaitcheck.py` 0 `await` outside an async context · `capturecheck.py` 0 captured mutable vars in closures · `audit_keys.py` 0 missing / 0 untranslated / 0 placeholder mismatches · `audit_uiliterals.py` 0 problems · `sync_xcodeproj.py` adds 0 and removes 0 files.
 - Download in Xcode: clone the branch and open `Resilix.xcodeproj`; the project carries **no SwiftPM dependencies**, so it resolves and builds with the stock iOS SDK. Signing is `CODE_SIGN_STYLE = Automatic` with no `DEVELOPMENT_TEAM`, so pick your own team in *Signing & Capabilities* before running on a device.

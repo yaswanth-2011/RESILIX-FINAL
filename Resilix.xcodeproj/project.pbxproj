@@ -123,6 +123,7 @@
 		285C0F06010E18D6FF223F90 /* Networking/FrameCodecTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFCF316B48C5CBA8F90FDD9 /* Networking/FrameCodecTests.swift */; };
 		74BE8959EDC994EE33C554E0 /* Networking/MediaTransferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19921076A1CFD23A0814EA19 /* Networking/MediaTransferTests.swift */; };
 		CC2077050CBD72A952C528F9 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037AE1B0064E3A37FBACF339 /* TestSupport.swift */; };
+		99171BB0388EBC801B743ECE /* Core/Concurrency/OnceGate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145452F68032E3D5816FA19A /* Core/Concurrency/OnceGate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -246,6 +247,7 @@
 		5EFCF316B48C5CBA8F90FDD9 /* Networking/FrameCodecTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking/FrameCodecTests.swift; sourceTree = "<group>"; };
 		19921076A1CFD23A0814EA19 /* Networking/MediaTransferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Networking/MediaTransferTests.swift; sourceTree = "<group>"; };
 		037AE1B0064E3A37FBACF339 /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		145452F68032E3D5816FA19A /* Core/Concurrency/OnceGate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Concurrency/OnceGate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,6 +280,7 @@
 		4A28A448D526473EB9CE4AD1 /* Resilix */ = {
 			isa = PBXGroup;
 			children = (
+				145452F68032E3D5816FA19A /* Core/Concurrency/OnceGate.swift */,
 				9481C4BC2DEB467AAE394464 /* Core/Models/FirstAidTopic.swift */,
 				44D54B947D176E926BB7C030 /* Features/Map/OfflineTileOverlay.swift */,
 				980C2756A90F5E8B9E8A50A9 /* Features/Map/OfflineMapSheet.swift */,
@@ -550,6 +553,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99171BB0388EBC801B743ECE /* Core/Concurrency/OnceGate.swift in Sources */,
 				0C39B3CADDDF234AF4C95EA8 /* Features/Map/OfflineTileOverlay.swift in Sources */,
 				42E8764B61D4276E5C711308 /* Features/Map/OfflineMapSheet.swift in Sources */,
 				12EEFAECAC40C2695678F9D3 /* Features/Assist/AIModelManagerView.swift in Sources */,
