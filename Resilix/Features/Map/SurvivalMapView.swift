@@ -245,11 +245,15 @@ struct SurvivalMapView: View {
                         userCoordinate = coordinate
                     }
                 }
-                .onChange(of: app.locationService.coordinate) { _, newCoordinate in
-                    // Keep the marker on the live real position.
-                    if let newCoordinate { userCoordinate = newCoordinate }
+                .onChange(of: app.locationService.coordinate?.latitude) { _, _ in
+                    // Keep the marker on the live real position (latitude is
+                    // Equatable, unlike CLLocationCoordinate2D itself).
+                    if let newCoordinate = app.locationService.coordinate {
+                        userCoordinate = newCoordinate
+                    }
                     // Recentre once, when the first real fix arrives.
-                    guard let newCoordinate, !didCenterOnUser else { return }
+                    guard let newCoordinate = app.locationService.coordinate,
+                          !didCenterOnUser else { return }
                     didCenterOnUser = true
                     apply3DCameraIfNeeded()
                 }

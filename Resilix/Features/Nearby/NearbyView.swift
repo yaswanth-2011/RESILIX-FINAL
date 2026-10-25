@@ -136,9 +136,18 @@ struct NearbyView: View {
                     loadDevices()
                 }
             }
-            // Keep the mini map on the live real position.
-            .onChange(of: app.locationService.coordinate) { _, newCoordinate in
-                if let newCoordinate { userCoordinate = newCoordinate }
+            // Keep the mini map on the live real position (latitude is
+            // Equatable, unlike CLLocationCoordinate2D itself), and centre
+            // once on the first real GPS fix.
+            .onChange(of: app.locationService.coordinate?.latitude) { _, _ in
+                if let newCoordinate = app.locationService.coordinate {
+                    userCoordinate = newCoordinate
+                }
+                guard !didCenterOnUser, let _ = app.locationService.coordinate else { return }
+                didCenterOnUser = true
+                mapPosition = .region(
+                    MKCoordinateRegion(center: mapCenter, span: MKCoordinateSpan(latitudeDelta: 0.015, longitudeDelta: 0.015))
+                )
             }
             // Refresh the list whenever a transport discovers or loses a peer.
             .onReceive(app.meshController.$peers) { _ in
@@ -273,15 +282,6 @@ struct NearbyView: View {
             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             .allowsHitTesting(false)
             .colorScheme(.dark)
-            .onChange(of: mapCenter) { _, _ in
-                // Centre on the first real GPS fix, then leave the map alone
-                // so the user can pan.
-                guard !didCenterOnUser, userCoordinate != nil else { return }
-                didCenterOnUser = true
-                mapPosition = .region(
-                    MKCoordinateRegion(center: mapCenter, span: MKCoordinateSpan(latitudeDelta: 0.015, longitudeDelta: 0.015))
-                )
-            }
 
             // Pulsing rings emanating from iPhone center
             ForEach(0..<3, id: \.self) { i in

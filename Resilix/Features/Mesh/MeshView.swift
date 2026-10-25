@@ -102,8 +102,8 @@ struct MeshView: View {
                     startLocationUpdates()
                 }
             }
-            .onChange(of: app.locationService.coordinate) { _, newCoordinate in
-                if let newCoordinate { userCoordinate = newCoordinate }
+            .onChange(of: app.locationService.coordinate?.latitude) { _, _ in
+                if let newCoordinate = app.locationService.coordinate { userCoordinate = newCoordinate }
             }
             .sheet(item: $selectedPeer) { peer in
                 MeshDeviceDetailSheet(peer: peer)
@@ -153,7 +153,12 @@ struct MeshView: View {
 
     // MARK: - Network Map Card (Apple Maps)
     private var networkMapCard: some View {
-        MeshAppleMapView(peers: peers, userCoordinate: userCoordinate, pulse: pulse) { peer in
+        MeshAppleMapView(
+            peers: peers,
+            userCoordinate: userCoordinate,
+            pulse: pulse,
+            locationTrigger: app.locationService.coordinate?.latitude
+        ) { peer in
             selectedPeer = peer
         }
         .padding(.horizontal, ResilixTheme.space20)
@@ -380,6 +385,9 @@ struct MeshAppleMapView: View {
     let userCoordinate: CLLocationCoordinate2D?
     let pulse: Bool
     let onSelect: (MeshPeer) -> Void
+    /// Equatable trigger (latitude) that drives recentring on first fix;
+    /// CLLocationCoordinate2D itself is not Equatable.
+    let locationTrigger: Double?
 
     /// Startup centre until the first real GPS fix arrives.
     private static let fallbackCenter = CLLocationCoordinate2D(latitude: 37.3349, longitude: -122.0090)
@@ -490,9 +498,10 @@ struct MeshAppleMapView: View {
             }
             .frame(maxWidth: .infinity)
             // Centre on the first real GPS fix, then leave the map alone so
-            // the user can pan.
-            .onChange(of: userCoordinate) { _, newCoordinate in
-                guard let newCoordinate, !didCenterOnUser else { return }
+            // the user can pan (locationTrigger is Equatable, unlike
+            // CLLocationCoordinate2D itself).
+            .onChange(of: locationTrigger) { _, _ in
+                guard let newCoordinate = userCoordinate, !didCenterOnUser else { return }
                 didCenterOnUser = true
                 withAnimation(.easeInOut(duration: 0.35)) {
                     cameraPosition = .camera(MapCamera(
