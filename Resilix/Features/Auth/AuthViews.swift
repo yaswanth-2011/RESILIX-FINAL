@@ -10,9 +10,11 @@ public struct WelcomeView: View {
     @Binding var isGuest: Bool
     @State private var selectedMode: AuthMode = .signIn
     @State private var logoOpacity: Double = 0
-    @State private var logoScale: CGFloat = 0.3
-    @State private var logoRotation: Double = -15
+    @State private var logoScale: CGFloat = 0.05
+    @State private var logoRotation: Double = -180
     @State private var showContent: Bool = false
+    @State private var contentOpacity: Double = 0
+    @State private var contentOffset: CGFloat = 40
 
     public enum AuthMode: String, CaseIterable, Hashable {
         case signIn = "Sign In"
@@ -62,39 +64,44 @@ public struct WelcomeView: View {
                     VStack(spacing: 0) {
                         Spacer(minLength: 0)
                         VStack(spacing: 0) {
-                            // Logo placeholder dark — very big
+                            // Logo placeholder dark — zooms in dramatically
                             LogoPlaceholderDarkView(height: 220)
                                 .scaleEffect(logoScale)
                                 .opacity(logoOpacity)
                                 .rotationEffect(.degrees(logoRotation))
                                 .padding(.bottom, 22)
+                                .zIndex(2)
                                 .onAppear {
-                                    withAnimation(.easeOut(duration: 0.8).delay(0.1)) {
+                                    // Stage 1: zoom in the logo (0.05 → 1.0) with rotation
+                                    withAnimation(.easeOut(duration: 0.7).delay(0.15)) {
                                         logoOpacity = 1
                                         logoScale = 1.0
                                         logoRotation = 0
                                     }
-                                    withAnimation(.easeOut(duration: 0.6).delay(0.6)) {
-                                        showContent = true
+                                    // Stage 2: fade in the content below
+                                    withAnimation(.easeOut(duration: 0.5).delay(0.6)) {
+                                        contentOpacity = 1
+                                        contentOffset = 0
                                     }
                                 }
-                                .scaleEffect(showContent ? 1.0 : 1.0)
-                                .transition(.scale.combined(with: .opacity))
 
-                            // Native TabView pill liquid glass — slider, close to login
-                            AuthModeSlider(selectedMode: $selectedMode)
-                                .padding(.horizontal, 16)
+                            // Content (slider + tabs) — fades in after the logo lands
+                            VStack(spacing: 0) {
+                                AuthModeSlider(selectedMode: $selectedMode)
+                                    .padding(.horizontal, 16)
 
-                            // Native TabView — swipeable, selection bound to slider, no gap to fields
-                            TabView(selection: $selectedMode) {
-                                SignInTab(isGuest: $isGuest, showLogin: $showLogin, showCreate: $showCreate)
-                                    .tag(AuthMode.signIn)
-                                CreateAccountTab(showLogin: $showLogin, showCreate: $showCreate)
-                                    .tag(AuthMode.createAccount)
+                                TabView(selection: $selectedMode) {
+                                    SignInTab(isGuest: $isGuest, showLogin: $showLogin, showCreate: $showCreate)
+                                        .tag(AuthMode.signIn)
+                                    CreateAccountTab(showLogin: $showLogin, showCreate: $showCreate)
+                                        .tag(AuthMode.createAccount)
+                                }
+                                .tabViewStyle(.page(indexDisplayMode: .never))
+                                .frame(height: 268)
+                                .animation(.spring(response: 0.42, dampingFraction: 0.68), value: selectedMode)
                             }
-                            .tabViewStyle(.page(indexDisplayMode: .never))
-                            .frame(height: 268)
-                            .animation(.spring(response: 0.42, dampingFraction: 0.68), value: selectedMode)
+                            .opacity(contentOpacity)
+                            .offset(y: contentOffset)
                         }
                         .padding(.vertical, 8)
                         Spacer(minLength: 0)
