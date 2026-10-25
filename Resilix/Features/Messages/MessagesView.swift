@@ -92,7 +92,7 @@ struct MessagesView: View {
                         .font(.caption2)
                         .foregroundStyle(ResilixTheme.textTertiary)
                     if let r = message.lastRoute {
-                        Text(String(format: L("• %@"), r))
+                        Text("• " + r)
                             .font(.caption2)
                             .foregroundStyle(ResilixTheme.textTertiary)
                     }

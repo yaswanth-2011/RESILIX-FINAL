@@ -17,7 +17,7 @@ struct RouteDetailView: View {
                     HStack(spacing: 0) {
                 Text(L("route.freshness") + ": ")
                 Text(route.freshness, style: .relative)
-                Text(L(" ") + L("ui.ago"))
+                Text(" " + L("ui.ago"))
             }
             .font(.caption)
             .foregroundStyle(ResilixTheme.textSecondary)

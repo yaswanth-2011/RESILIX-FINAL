@@ -503,7 +503,7 @@ struct ConversationRow: View {
 struct UnreadBadge: View {
     let count: Int
     var body: some View {
-        Text("\(count)")
+        Text(verbatim: "\(count)")
             .font(ResilixTheme.font(12, .bold))
             .foregroundStyle(ResilixTheme.textOnAccent)
             .frame(minWidth: 22, minHeight: 22)

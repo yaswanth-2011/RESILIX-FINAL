@@ -45,7 +45,7 @@ struct IncidentRow: View {
                 }
             }
             HStack {
-                Text(incident.note ?? "SOS")
+                Text(incident.note ?? L("SOS"))
                     .font(.caption)
                     .foregroundStyle(ResilixTheme.textSecondary)
                     .lineLimit(1)

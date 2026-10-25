@@ -701,7 +701,7 @@ struct AIMessageRow: View {
                         .font(ResilixTheme.font(10, .medium))
                         .foregroundStyle(ResilixTheme.textTertiary)
                     if let src = message.source, !isUser {
-                        Text(String(format: L("· %@"), src))
+                        Text("· " + src)
                             .font(ResilixTheme.font(10, .medium))
                             .foregroundStyle(ResilixTheme.textTertiary)
                             .lineLimit(1)

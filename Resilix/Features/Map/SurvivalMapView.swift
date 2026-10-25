@@ -990,7 +990,7 @@ struct ThreeDPopupSheet: View {
                         .tracking(1.0)
                         .foregroundStyle(ResilixTheme.textTertiary)
                     Spacer()
-                    Text("\(Int(pitch))°")
+                    Text(verbatim: "\(Int(pitch))°")
                         .font(ResilixTheme.font(13, .bold))
                         .foregroundStyle(ResilixTheme.textPrimary)
                         .monospacedDigit()
@@ -1038,7 +1038,7 @@ private struct PresetButton: View {
                 Text(title)
                     .font(ResilixTheme.font(13, .semibold))
                     .foregroundStyle(ResilixTheme.textPrimary)
-                Text("\(Int(pitch))°")
+                Text(verbatim: "\(Int(pitch))°")
                     .font(ResilixTheme.font(11, .regular))
                     .foregroundStyle(ResilixTheme.textTertiary)
             }

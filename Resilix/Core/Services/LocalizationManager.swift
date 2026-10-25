@@ -72,6 +72,15 @@ final class LocalizationManager: ObservableObject {
         supportedLanguages.first { $0.name == name }?.code ?? "en"
     }
 
+    /// Resolves a localizable value with the currently selected language.
+    ///
+    /// Taking `String.LocalizationValue` (rather than `String`) is what keeps the
+    /// literal at the call site visible to Xcode's string extractor, so keys are
+    /// not reported as "references could not be found in source code".
+    func localized(_ value: String.LocalizationValue) -> String {
+        String(localized: value, bundle: .main, locale: locale)
+    }
+
     /// Resolves a key with the currently selected language.
     func localized(_ key: String) -> String {
         String(localized: String.LocalizationValue(key),
@@ -92,6 +101,17 @@ final class LocalizationManager: ObservableObject {
 }
 
 /// Shortcut for a localized string that uses the selected app language.
+///
+/// The parameter is a `String.LocalizationValue` so that Xcode's compiler-based
+/// string extraction recognises every literal call site and the String
+/// Catalog can verify that each key is really used.
+func L(_ value: String.LocalizationValue) -> String {
+    LocalizationManager.shared.localized(value)
+}
+
+/// Dynamic lookup for keys whose value is only known at runtime.
+/// Prefer the literal overload; this one is not visible to the extractor.
+@_disfavoredOverload
 func L(_ key: String) -> String {
     LocalizationManager.shared.localized(key)
 }

@@ -16,7 +16,7 @@
 | Physical device run (2–3 iPhones, BLE + P2P Wi-Fi, real relay) | **NOT PERFORMED** — no devices. |
 | Offline syntax validation | **PASS** — `Tools/swiftcheck.py` (tree-sitter-swift 0.7.4): **115/115 files parse with 0 errors**. |
 | Xcode project integrity | **PASS** — `Tools/sync_xcodeproj.py` + custom validator: brace balance 0, **0 dangling object references**, 105 app + 9 test files all present on disk and in their Sources phases, **no file on disk left out of a target**. |
-| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **784 keys × 11 languages = 8,404 translated units**, every key fully translated in all 11 languages, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches** (`Tools/l10n/audit_keys.py`). |
+| Localisation catalog integrity | **PASS** — `Localizable.xcstrings` parses as JSON, **709 keys × 11 languages = 7,799 translated units**, every key fully translated, **0 missing keys, 0 untranslated entries, 0 placeholder mismatches, 0 orphan keys** (`Tools/l10n/audit_keys.py`). |
 | Localised-screen literal sweep | **PASS** — `Tools/l10n/audit_uiliterals.py`: every SwiftUI `Text/Label/Button/navigationTitle/NavigationLink/…` literal resolves to a catalog key with 11 translations; **0 problems** (only empty/symbol-only literals remain, which carry no translatable text). |
 | Design-frozen check | **PASS** — the theme file diff contains **no numeric change**: all 32 colour tokens have identical RGB values before/after, all scalar spacing tokens and the `font()` helper are byte-identical. The only theme edit is the helper's internal shape (`dynamic` → `adaptive` with `RGB`/`RGBA` structs) and it is behaviour-identical. |
 | Empty actions / placeholders | **PASS** — 0 `TODO`/`FIXME`/`fatalError`; the only empty closures are SwiftUI `role: .cancel` buttons (auto-dismiss), protocol `init(){}` stubs, and the `MockMeshTransport`/demo-only no-ops. |
@@ -152,12 +152,27 @@ MBTiles (SQLite) packs and tile directories imported by the user into the app co
 |---|---|---|
 | English | en | source language (fallback) |
 | Hindi, Telugu, Tamil, Kannada, Malayalam | hi, te, ta, kn, ml | **784 / 784 keys** |
-| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | **784 / 784 keys** |
+| Marathi, Bengali, Gujarati, Punjabi, Urdu | mr, bn, gu, pa, ur | **709 / 709 keys** |
 
-**Catalog totals:** 784 keys × 11 languages = **8,404 translated string units** in `Resilix/Resources/Localizable.xcstrings`.
+**Catalog totals:** 709 keys × 11 languages = **7,799 translated string units** in `Resilix/Resources/Localizable.xcstrings`.
 **Automated audits (both green):**
-- `Tools/l10n/audit_keys.py` → 712 referenced keys, 0 missing from catalog, 0 untranslated, 0 placeholder-count mismatches, 73 orphan keys kept deliberately (reachable via SwiftUI `LocalizedStringKey` or reserved for reuse).
+- `Tools/l10n/audit_keys.py` → 710 referenced keys, 0 missing from catalog, 0 untranslated, 0 placeholder-count mismatches, **0 orphan keys**.
+- `Tools/swiftcheck.py`, `Tools/sync_xcodeproj.py` → 114/114 files parse; project adds/removes 0 files.
 - `Tools/l10n/audit_uiliterals.py` → **0 problems**: no hard-coded English remains in any `Text`/`Label`/`Button`/`navigationTitle`/`NavigationLink`/`Section`/`TextField`/`Toggle`/`alert` title on a localised screen.
+
+### 7.1 String Catalog health (Xcode editor diagnostics)
+
+Opening the catalog in Xcode 15/16 raised three classes of diagnostics. All three root causes are fixed:
+
+| Xcode diagnostic | Cause | Fix |
+|---|---|---|
+| `References to this key could not be found in source code` (for most keys) | `L(_ key: String)` took a plain `String`, so the compiler-based extractor could not associate any literal with a catalog key. | `L` now takes **`String.LocalizationValue`**, which is one of the three types the extractor recognises (with `SWIFT_EMIT_LOC_STRINGS`). A `@_disfavoredOverload` `String` overload remains for keys computed at runtime. |
+| `Unable to derive a symbol name from this key…` | Keys made only of punctuation/placeholders: `%@`, `%@°`, `· %@`, `• %@`, `" "`. | The three call sites that produced `%@`/`%@°` now use `Text(verbatim:)` (numbers and degrees need no translation), the separator keys became plain literals, and all five entries were removed. |
+| `This string key would generate the same symbol as …` | 17 legitimate case-only pairs (`About`/`ABOUT`, `Sign In`/`SIGN IN`, `1 hop`/`1 Hop`, …) recur in different design roles — title vs. section header. Changing the text would alter the frozen design. | `STRING_CATALOG_GENERATE_SYMBOLS` is now **`NO`**. The app never used generated symbols (it localises through `L()`), so symbol generation was pure noise. |
+
+All build settings are set at project level in both configurations: `STRING_CATALOG_GENERATE_SYMBOLS = NO`, `SWIFT_EMIT_LOC_STRINGS = YES`, `LOCALIZED_STRING_SWIFTUI_SUPPORT = YES`.
+
+Two genuine localisation bugs surfaced while doing this and were fixed: `Text(incident.note ?? "SOS")` and `Text(… ?? "None")` were rendering through the non-localising `Text(String)` overload.
 
 **Deliberately left in English (technical identifiers, not UI copy):** SQL fragments, font PostScript names, the Bonjour service type `_resilix._tcp`, the Bonjour peer name `Resilix Node`, model IDs/licence names (`google/gemma-4-E2B`, `Qwen3-0.6B`, `Apache-2.0`), and diagnostic dumps.
 

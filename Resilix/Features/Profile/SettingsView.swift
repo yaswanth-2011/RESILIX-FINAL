@@ -448,7 +448,7 @@ struct OfflineAISettingsView: View {
 
             Section(header: Text(L("Active model"))) {
                 HStack {
-                    Text(app.aiService.activeModel?.displayName ?? "None")
+                    Text(app.aiService.activeModel?.displayName ?? L("None"))
                         .foregroundStyle(ResilixTheme.textPrimary)
                     Spacer()
                     Text(statusText)
