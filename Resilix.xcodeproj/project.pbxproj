@@ -12,7 +12,6 @@
 		148580DB623C43F7997D771E /* Core/Models/ResourceCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C39392B592F40AD942E0794 /* Core/Models/ResourceCategory.swift */; };
 		156CD5621AAF4773BD90EB58 /* Features/Mesh/RouteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F3D233B2AB4B1CA3AFA32B /* Features/Mesh/RouteDetailView.swift */; };
 		16B5BB1AE452412F96E37B16 /* Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D8D78C4B4EA4CDAB3704C09 /* Resources/Assets.xcassets */; };
-		7C4A1E9B2D3F4A5B8C6D0E11 /* Resources/LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 91B2C666508A4CEF9DDAA092 /* Resources/LaunchScreen.storyboard */; };
 		18585AD26BF64E18A75BDFEC /* Core/Services/SOSService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A17A49F9DE4E9DAB4F7CED /* Core/Services/SOSService.swift */; };
 		1D21C41867BA4280B7301C0A /* Core/Services/PermissionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF26F37FFDE84E6BBB4E067C /* Core/Services/PermissionService.swift */; };
 		2463A5E6EDEC497A86FD3737 /* Core/Models/LinkQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB5C750CEE84007B1FD70D0 /* Core/Models/LinkQuality.swift */; };
@@ -175,7 +174,6 @@
 		8947D8B4F56941C08E79F521 /* Core/Networking/PeerToPeerWiFiTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Networking/PeerToPeerWiFiTransport.swift; sourceTree = "<group>"; };
 		8D8D78C4B4EA4CDAB3704C09 /* Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		8EC3330A4E0C417FB324BEF3 /* Core/Routing/MeshRoutingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Routing/MeshRoutingEngine.swift; sourceTree = "<group>"; };
-		91B2C666508A4CEF9DDAA092 /* Resources/LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Resources/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9336D33C58C244D8B570E6D7 /* Core/Models/ResourceVerificationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Models/ResourceVerificationState.swift; sourceTree = "<group>"; };
 		936DEAB68F1047D58F5B75D3 /* Core/Services/RelayManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Core/Services/RelayManager.swift; sourceTree = "<group>"; };
 		9428A723006447A883F02251 /* Features/Messages/MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Features/Messages/MessagesView.swift; sourceTree = "<group>"; };
@@ -363,7 +361,6 @@
 				06E11A9D647F4E4C9C8B76C0 /* App/InfoPlist.swift */,
 				603CF83036C54565A65F416E /* App/ResilixApp.swift */,
 				5DF4221626F646948476C27D /* SharedUI/ResilixComponents.swift */,
-				91B2C666508A4CEF9DDAA092 /* Resources/LaunchScreen.storyboard */,
 				45A553061BF84797A21BB504 /* Features/Launch/SplashView.swift */,
 				F431CE81354B4A3EA0193929 /* Features/Mesh/Mesh3DView.swift */,
 				C4E7824F4E0244F0B39A8D54 /* Features/Nearby/NearbyView.swift */,
@@ -433,6 +430,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D1B2C3D4E5F60718293A4B5C /* PBXTargetDependency */,
 			);
 			name = ResilixTests;
 			productName = ResilixTests;
@@ -457,6 +455,24 @@
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
+
+/* Begin PBXContainerItemProxy section */
+		C0A1B2C3D4E5F60718293A4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6B71AFD0D4604E479789F94B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5651F888C9A744C3B46AEB7E;
+			remoteInfo = Resilix;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		D1B2C3D4E5F60718293A4B5C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5651F888C9A744C3B46AEB7E /* Resilix */;
+			targetProxy = C0A1B2C3D4E5F60718293A4B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXProject section */
 		6B71AFD0D4604E479789F94B /* Project object */ = {
@@ -500,7 +516,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				16B5BB1AE452412F96E37B16 /* Resources/Assets.xcassets in Resources */,
-				7C4A1E9B2D3F4A5B8C6D0E11 /* Resources/LaunchScreen.storyboard in Resources */,
 				2B1C0A0A1B2C3D4E5F607081 /* Resources/Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -833,6 +848,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Resilix.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Resilix";
+				TEST_TARGET_NAME = Resilix;
 			};
 			name = Debug;
 		};
@@ -851,6 +868,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Resilix.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Resilix";
+				TEST_TARGET_NAME = Resilix;
 			};
 			name = Release;
 		};

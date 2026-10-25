@@ -45,6 +45,13 @@ The remaining literal-scan hits are non-defects: SF Symbol names, interpolation-
 | 4 | `LaunchScreen.storyboard` had a file reference but was missing from the Resources build phase, while `Info.plist` declares `UILaunchStoryboardName = LaunchScreen` | Blank launch screen at runtime; a flashing white one against a dark UI. | Added to the Resources phase; background changed to black to match `UIUserInterfaceStyle = Dark`. |
 | 5 | `AccentColor.colorset` declared a universal idiom with **no colour components** | Unconfigured asset (and a white launch tint). | Filled with the brand cyan the app already uses (light `0.33/0.44/0.57`, dark `0.56/0.66/0.77`). |
 
+### 0.2b Launch screen and test target (follow-up failures)
+
+| # | Defect | Symptom in Xcode | Fix |
+|---|---|---|---|
+| 6 | `LaunchScreen.storyboard` was a hand-written Interface Builder document that had never been compiled (it was absent from the Resources phase in the original project). Adding it to the build exposed it to `ibtool`. | `The document "LaunchScreen.storyboard" could not be opened. (com.apple.InterfaceBuilder error -1.)` | Interface Builder removed from the launch path entirely: the storyboard and its references are deleted, `UILaunchStoryboardName` is gone, and the declarative `UILaunchScreen` dictionary — already present in `Info.plist` and supported since iOS 14 — is now the only launch mechanism. `UIColorName` points at a new `LaunchBackground` colorset (pure black, matching `ResilixTheme.backgroundPrimary` dark), with `UIImageName = ResilixLogoPlaceholder`. |
+| 7 | `ResilixTests` had **no target dependency** on the app target and **no `TEST_HOST`**, while declaring `BUNDLE_LOADER = "$(TEST_HOST)"` | `⌘U` / `xcodebuild test` would fail to link: the host path expanded to empty, so every symbol from `@testable import Resilix` was undefined. | Added `TEST_HOST`/`TEST_TARGET_NAME` to both test configurations plus a `PBXTargetDependency` (`PBXContainerItemProxy`, proxyType 1) from `ResilixTests` to `Resilix`. |
+
 ### 0.3 Functional defects found and fixed in the same audit
 
 | Defect | Impact | Fix |
